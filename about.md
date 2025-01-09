@@ -2,12 +2,11 @@
 layout: page
 title: About
 permalink: /about/
-
 ---
 
 ## Introduction
 
-Hello, I'm Jiahao Xiang, a postgraduate student at Hengyang Normal University. I started as a mechanical engineer, but now I'm studying electronic information. I'm interested in computer science; the logic of computer programming is so fun and interesting. By combining the knowledge of mechanical engineering and electronic information, I'm looking forward to creating some interesting projects.
+Hello, I'm isomo, a postgraduate student at Hengyang Normal University. I started as a mechanical engineer, but now I'm studying electronic information. I'm interested in computer science; the logic of computer programming is so fun and interesting. By combining the knowledge of mechanical engineering and electronic information, I'm looking forward to creating some interesting projects.
 
 I'm curious about electronic computers and am learning the basics of computer science, such as computer organization, computer networks, operating systems, databases, data structures and algorithms, and programming languages. Based on this knowledge, I'm interested in applications like embedded systems, the Internet of Things, deep learning, game and web development.
 
@@ -26,8 +25,8 @@ I'm a hardworking and responsible person, eager to learn new things and face new
 
 ## Contact
 
-- **Email:** [Gmail](mailto:jiahaoxiang2000@gmail.com)  [QQ](mailto:simple.xjh@qq.com)
-- **WeChat:** to_be_simple__
+- **Email:** [Gmail](mailto:jiahaoxiang2000@gmail.com) [QQ](mailto:simple.xjh@qq.com)
+- **WeChat:** to_be_simple\_\_
 - **GitHub:** [jiahaoxiang2000](https://github.com/jiahaoxiang2000)
 - **BiliBili:** [xjh-2000](https://space.bilibili.com/136606644)
 - **Phone:** +86 13087286239

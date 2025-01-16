@@ -1,11 +1,11 @@
 {
   "introduction": 1,
-  "github": 1,
-  "guide": 1,
   "godot": 1,
   "game": 1,
   "dev": 1,
   "multi-author": 2,
   "next-js": 2,
-  "feature": 2
+  "feature": 2,
+  "github": 1,
+  "guide": 1
 }

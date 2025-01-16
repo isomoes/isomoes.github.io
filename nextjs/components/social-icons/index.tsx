@@ -11,12 +11,13 @@ import {
   Instagram,
   Medium,
   Bluesky,
+  Bilibili,
 } from './icons'
 
 const components = {
   mail: Mail,
   github: Github,
-  facebook: Facebook,
+  facebook: Bluesky,
   youtube: Youtube,
   linkedin: Linkedin,
   twitter: Twitter,
@@ -26,6 +27,7 @@ const components = {
   instagram: Instagram,
   medium: Medium,
   bluesky: Bluesky,
+  bilibili: Bilibili,
 }
 
 type SocialIconProps = {

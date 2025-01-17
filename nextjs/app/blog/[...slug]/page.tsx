@@ -13,6 +13,7 @@ import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
+import TOCInline from 'pliny/ui/TOCInline'
 
 const defaultLayout = 'PostSimple'
 const layouts = {

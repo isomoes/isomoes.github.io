@@ -5,8 +5,10 @@ import type { MDXComponents } from 'mdx/types'
 import Image from './Image'
 import CustomLink from './Link'
 import TableWrapper from './TableWrapper'
+import BilibiliVideo from './BilibiliVideo'
 
 export const components: MDXComponents = {
+  BilibiliVideo,
   Image,
   TOCInline,
   a: CustomLink,

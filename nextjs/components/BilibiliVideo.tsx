@@ -18,7 +18,7 @@ const BilibiliVideo: React.FC<BilibiliVideoProps> = ({
     <div className="flex  items-center justify-center">
       <iframe
         title={`Bilibili Video ${bvid}`}
-        src={`//player.bilibili.com/player.html?bvid=${bvid}&high_quality=1`}
+        src={`//player.bilibili.com/player.html?bvid=${bvid}&high_quality=1&autoplay=0`}
         scrolling="no"
         frameBorder="no"
         allowFullScreen={true}

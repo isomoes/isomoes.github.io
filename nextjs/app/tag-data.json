@@ -1,10 +1,10 @@
 {
   "introduction": 2,
-  "github": 1,
-  "guide": 1,
+  "blog": 1,
+  "js": 1,
   "godot": 1,
   "game": 1,
   "dev": 1,
-  "blog": 1,
-  "js": 1
+  "github": 1,
+  "guide": 1
 }

@@ -10,22 +10,23 @@ interface BilibiliVideoProps {
 
 const BilibiliVideo: React.FC<BilibiliVideoProps> = ({
   bvid,
-  cid,
   page = 1,
-  width = 500,
+  width = '80%',
   height = 375,
 }) => {
   return (
-    <iframe
-      title={`Bilibili Video ${bvid} Page ${page}`}
-      src={`//player.bilibili.com/player.html?bvid=${bvid}`}
-      scrolling="no"
-      frameBorder="no"
-      allowFullScreen={true}
-      width={width}
-      height={height}
-      style={{ maxWidth: '100%', border: 'none' }}
-    />
+    <div className="flex  items-center justify-center">
+      <iframe
+        title={`Bilibili Video ${bvid}`}
+        src={`//player.bilibili.com/player.html?bvid=${bvid}`}
+        scrolling="no"
+        frameBorder="no"
+        allowFullScreen={true}
+        width={width}
+        height={height}
+        style={{ maxWidth: '100%', border: 'none' }}
+      />
+    </div>
   )
 }
 

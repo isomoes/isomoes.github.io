@@ -1,5 +1,4 @@
 ---
-
 title: 'Neovim Start'
 date: '2025-01-23'
 tags: ['neovim', 'IDE']
@@ -21,3 +20,15 @@ Additionally, the UI interaction logic of VSCode is not great for extending to n
 ## LazyVim
 
 LazyVim is a Neovim setup powered by 💤 lazy.nvim to make it easy to customize and extend your config.
+
+### Keymaps
+
+LazyVim uses `which-key.nvim` to help you remember your keymaps. Just press any key like <space> and you'll see a popup with all possible keymaps starting with <space>.
+Here we can see the defulat keymaps on the [link](http://www.lazyvim.org/keymaps).
+
+Then we can customize the keymaps in the `lua/config/keymaps.lua` file, here override the defulat keymaps. like this:
+
+```lang-lua
+local map = vim.keymap.set
+map('n', '<leader>q', ':q<CR>')
+```

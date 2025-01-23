@@ -32,3 +32,16 @@ Then we can customize the keymaps in the `lua/config/keymaps.lua` file, here ove
 local map = vim.keymap.set
 map('n', '<leader>q', ':q<CR>')
 ```
+
+this will map the `<leader>q` to `:q<CR>`, which means quit the current buffer.
+
+### Plugins
+
+LazyVim is based on the `lazy.vim`, which is a plugin manager for Neovim. You can find the plugins in the `lua/plugins` floder.
+on this floder, the `*.lua` will be automatically loaded by the `lazy.vim`.
+LazyVim is package much defualt plugins with us. You can find the plugins on the [link](http://www.lazyvim.org/plugins).
+On the last part, we will to inspect the different plugins and how to use them.
+
+### Customization
+
+On the `lua/config/` the `autocmds.lua` and `options.lua`, help we to override the default settings of the Neovim. also include the `keymaps.lua` to customize the keymaps.

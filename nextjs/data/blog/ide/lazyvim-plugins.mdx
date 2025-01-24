@@ -71,3 +71,36 @@ opts = {
   },
 }
 ```
+
+Based on this plugins, we can to complete the snippets, LSP, path, buffer and cmdline.
+And the keymap we can configure by ourself habit.
+
+## Colorscheme
+
+we think the `tokeynight-night` is more beautiful colorscheme for the neovim. So we will to use it as the default colorscheme. Here is the configure:
+
+```lua lua/plugins/colorscheme.lua
+{
+  "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "tokyonight-night",
+    },
+}
+```
+
+## Editor `fzf`
+
+The Editor core is based on the [fzf-lua](https://github.com/ibhagwan/fzf-lua), which can fuzzy search files, buffers, git files, etc. It is a powerful fuzzy search plugin that can be used to search for files, buffers, git files, etc.
+
+- grep the files by `<space><space>`.
+- grep context by `<space>sw`
+- etc.
+
+### neo-tree
+
+The [neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim) is the explorer plugin for neovim. It is a file explorer plugin that can be used to explore files and directories. It is a good choice for those who want to use a file explorer plugin.
+It support to explore the buffer, gitstatus, floder.
+
+- the `<leader>e` is to the floder.
+- the `<leader>ge` is to the gitstatus.
+- the `<leader>be` is to the buffer.

@@ -1,4 +1,7 @@
 {
+  "neovim": 3,
+  "ide": 3,
+  "plugins": 2,
   "introduction": 2,
   "blog": 1,
   "js": 1,

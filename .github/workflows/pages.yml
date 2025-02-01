@@ -64,10 +64,11 @@ jobs:
         with:
           name: github-pages
           path: artifact
-      - uses: crazy-max/ghaction-extract@v2
-        with:
-          archive: artifact/artifact.tar
-          destination: dist
+      - name: Extract artifact
+        run: |
+          mkdir -p dist
+          cd artifact
+          tar -xf artifact.tar -C ../dist
       - uses: manyuanrong/setup-ossutil@v3.0
         with:
           endpoint: "oss-cn-guangzhou.aliyuncs.com"

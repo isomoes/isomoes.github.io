@@ -5,6 +5,13 @@
  * https://github.com/PrismJS/prism-themes
  */
 
+ /* Code block styles */
+pre {
+  white-space: pre-wrap; /* This will enable automatic wrapping of code blocks */
+  word-break: break-word; /* This will break long words to fit within the container */
+}
+
+
 /* Code title styles */
 .remark-code-title {
   @apply rounded-t bg-gray-700 px-5 py-3 font-mono text-sm font-bold text-gray-200 dark:bg-gray-800;

@@ -1,17 +1,17 @@
 {
-  "introduction": 2,
-  "github": 1,
-  "guide": 1,
-  "godot": 1,
-  "game": 1,
-  "dev": 1,
-  "neovim": 2,
-  "ide": 2,
-  "blog": 1,
-  "js": 1,
   "tools": 1,
   "misc": 1,
   "coding": 1,
   "ai": 1,
-  "plugins": 2
+  "plugins": 2,
+  "neovim": 2,
+  "ide": 2,
+  "introduction": 2,
+  "blog": 1,
+  "js": 1,
+  "godot": 1,
+  "game": 1,
+  "dev": 1,
+  "github": 1,
+  "guide": 1
 }

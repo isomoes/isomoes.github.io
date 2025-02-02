@@ -14,7 +14,7 @@ import { Metadata } from 'next'
 
 const merriweather = Merriweather({
   subsets: ['latin'],
-  weight: ["400", "700"],
+  weight: ['400', '700'],
   display: 'swap',
   variable: '--font-merriweather',
 })

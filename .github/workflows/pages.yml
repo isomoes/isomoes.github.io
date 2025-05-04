@@ -55,23 +55,3 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-
-  deploy-oss:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: artifact
-      - name: Extract artifact
-        run: |
-          mkdir -p dist
-          cd artifact
-          tar -xf artifact.tar -C ../dist
-      - uses: manyuanrong/setup-ossutil@v3.0
-        with:
-          endpoint: "oss-cn-guangzhou.aliyuncs.com"
-          access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
-      - run: ossutil cp -rf dist/ oss://isomo/ --meta=Cache-Control:no-cache

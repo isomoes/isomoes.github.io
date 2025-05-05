@@ -5,6 +5,7 @@ tags: ['vim', 'KeyMaps', 'Tools']
 summary: 'Vim KeyMaps for all your needs! An illustrated guide based on Vim KeyMaps.'
 ---
 
+<BilibiliVideo bvid="BV1VtVFz3EQ9" />
 
 <TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
 
@@ -20,7 +21,6 @@ Since we use the Vim extension in VSCode, we follow the [roadmap](https://github
 ## Some Useful Commands
 
 > here we only list some useful commands, for more details please refer to the [Vim Cheat Sheet](https://vim.rtorr.com/)
-
 
 ### Motion: How to Move
 
@@ -57,3 +57,14 @@ Scrolling
 - `.` - Repeat last action.
 - `q{a-z}` - Record a macro.
 - `@{a-z}` - Execute a macro.
+
+### Ctrl Commands
+
+- `ctrl + d` / `ctrl + u` - Scroll down/up half a page.
+- `ctrl + o` / `ctrl + i` - Jump to previous/next position in jump list.
+- `ctrl + r` - Redo.
+
+> **Note:**
+> On Windows, `ctrl + c` and `ctrl + v` are commonly used for copy and paste in most applications.
+> In Vim, `ctrl + c` is similar to `Esc` (cancel/interrupt), and `ctrl + v` enters Visual Block mode.
+> _To avoid confusion on the keyboard, here we to close the `ctrl+ANY` commands by the `"vim.useCtrlKeys": false` setting in `settings.json`._

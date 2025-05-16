@@ -1,0 +1,55 @@
+---
+title: 'Arch Linux'
+date: '2025-05-16'
+tags: ['Arch Linux', 'linux', 'setup', 'guide']
+summary: 'A practical guide to setting up and using Arch Linux, including audio, input methods, and device support etc.'
+---
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+Arch Linux is a lightweight, flexible Linux distro with a rolling release model. This post shares concise, real-world setup tips for a smooth experience. 🚀
+
+## Hyprland Setup 🖥️
+
+Hyprland is a dynamic tiling Wayland compositor, perfect for a modern Arch Linux desktop. Install it and follow the official wiki for configuration basics. Key settings like environment variables and autostart commands (for input methods, etc.) should be added to your Hyprland config file. No need to memorize every detail—just refer to the docs as needed!
+
+## Audio: PipeWire & pavucontrol 🔊
+
+PipeWire is the modern audio/video server for Linux. To set up PipeWire and pavucontrol:
+
+```fish
+sudo pacman -S pipewire pipewire-pulse pipewire-alsa pipewire-jack wireplumber pavucontrol
+```
+
+Enable and start services, then launch the volume control GUI as needed.
+
+## Input Method: Fcitx5 🌐
+
+For multilingual input (Chinese/English), install Fcitx5 and addons. Add the required environment variables and autostart lines to your Hyprland config. Use the GUI tool to configure input methods.
+
+## Apple Devices on Arch Linux 🍏
+
+### Magic Mouse 2 (USB-C 2024)
+
+- Use the [Linux-Magic-Trackpad-2-USB-C-Driver](https://github.com/mr-cal/Linux-Magic-Trackpad-2-USB-C-Driver).
+- Example config for module options is available in the repo.
+
+### Magic Keyboard (2021, no Touch ID)
+
+- Works out of the box. For tweaks, edit the appropriate config file.
+
+## Useful Tools 🛠️
+
+- PDF: [Okular](https://okular.kde.org/)
+- Screenshot: [Hyprshot](https://github.com/Gustash/Hyprshot)
+- Recording: [OBS Studio](https://archlinux.org/packages/extra/x86_64/obs-studio/)
+- Key show: [wshowkeys](https://github.com/DreamMaoMao/wshowkeys)
+- Proxy: [daed](https://github.com/daeuniverse/daed)
+
+---
+
+## Conclusion 🎉
+
+This guide is based on hands-on experience. For more, see the [Arch Wiki](https://wiki.archlinux.org/). Happy hacking! 😄

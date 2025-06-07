@@ -1,0 +1,43 @@
+---
+title: 'Neovim as an IDE with AI'
+date: '2025-06-07'
+tags: ['neovim', 'IDE', 'AI']
+summary: ''
+---
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+# CodeCompanion
+
+[CodeCompanion:](https://github.com/olimorris/codecompanion.nvim?tab=readme-ov-file) Code with any LLM via the in-built adapters, the community adapters or by building your own.
+
+## Features
+
+**Core Functionality**
+- **Chat Buffer**: Converse with LLMs directly within Neovim with single response per turn interaction
+- **Inline Assistant**: Write code directly into buffers with AI assistance and diff preview
+- **Action Palette**: Quick access to all plugin features and prompt library via `:CodeCompanionActions`
+- **Command Generation**: Create Neovim commands via `:CodeCompanionCmd` in command-line mode
+
+**Context Integration**
+- **Variables**: Add context with `#buffer`, `#lsp`, and `#viewport` for current Neovim state
+- **Slash Commands**: Insert additional context via `/buffer`, `/file`, `/fetch`, `/help`, `/symbols`, `/terminal`, and `/now`
+- **Visual Selection**: Send selected code directly to AI for explanation, fixes, or tests
+
+**AI Agents & Tools**
+- **@editor**: LLM edits code directly in Neovim buffers
+- **@cmd_runner**: Execute shell commands (with approval)
+- **@files**: File system operations (with approval)
+- **@full_stack_dev**: Combined agent with all tools
+
+**Adapter Support**
+- **Multiple LLMs**: Works with Anthropic, OpenAI, GitHub Copilot, and more
+- **Flexible Configuration**: Custom API keys, environment variables, and command execution
+- **Default Integration**: Works out-of-the-box with existing Copilot installations
+
+**Built-in Prompts**
+- `/commit` - Generate commit messages
+- `/explain` - Code explanation
+- `/fix` - Code fixes
+- `/lsp` - LSP diagnostics explanation
+- `/tests` - Unit test generation

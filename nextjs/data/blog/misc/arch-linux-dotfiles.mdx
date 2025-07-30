@@ -1,0 +1,363 @@
+---
+title: 'My Arch Linux Dotfiles: A Real-World Configuration Journey'
+date: '2025-07-30'
+tags: ['Arch Linux', 'dotfiles', 'configuration', 'development', 'setup']
+summary: 'A deep dive into my personal Arch Linux configuration repository, showcasing real working dotfiles for development, window management, and daily computing.'
+---
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+Building on the [Arch Linux setup guide](/blog/misc/arch-linux), this post showcases my personal [arch-config](https://github.com/jiahaoxiang2000/arch-config) dotfiles repository - a real, working configuration setup that powers my daily Arch Linux development environment. 🚀
+
+## Why Share My Dotfiles? 💻
+
+Instead of generic application recommendations, I'm sharing my actual configuration files that have evolved through months of daily use. This repository represents a practical, battle-tested setup for development, content creation, and system administration on Arch Linux.
+
+The [arch-config repository](https://github.com/jiahaoxiang2000/arch-config) contains real configuration files that you can examine, learn from, and adapt to your own needs. Every configuration has been refined through actual usage rather than theoretical optimization.
+
+## Repository Structure & Architecture 🏗️
+
+The [arch-config repository](https://github.com/jiahaoxiang2000/arch-config) follows a modular approach using git submodules for major configuration components:
+
+### Core Structure
+
+```
+arch-config/
+├── fish/           # Fish shell configuration
+├── waybar/         # Status bar configuration
+├── qutebrowser/    # Primary browser setup
+├── foot/           # Terminal emulator
+├── git/            # Git global settings
+├── autostart/      # Session startup applications
+├── hypr/           # Hyprland config (submodule)
+├── river/          # River window manager
+├── i3bar-river/    # i3bar for River
+├── i3status-rust/  # Rust status bar
+├── nvim/           # Neovim config (submodule)
+├── Code/User/      # VS Code config (submodule)
+├── zed/            # Zed editor config (submodule)
+└── ...             # Additional tool configs
+```
+
+### Git Submodules Architecture
+
+The repository uses git submodules for major configuration components:
+
+- **Hyprland**: [hypr-config](https://github.com/jiahaoxiang2000/hypr-config) - Wayland compositor
+- **Neovim**: [nvim-config](https://github.com/jiahaoxiang2000/nvim-config) - Text editor
+- **VS Code**: [vscode-config](https://github.com/jiahaoxiang2000/vscode-config) - IDE settings
+- **Zed**: [zed-conf](https://github.com/jiahaoxiang2000/zed-conf) - Modern editor
+
+This modular approach allows independent versioning of major components while maintaining a unified dotfiles structure.
+
+## Installation & Setup 🚀
+
+### Quick Setup
+
+1. **Clone the repository**:
+
+   ```fish
+   git clone --recursive https://github.com/jiahaoxiang2000/arch-config.git ~/.config-backup
+   cd ~/.config-backup
+   ```
+
+2. **Create symbolic links** (recommended approach):
+
+   ```fish
+   ln -sf ~/.config-backup/fish ~/.config/fish
+   ln -sf ~/.config-backup/waybar ~/.config/waybar
+   ln -sf ~/.config-backup/qutebrowser ~/.config/qutebrowser
+   # Add more as needed
+   ```
+
+3. **Update submodules**:
+   ```fish
+   git submodule update --init --recursive
+   ```
+
+### Verification Methods 🔍
+
+After setup, verify your configuration is working:
+
+### Configuration Folder Check
+
+Most applications create configuration folders in `~/.config/`. You can check what's installed by listing this directory:
+
+```fish
+ls ~/.config/
+```
+
+## Key Configuration Highlights 🎯
+
+### Fish Shell Environment (`fish/config.fish`)
+
+The shell configuration handles development environment setup:
+
+```fish
+# Input method support for GUI applications
+set -x GTK_IM_MODULE fcitx
+set -x QT_IM_MODULE fcitx
+set -x XMODIFIERS @im=fcitx
+
+# Custom translation functions
+function tozh
+    trans-cli "$argv"
+end
+
+function toen
+    trans-cli -f zh -t en "$argv"
+end
+
+# Node.js environment with fnm
+if type -q fnm
+    fnm env | source
+end
+
+# Cross-platform Homebrew support
+if test (uname) = "Darwin"
+    if test -f /opt/homebrew/bin/brew
+        eval (/opt/homebrew/bin/brew shellenv)
+    end
+end
+```
+
+### Wayland Window Management
+
+**Hyprland Compositor** (Submodule: [hypr-config](https://github.com/jiahaoxiang2000/hypr-config))
+
+- Complete Wayland compositor setup
+- Custom keybindings and window rules
+- Display configuration and animations
+
+**River Window Manager** (`river/`)
+
+- Minimalist Wayland compositor
+- Dynamic tiling window management
+- Lightweight alternative to Hyprland
+
+**Waybar Status Bar** (`waybar/config.jsonc` & `waybar/style.css`)
+
+- System information display
+- Custom modules and styling
+- Integration with system services
+
+**i3bar Integration** (`i3bar-river/` & `i3status-rust/`)
+
+- Status bar for River window manager
+- Rust-based status information
+- Minimal system monitoring
+
+### Development Environment
+
+**Neovim** (Submodule: [nvim-config](https://github.com/jiahaoxiang2000/nvim-config))
+
+- Comprehensive Vim configuration
+- Plugin management and custom keybindings
+- Language server integration
+
+**VS Code** (Submodule: [vscode-config](https://github.com/jiahaoxiang2000/vscode-config))
+
+- Extensions and settings
+- Workspace configurations
+- Custom themes and keybindings
+
+**Zed Editor** (Submodule: [zed-conf](https://github.com/jiahaoxiang2000/zed-conf))
+
+- Modern editor configuration
+- Performance optimizations
+
+### Browser & Web Tools
+
+**Qutebrowser** (`qutebrowser/config.py`)
+
+- Vim-like browsing experience
+- Custom keybindings and search engines
+- Privacy and performance optimizations
+
+**Firefox** (System-managed profiles)
+
+- Traditional browser option
+- Extension and privacy configurations
+- Complementary to Qutebrowser setup
+
+**Surfingkeys** (`Surfingkeys-conf.js`)
+
+- Browser keyboard navigation extension
+- Custom shortcuts and commands
+- Works across different browsers
+
+### Terminal & System Tools
+
+**Foot Terminal** (`foot/foot.conf`)
+
+- Wayland-native terminal emulator
+- Color schemes and font configuration
+
+**Git Configuration** (`git/ignore`)
+
+- Global ignore patterns
+- Development workflow optimization
+
+## Real-World Application Categories 📋
+
+Based on my actual system with **163 explicitly installed packages**, here's what's really powering my daily workflow:
+
+> **Note**: This list only shows system-installed applications via pacman/AUR. Many additional tools are installed through language-specific package managers (e.g., Typst via Rust's cargo, Claude Code via Node.js npm, Python packages via pip/pipx, etc.). The actual development toolchain is much richer than what appears in system package lists.
+
+### Development Environment 💻
+
+**Editors & IDEs:**
+
+- **neovim** - Primary text editor with extensive configuration
+- **visual-studio-code-bin** - Full-featured IDE for larger projects
+- **zed** - Modern, fast editor for quick edits
+- **emacs-wayland** - Alternative editor for specific workflows
+- **vim** - Fallback terminal editor
+
+**Programming Languages & Tools:**
+
+- **rustup** - Rust toolchain management
+- **python-pip, python-pipx** - Python package management
+- **jdk17-openjdk, maven** - Java development environment
+- **github-cli** - Git repository management
+- **ast-grep, tree-sitter-cli** - Code analysis tools
+
+### System & Window Management 🪟
+
+**Window Managers:**
+
+- **hyprland** - Primary Wayland compositor with animations
+- **river** - Lightweight alternative window manager
+
+**System Tools:**
+
+- **waybar** - Status bar with custom modules
+- **i3bar-river-git, i3status-rust-git** - River WM status integration
+- **foot, kitty** - Wayland-native terminals
+- **htop, neofetch** - System monitoring and information
+- **yay, paru-bin** - AUR helpers for package management
+
+### Media & Content Creation 🎬
+
+**Video & Streaming:**
+
+- **obs-studio, obs-streamfx-unstable** - Professional streaming/recording
+- **vlc** - Universal media player
+- **kdenlive** - Video editing suite
+- **wlrobs** - Wayland screen capture for OBS
+
+**Audio:**
+
+- **pipewire, pipewire-pulse, pipewire-jack** - Modern audio server
+- **pavucontrol** - Audio control interface
+
+**Creative Tools:**
+
+- **bambustudio-nvidia-bin** - 3D printing slicer with GPU acceleration
+- **hyprshot** - Screenshot utility
+- **wshowkeys-mao-git** - Key display for screencasts
+
+### Productivity & Office 📝
+
+**Office Suite:**
+
+- **wps-office-365** - Complete office suite with cloud integration
+- **wps-office-365-fonts, wps-office-365-xiezuo** - Enhanced writing tools
+- **okular** - Advanced PDF viewer with annotation support
+
+**Document Processing:**
+
+- **texlive-meta** - Complete LaTeX distribution
+- **Multiple texlive language packs** - International document support
+- **biber** - Bibliography processing
+
+**File Management:**
+
+- **nemo** - Feature-rich file manager
+- **unrar, unzip, zip** - Archive handling
+
+### Internet & Communication 🌐
+
+**Web Browsers:**
+
+- **firefox** - Primary browser for general use
+- **qutebrowser** - Keyboard-driven browsing
+
+**Communication:**
+
+- **telegram-desktop** - Messaging platform
+- **linuxqq, wechat-bin** - Chinese social platforms
+- **thunderbird** - Email client
+
+**Network Tools:**
+
+- **wireshark-qt** - Network protocol analysis
+- **tigervnc** - Remote desktop access
+- **aria2** - Advanced download manager
+
+### Specialized & Development Tools 🔧
+
+**Input Methods:**
+
+- **fcitx5** - Input method framework
+- **fcitx5-chinese-addons, fcitx5-material-color** - Chinese input with theming
+
+**Language & Translation:**
+
+- **translate-shell** - Command-line translation
+- **python-gtts** - Text-to-speech conversion
+
+**Hardware & Testing:**
+
+- **geekbench** - System benchmarking
+- **picoscope7, ps7-lib\*** - Oscilloscope software and libraries
+- **evtest** - Input device testing
+- **sysbench** - System performance testing
+
+**Development Infrastructure:**
+
+- **uv** - Fast Python package manager
+- **fnm, nvm** - Node.js version management
+- **platformio-core** - Embedded systems development
+- **v2raya** - Proxy management interface
+
+---
+
+## Getting Started with My Configuration 🚀
+
+### Using This Repository
+
+1. **Browse the configurations**: Explore the [arch-config repository](https://github.com/jiahaoxiang2000/arch-config) to understand the structure
+2. **Cherry-pick what you need**: You don't need to adopt everything - take what works for your workflow
+3. **Adapt and customize**: Use my configurations as a starting point for your own setup
+4. **Contribute improvements**: Found a better way to configure something? Pull requests welcome!
+
+### Key Benefits of This Approach
+
+- **Real-world tested**: Every configuration has been used daily for months
+- **Modular design**: Git submodules allow independent updates of major components
+- **Cross-platform elements**: Fish shell config works on both Linux and macOS
+- **Version controlled**: Track changes and rollback if needed
+- **Shareable**: Easy to share and collaborate on configurations
+
+## Why Dotfiles Matter 🎯
+
+Rather than starting from scratch or following generic tutorials, using proven dotfiles gives you:
+
+- **Immediate productivity**: Jump straight into a working environment
+- **Best practices**: Learn from configurations that have evolved through actual use
+- **Time savings**: Avoid the hours of tweaking that goes into a personalized setup
+- **Inspiration**: Discover tools and workflows you might not have considered
+
+## Next Steps 📚
+
+- Check out the [arch-config repository](https://github.com/jiahaoxiang2000/arch-config) and its submodules
+- Review the [initial Arch Linux setup guide](/blog/misc/arch-linux) for system configuration
+- Explore individual configuration files to understand the setup choices
+- Start with the shell configuration and gradually adopt other components
+
+Remember: these are _my_ configurations, optimized for _my_ workflow. Use them as inspiration and adapt them to your needs rather than copying blindly.
+
+Happy computing on Arch! 🐧

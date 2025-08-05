@@ -1,0 +1,122 @@
+---
+title: 'AutoHotkey Windows: Tiling Navigation & Vim-like Controls'
+date: '2025-08-05'
+tags: ['AutoHotkey', 'Windows', 'productivity', 'vim', 'tiling', 'workflow']
+summary: 'A comprehensive AutoHotkey setup bringing tiling window navigation and vim-like controls to Windows 11, plus insights on why simplicity led back to Windows.'
+---
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+Windows 11 with AutoHotkey v2.0 can deliver powerful tiling window management and vim-like navigation without the complexity overhead. This post covers my [ahk-win](https://github.com/jiahaoxiang2000/ahk-win) project that brings **Win+HJKL** navigation and comprehensive keyboard controls to Windows. 🚀
+
+## Tiling Window Navigation with Win+HJKL 🖥️
+
+The core feature provides vim-like window focus navigation using **Win+HJKL** hotkeys:
+
+- **Win+H** - Focus window to the left
+- **Win+J** - Focus window below  
+- **Win+K** - Focus window above
+- **Win+L** - Focus window to the right
+
+### Intelligent Distance Algorithm
+
+The navigation system uses smart distance calculation that considers:
+- **Directional proximity**: Compares same edges (left-to-left, top-to-top) for intuitive navigation
+- **Window overlap**: Applies penalties for windows without perpendicular axis overlap
+- **Multi-monitor support**: Works seamlessly across multiple displays without unexpected jumps
+
+This creates natural, predictable window switching that feels like native tiling window manager behavior.
+
+## Virtual Desktop Management 🔄
+
+Navigate between Windows virtual desktops with **Win+Shift+H/L**:
+
+- **Win+Shift+H** - Switch to previous desktop with auto-focus
+- **Win+Shift+L** - Switch to next desktop with auto-focus
+
+The system automatically focuses the first available window after switching, eliminating the need for manual activation.
+
+## Comprehensive Vim-like Text Navigation ⌨️
+
+Using **Esc** as a modifier key enables complete vim-like text editing across all Windows applications:
+
+### Basic Movement
+- **Esc+H/J/K/L** - Arrow key navigation
+- **Esc+A** - Home (beginning of line)
+- **Esc+;** - End (end of line)
+
+### Word Movement  
+- **Esc+U** - Previous word (Ctrl+Left)
+- **Esc+I** - Next word (Ctrl+Right)
+
+### Text Selection
+- **Esc+N/M** - Select previous/next word
+- **Esc+,/.** - Select to beginning/end of line
+- **Esc+B/E** - Select left/right character
+- **Esc+//P** - Select down/up line
+
+### Page Navigation
+- **Esc+D/F** - Page Down/Up
+- **Esc+S/R** - Select Page Down/Up
+
+### Editing
+- **Esc+Y** - Backspace
+- **Esc+O** - Delete previous word (Ctrl+Backspace)
+
+## Installation & Setup 🛠️
+
+### Requirements
+1. Install [AutoHotkey v2.0](https://www.autohotkey.com/v2/)
+2. Download `key.ahk` from [GitHub releases](https://github.com/jiahaoxiang2000/ahk-win/releases)
+3. Run the script by double-clicking or compiling to executable
+
+### Auto-Startup Configuration
+For automatic startup on Windows boot:
+
+```batch
+# Use the included startup.bat script
+1. Run startup.bat once to test compilation
+2. Copy startup.bat to shell:startup folder (Win+R → shell:startup)
+3. Script compiles and starts automatically on boot
+```
+
+The startup script handles process management, detecting running instances and ensuring the latest version is always active.
+
+## Why Back to Windows? 🤔
+
+After my [intensive Arch Linux journey](/blog/misc/arch-linux-may-july-journey), returning to Windows wasn't a step backward—it was a conscious choice prioritizing **simplicity and speed**.
+
+### The Philosophy of Practical Choice
+
+**Windows GUI Excellence**: Windows excels at what it was designed for—running diverse GUI applications seamlessly. Games, established creative tools, and legacy software simply work without compatibility layers or workarounds.
+
+**Development via WSL**: For development work, WSL provides the Linux environment I need without maintaining separate systems. This hybrid approach gives me:
+- Linux command-line tools and development environment
+- Native Windows GUI applications when needed
+- Single system maintenance overhead
+
+**Avoiding Dual System Complexity**: Rather than maintaining both Linux and Windows installations, this approach provides the best of both worlds without the complexity of:
+- Dual boot management
+- File system synchronization
+- Duplicate tool installations
+- Context switching between different workflows
+
+### The Simplicity Principle
+
+**Fast Decision Making**: Windows eliminates the "which tool should I use?" decision fatigue that comes with Linux's abundant choices. When you need to get work done quickly, having fewer but reliable options accelerates productivity.
+
+**Established Workflows**: Years of Windows muscle memory and established workflows shouldn't be discarded lightly. AutoHotkey allows customization without rebuilding everything from scratch.
+
+**Tool Preservation**: Rather than abandoning useful Windows-specific tools and scripts, this approach preserves and enhances them with vim-like efficiency improvements.
+
+---
+
+## Conclusion 🎯
+
+This AutoHotkey setup demonstrates that Windows can provide tiling window manager efficiency without sacrificing compatibility or stability. The key insight from my Linux journey wasn't that one system is superior—it's that the best system is the one that removes friction from your specific workflow.
+
+For workflows requiring GUI applications, game compatibility, and established Windows tools, enhanced Windows navigation provides productivity gains without the learning curve overhead of completely new systems.
+
+Sometimes the most elegant solution isn't the most complex one. 😊

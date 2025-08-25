@@ -14,6 +14,7 @@ const siteMetadata = {
   github: 'https://github.com/jiahaoxiang2000/',
   // x: 'https://twitter.com/x',
   bilibili: 'https://space.bilibili.com/136606644',
+  rss: '/feed.xml',
   // twitter: 'https://twitter.com/Twitter',
   // facebook: 'https://facebook.com',
   // youtube: 'https://youtube.com',

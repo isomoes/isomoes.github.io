@@ -12,6 +12,7 @@ import {
   Medium,
   Bluesky,
   Bilibili,
+  RSS,
 } from './icons'
 
 const components = {
@@ -28,6 +29,7 @@ const components = {
   medium: Medium,
   bluesky: Bluesky,
   bilibili: Bilibili,
+  rss: RSS,
 }
 
 type SocialIconProps = {

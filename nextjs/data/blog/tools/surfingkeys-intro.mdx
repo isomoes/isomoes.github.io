@@ -1,0 +1,221 @@
+---
+title: 'Surfingkeys: Transform Your Browser into a Vim-Powered Navigation Machine'
+date: '2025-09-15'
+tags: ['browser', 'productivity', 'vim', 'keyboard-navigation', 'surfingkeys', 'tools']
+summary: 'Discover how Surfingkeys revolutionizes web browsing with vim-like keyboard navigation, eliminating the need for mouse interactions and supercharging your productivity with customizable shortcuts and powerful text editing capabilities.'
+---
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+Picture this: you're deep in a coding session, fingers dancing across the keyboard, when suddenly you need to check documentation online. Your hand reaches for the mouse, breaking your flow completely. Sound familiar? **What if I told you there's a way to browse the web with the same keyboard efficiency you love in Vim?** 🚀
+
+Enter **Surfingkeys** – a browser extension that transforms your web browsing experience into a keyboard-driven powerhouse. Just like how Vim revolutionized text editing by keeping your hands on the home row, Surfingkeys brings that same philosophy to web navigation, making every click, scroll, and text input accessible through intuitive keyboard shortcuts.
+
+For developers and power users who live and breathe efficiency, this isn't just another browser extension – it's a **game-changer** that can dramatically boost your productivity and reduce the cognitive overhead of constant mouse switching.
+
+## What is Surfingkeys? ⌨️
+
+**Surfingkeys** is a browser extension that provides vim-like keyboard navigation for web browsing. It transforms your browser into a keyboard-centric environment where every action – from clicking links to managing tabs – can be performed without ever touching your mouse.
+
+The extension operates on familiar vim principles with **three distinct modes**:
+
+🎯 **Normal Mode** - Your default state for navigation and commands  
+👁️ **Visual Mode** - For selecting text and visual operations  
+✏️ **Insert Mode** - For typing in forms and text fields
+
+What makes Surfingkeys truly special is its **comprehensive approach**. Unlike simple keyboard shortcut extensions, it reimagines the entire browsing experience around keyboard efficiency, offering everything from link hints and tab management to a built-in vim editor for text inputs.
+
+## Core Features That Will Transform Your Browsing 💪
+
+### Lightning-Fast Link Navigation
+
+The **link hints system** is where Surfingkeys truly shines. Press `f` and watch as every clickable element on the page gets a unique letter combination overlay. Type those letters, and you'll instantly navigate to that link – **no mouse required**.
+
+```javascript
+// Press 'f' to show link hints
+// Type the letter combination to follow links
+// Press 'F' to open links in new tabs
+```
+
+For sites with lots of links, this eliminates the tedious process of hunting and clicking, making navigation feel **lightning-fast** and precise.
+
+### Effortless Tab Management
+
+Managing browser tabs becomes a breeze with intuitive keyboard shortcuts:
+
+- `T` - Switch between tabs with a searchable interface
+- `x` - Close current tab
+- `X` - Restore recently closed tab
+- `gt` - Next tab
+- `gT` - Previous tab
+
+No more clicking through dozens of tabs to find what you need!
+
+### The Omnibar: Your Command Center
+
+Press `t` to open the **Omnibar** – a powerful command interface that gives you instant access to:
+
+- 🔍 **Search history and bookmarks**
+- 🌐 **Quick site navigation**
+- ⚡ **Command execution**
+- 📝 **Smart suggestions**
+
+It's like having a terminal for your browser, putting everything at your fingertips.
+
+### Built-in Vim Editor for Text Inputs
+
+Here's where Surfingkeys gets **really impressive**. Press `I` (capital i) when focused on any text input, and you'll open a **full vim editor** within your browser. This means you can:
+
+- Edit long form posts with proper vim commands
+- Use visual block mode for complex text manipulation
+- Access your familiar vim shortcuts and muscle memory
+- Handle large text inputs with ease
+
+### Smooth Navigation and Scrolling
+
+Navigate pages naturally with vim-style movement:
+
+- `j/k` - Scroll down/up
+- `d/u` - Page down/up
+- `gg/G` - Top/bottom of page
+- `H/L` - Browser history back/forward
+
+The scrolling is **smooth and responsive**, making page navigation feel natural and efficient.
+
+## Installation and Quick Start 🚀
+
+Getting started with Surfingkeys is **refreshingly simple**:
+
+### Browser Installation
+
+**Chrome/Edge Users:**
+1. Visit the [Chrome Web Store](https://chrome.google.com/webstore/detail/surfingkeys/gfbliohnnapiefjpjlpjnehglfpaknnc)
+2. Click "Add to Chrome/Edge"
+3. Grant necessary permissions
+
+**Firefox Users:**
+1. Go to [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/surfingkeys_ff/)
+2. Click "Add to Firefox"
+3. Confirm installation
+
+**Safari Users:**
+1. Download from the [Safari App Store](https://apps.apple.com/us/app/surfingkeys/id1609752330)
+2. Install and enable the extension
+
+### First Steps
+
+Once installed, **you're immediately ready to go!** Try these essential shortcuts:
+
+1. Press `?` to open the help dialog and see all available commands
+2. Press `f` on any webpage to see link hints in action
+3. Press `T` to experience the tab switching interface
+4. Press `t` to explore the Omnibar functionality
+
+## Essential Keybindings Every User Should Know 📝
+
+Here are the **must-know shortcuts** to get you started:
+
+### Navigation Basics
+```
+f       - Show link hints (follow links)
+F       - Show link hints (open in new tab)
+j/k     - Scroll down/up
+d/u     - Page down/up
+gg/G    - Go to top/bottom of page
+```
+
+### Tab Management
+```
+T       - Switch tabs
+x       - Close current tab
+X       - Restore closed tab
+t       - Open Omnibar for bookmarks/history
+```
+
+### Text and Search
+```
+I       - Edit current input with vim editor
+/       - Search in page
+n/N     - Next/previous search result
+v       - Enter visual mode for text selection
+```
+
+### History and Sessions
+```
+H       - Go back in browser history
+L       - Go forward in browser history
+ZZ      - Save current session
+ZR      - Restore saved session
+```
+
+## Customization: Make It Your Own 🛠️
+
+One of Surfingkeys' greatest strengths is its **complete customizability**. You can modify virtually every aspect of the extension using JavaScript configuration.
+
+### Custom Key Mappings
+
+Here's an example from my personal configuration that demonstrates the flexibility:
+
+```javascript
+// Custom history navigation (more intuitive for vim users)
+api.map('H', 'S');  // backward browser history 
+api.map('L', 'D');  // forward browser history
+
+// Alternative tab switching
+api.map('gt', 'T'); // use gt for tab switching interface
+
+// Custom search mapping
+api.map('s', '/');  // use 's' for search instead of '/'
+```
+
+### Site-Specific Configurations
+
+You can **disable Surfingkeys on specific sites** where it might interfere with existing keyboard shortcuts:
+
+```javascript
+// Block Surfingkeys on certain websites
+settings.blocklistPattern = /((calendar).google|udemy|member.bilibili).com|.*follow.is/i;
+```
+
+This is particularly useful for web applications that have their own keyboard shortcuts (like Google Calendar or online IDEs).
+
+## Advanced Features for Power Users 🎯
+
+### PDF Viewer Integration
+
+Surfingkeys works seamlessly with **PDF files**, allowing you to navigate documents with the same keyboard shortcuts you use for web pages. This creates a **unified browsing experience** across all content types.
+
+### Search Selected Text
+
+Select any text in visual mode and instantly search for it across different search engines. This feature **streamlines research workflows** and makes information gathering much more efficient.
+
+### Clipboard Integration
+
+Sophisticated clipboard operations make **copy-paste workflows** much more efficient:
+- `yy` - Copy current page URL
+- `yf` - Copy link under cursor
+- `yt` - Copy current page title
+
+## Configuration Resources 📚
+
+Want to dive deeper into customization? Check out these valuable resources:
+
+- **Official Documentation**: [Surfingkeys GitHub](https://github.com/brookhong/Surfingkeys) - Comprehensive guides and API documentation
+- **My Personal Config**: [Arch Config Repository](https://github.com/jiahaoxiang2000/arch-config) - Real-world configuration examples and customizations
+- **Community Configs**: Browse the GitHub issues and discussions for inspiration from other users
+
+The configuration system is **incredibly powerful** – you can modify keybindings, create custom commands, integrate with external tools, and even build your own mini-applications within the extension.
+
+## Ready to Transform Your Browsing? 
+
+**Surfingkeys isn't just another browser extension** – it's a complete reimagining of how we interact with the web. By bringing vim's efficiency principles to browsing, it eliminates one of the biggest productivity bottlenecks for keyboard-focused users.
+
+Whether you're a vim veteran or just someone who values efficiency, Surfingkeys offers a **compelling glimpse into the future of web navigation**. The best part? You can start using it immediately and gradually discover its more powerful features as you go.
+
+Give it a try for just one week, and I guarantee you'll wonder how you ever browsed without it. Your mouse might just start collecting dust! 🖱️➡️⌨️
+
+---
+
+*Want to see more productivity tools and configurations? Check out my [other tool reviews](/blog/tools) and [configuration files](https://github.com/jiahaoxiang2000/arch-config) for a complete development environment setup.*

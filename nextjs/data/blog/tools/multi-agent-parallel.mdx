@@ -1,0 +1,171 @@
+---
+title: 'Multi-Agent Parallel Workflow: From Coder to Conductor'
+date: '2026-01-16'
+tags: ['multi-agent', 'opencode', 'vibe-kanban', 'parallel-workflow', 'ai-coding', 'productivity', 'task-scheduling']
+summary: 'First experience with multi-agent parallel workflows using vibe-kanban and OpenCode. Learn how breaking down tasks for parallel AI execution dramatically increases productivity, transforming developers from coders to orchestrators.'
+---
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## First Steps into Multi-Agent Territory
+
+After months of working with single-agent AI coding assistants, we finally took the plunge into **multi-agent parallel workflows**. The experience has been transformative - not just in terms of productivity, but in how we fundamentally think about our role as developers.
+
+The core concept is deceptively simple: instead of waiting for one AI agent to complete a task before starting the next, you **run multiple agents in parallel**, each handling different aspects of your project simultaneously. What makes this possible is the combination of [**vibe-kanban**](https://github.com/BloopAI/vibe-kanban) for task scheduling and [**OpenCode**](/blog/tools/opencode-cli) for accessing multiple AI model providers through a single interface.
+
+This isn't just about speed - it's about fundamentally rethinking how we approach complex development tasks. When you can decompose a large project into smaller, independent pieces and have multiple AI agents work on them simultaneously, the entire workflow changes.
+
+## The OpenCode Advantage: Provider Flexibility
+
+One of the critical enablers for multi-agent parallel work is **OpenCode's provider-agnostic architecture**. As we covered in our [OpenCode CLI guide](/blog/tools/opencode-cli), OpenCode supports 75+ LLM providers, allowing you to pick the best model for each specific task.
+
+In our parallel workflow setup, we leverage multiple providers simultaneously:
+
+- **GLM-4.6** (Z.AI) for tasks requiring strong multilingual capabilities
+- **MiniMax** for creative content generation
+- **Gemini** (Google) for research and analysis tasks
+- **ChatGPT** (OpenAI) for complex reasoning
+- **Claude Sonnet** (Anthropic) for nuanced code generation
+
+This provider diversity isn't just about having options - it's about **optimizing each parallel task** for the model best suited to handle it. A documentation task might go to one provider while a complex refactoring job goes to another, all running simultaneously.
+
+## The Parallel Productivity Multiplier
+
+Over the past two days of intensive multi-agent usage, the productivity gains have been remarkable. We've been working on our **graduation thesis**, and the output has been significantly higher compared to previous single-agent workflows.
+
+Here's what changed: instead of a linear workflow where we wait for each AI-assisted task to complete before starting the next, we now operate in a **parallel execution model**. While one agent is researching related work, another is refactoring code, and a third is drafting documentation.
+
+**Example parallel workflow:**
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Main Project                       │
+├─────────────────┬─────────────────┬─────────────────┤
+│   Agent 1       │   Agent 2       │   Agent 3       │
+│   Research      │   Code Impl     │   Documentation │
+│   ────────►     │   ────────►     │   ────────►     │
+│   [Running]     │   [Running]     │   [Running]     │
+└─────────────────┴─────────────────┴─────────────────┘
+```
+
+But the real power isn't just parallelizing a single project. Because everything runs concurrently, you can **work on other smaller projects** at the same time. While the main thesis work progresses across multiple agents, you might also have agents handling:
+
+- Bug fixes for side projects
+- Documentation updates for open-source contributions
+- Research for future work
+
+This is the **true parallelism advantage** - not just speeding up one task, but enabling simultaneous progress across your entire portfolio of work.
+
+## Task Decomposition: The Key to Parallelization
+
+The secret to effective multi-agent workflows lies in **intelligent task decomposition**. Large, monolithic tasks can't be parallelized - you need to break them into independent units that can execute concurrently.
+
+Drawing from the [subagent architecture](/blog/misc/claude-subagent) concepts we explored previously, effective decomposition follows certain principles:
+
+**Independent execution**: Each subtask should be completable without blocking on other subtasks. If task B requires the output of task A, they can't run in parallel.
+
+**Clear boundaries**: Define precise scope for each task. Vague tasks lead to overlap and conflicts.
+
+**Appropriate granularity**: Too fine-grained and you waste time on coordination overhead. Too coarse and you miss parallelization opportunities.
+
+**Example decomposition for a feature implementation:**
+
+```
+Feature: User Authentication System
+├── Task 1: Database schema design         [Agent A]
+├── Task 2: API endpoint implementation    [Agent B]
+├── Task 3: Frontend login component       [Agent C]
+├── Task 4: Unit test suite               [Agent D]
+└── Task 5: API documentation             [Agent E]
+```
+
+Each of these tasks can start immediately. While there might be some integration work at the end, the **bulk of the implementation runs in parallel**.
+
+## Vibe-Kanban: Orchestrating the Chaos
+
+Managing multiple parallel AI agents requires a robust scheduling system. This is where [**vibe-kanban**](https://github.com/BloopAI/vibe-kanban) comes in - providing the visual task management and scheduling infrastructure to coordinate multiple concurrent workflows.
+
+The kanban approach naturally fits parallel execution:
+
+- **Visual task tracking** shows what's running, what's pending, and what's completed
+- **Work-in-progress limits** prevent overloading (even with AI, there are practical limits)
+- **Priority management** ensures critical path items get allocated first
+- **Status synchronization** keeps you informed of progress across all agents
+
+Currently, we're handling the scheduling **manually** - deciding which tasks to allocate to which agents and when. This works, but it requires constant attention and context-switching.
+
+## The Evolution: From Manual to Automated Scheduling
+
+The current state of multi-agent workflows requires human orchestration. We act as the **scheduler**, making decisions about:
+
+- Which tasks to parallelize
+- Which models to assign to each task
+- When to check results and integrate outputs
+- How to handle dependencies and conflicts
+
+But this is just the beginning. The natural evolution is toward **specialized AI schedulers** that can manage the entire multi-agent workflow autonomously.
+
+Imagine providing a high-level **goal** rather than individual tasks:
+
+```
+Goal: "Implement complete user authentication with OAuth support,
+       full test coverage, and API documentation"
+
+Scheduler AI:
+├── Analyzes goal
+├── Generates task decomposition
+├── Assigns optimal models to each task
+├── Monitors progress
+├── Handles integration
+└── Delivers completed feature
+```
+
+The scheduler would understand task dependencies, model capabilities, and optimal parallelization strategies - all without manual intervention.
+
+## A Role Transformation
+
+This shift in how we work with AI represents a fundamental **role transformation**:
+
+**Stage 1: The Coder** - Traditional development where you write every line of code yourself. AI is just a fancy autocomplete.
+
+**Stage 2: The Product Manager** - Current multi-agent state. You decompose requirements, assign tasks to AI agents, review outputs, and integrate results. You're managing AI resources rather than writing code directly.
+
+**Stage 3: The Company CEO** - Future state with AI schedulers. You provide strategic direction and goals. The AI system handles decomposition, assignment, execution, and integration autonomously. You focus on high-level decisions and quality oversight.
+
+We're currently transitioning from Stage 1 to Stage 2. The productivity gains from this shift alone are substantial. Stage 3 promises even more dramatic changes in how software gets built.
+
+## Practical Lessons from Two Days of Parallel Work
+
+After intensive parallel workflow experimentation, here are the key takeaways:
+
+**Start with clear task boundaries**. Ambiguous task definitions lead to overlap, conflicts, and wasted agent cycles. Spend time upfront defining exactly what each parallel task should accomplish.
+
+**Match models to tasks**. Don't use the same model for everything. As covered in our [OpenCode guide](/blog/tools/opencode-cli#multi-provider-setup-), different providers excel at different task types. Use this to your advantage.
+
+**Monitor, don't micromanage**. Check in on progress periodically, but resist the urge to interrupt running tasks constantly. Trust the process and review results at defined checkpoints.
+
+**Plan for integration**. Parallel execution is only half the battle. Budget time for integrating parallel outputs, resolving conflicts, and ensuring consistency across the codebase.
+
+**Embrace the context switch**. With multiple agents running, you can genuinely work on other things. Don't just sit and watch - use the parallel execution time productively.
+
+## Looking Forward
+
+Multi-agent parallel workflows represent a genuine paradigm shift in AI-assisted development. The combination of [**OpenCode's provider flexibility**](/blog/tools/opencode-cli) and intelligent task scheduling through tools like vibe-kanban creates possibilities that simply didn't exist with single-agent approaches.
+
+We're still in the early days. Manual scheduling works but adds cognitive overhead. The tools are maturing, but integration isn't seamless yet. However, the productivity gains are real and substantial.
+
+As AI scheduling systems mature and the transition to Stage 3 (CEO mode) becomes feasible, we'll see even more dramatic changes. The developers who learn to orchestrate AI agents effectively today will be best positioned for this AI-native future.
+
+The question isn't whether multi-agent parallel workflows will become standard practice - it's how quickly you'll adopt them.
+
+---
+
+## Related Resources
+
+- [**OpenCode CLI Guide**](/blog/tools/opencode-cli) - Multi-provider AI coding setup
+- [**Claude Code Subagents**](/blog/misc/claude-subagent) - Specialized agent architecture
+- [**Claude Code Configuration**](/blog/tools/claude-code-config) - Complete configuration guide
+- [**vibe-kanban**](https://github.com/BloopAI/vibe-kanban) - Task scheduling for AI workflows
+- [**OpenCode Documentation**](https://opencode.ai/docs/) - Official docs

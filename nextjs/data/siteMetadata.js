@@ -1,17 +1,17 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Isomo Blog',
-  author: 'Isomo',
-  headerTitle: 'Isomo',
-  description: 'Isomo personal blog',
+  title: 'Isomoes Blog',
+  author: 'Isomoes',
+  headerTitle: 'Isomoes',
+  description: 'Isomoes personal blog',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://jiahaoxiang2000.github.io',
-  siteRepo: 'https://github.com/jiahaoxiang2000/jiahaoxiang2000.github.io',
+  siteUrl: 'https://isomoes.github.io',
+  siteRepo: 'https://github.com/isomoes/isomoes.github.io',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/avatar.jpg`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   email: 'jiahaoxiang2000@gmail.com',
-  github: 'https://github.com/jiahaoxiang2000/',
+  github: 'https://github.com/isomoes/',
   // x: 'https://twitter.com/x',
   bilibili: 'https://space.bilibili.com/136606644',
   rss: '/feed.xml',
@@ -64,7 +64,7 @@ const siteMetadata = {
     giscusConfig: {
       // Visit the link below, and follow the steps in the 'configuration' section
       // https://giscus.app/
-      repo: 'jiahaoxiang2000/jiahaoxiang2000.github.io',
+      repo: 'isomoes/isomoes.github.io',
       repositoryId: 'R_kgDOMlL5Cg',
       category: 'Announcements',
       categoryId: 'DIC_kwDOMlL5Cs4CmC4q',

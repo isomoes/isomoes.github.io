@@ -3,6 +3,9 @@
   "version": "2.3.0",
   "private": true,
   "scripts": {
+    "contentlayer": "contentlayer2 build",
+    "predev": "contentlayer2 build",
+    "prebuild": "contentlayer2 build",
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
     "build": "cross-env  INIT_CWD=$PWD next build && node scripts/postbuild.mjs",
@@ -24,6 +27,7 @@
     "gray-matter": "^4.0.2",
     "hast-util-from-html-isomorphic": "^2.0.0",
     "image-size": "1.0.0",
+    "mermaid": "^11.12.0",
     "next": "15.1.4",
     "next-contentlayer2": "0.5.3",
     "next-themes": "^0.3.0",

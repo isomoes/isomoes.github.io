@@ -67,7 +67,10 @@ export default function Mermaid({ chart }: MermaidProps) {
 
   return (
     <div className="not-prose my-6 overflow-x-auto rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
-      <div className="flex justify-center [&_svg]:block" dangerouslySetInnerHTML={{ __html: svg }} />
+      <div
+        className="flex justify-center [&_svg]:block"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
     </div>
   )
 }

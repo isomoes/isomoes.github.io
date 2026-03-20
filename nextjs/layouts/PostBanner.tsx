@@ -5,7 +5,6 @@ import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Comments from '@/components/Comments'
 import Link from '@/components/Link'
-import LocaleSwitcher from '@/components/LocaleSwitcher'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import siteMetadata from '@/data/siteMetadata'
@@ -17,19 +16,11 @@ interface LayoutProps {
   content: CoreContent<Blog>
   children: ReactNode
   locale: Locale
-  postAlternates?: Partial<Record<Locale, string>>
   next?: { path: string; title: string }
   prev?: { path: string; title: string }
 }
 
-export default function PostMinimal({
-  content,
-  locale,
-  postAlternates,
-  next,
-  prev,
-  children,
-}: LayoutProps) {
+export default function PostMinimal({ content, locale, next, prev, children }: LayoutProps) {
   const { slug, title, images } = content
   const displayImage =
     images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
@@ -49,9 +40,6 @@ export default function PostMinimal({
               </Bleed>
             </div>
             <div className="relative pt-10">
-              <div className="flex justify-center pb-4">
-                <LocaleSwitcher currentLocale={locale} postAlternates={postAlternates} />
-              </div>
               <PageTitle>{title}</PageTitle>
             </div>
           </div>

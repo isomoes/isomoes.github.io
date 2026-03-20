@@ -3,7 +3,6 @@ import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog, Authors } from 'contentlayer/generated'
 import Comments from '@/components/Comments'
 import Link from '@/components/Link'
-import LocaleSwitcher from '@/components/LocaleSwitcher'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import Image from '@/components/Image'
@@ -27,7 +26,6 @@ interface LayoutProps {
   content: CoreContent<Blog>
   authorDetails: CoreContent<Authors>[]
   locale: Locale
-  postAlternates?: Partial<Record<Locale, string>>
   next?: { path: string; title: string }
   prev?: { path: string; title: string }
   children: ReactNode
@@ -37,7 +35,6 @@ export default function PostLayout({
   content,
   authorDetails,
   locale,
-  postAlternates,
   next,
   prev,
   children,
@@ -52,9 +49,6 @@ export default function PostLayout({
         <div className="xl:divide-y xl:divide-gray-200 xl:dark:divide-gray-700">
           <header className="pt-6 xl:pb-6">
             <div className="space-y-1 text-center">
-              <div className="flex justify-center pb-4">
-                <LocaleSwitcher currentLocale={locale} postAlternates={postAlternates} />
-              </div>
               <dl className="space-y-10">
                 <div>
                   <dt className="sr-only">{dictionary.post.publishedOn}</dt>

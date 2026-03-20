@@ -4,6 +4,7 @@ import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
+import LocaleSwitcher from './LocaleSwitcher'
 import { defaultLocale, type Locale } from '@/lib/i18n/config'
 import { withLocalePath } from '@/lib/i18n/paths'
 
@@ -45,6 +46,7 @@ const Header = ({ locale = defaultLocale }: { locale?: Locale }) => {
               </Link>
             ))}
         </div>
+        <LocaleSwitcher currentLocale={locale} />
         <SearchButton locale={locale} />
         <ThemeSwitch />
         <MobileNav locale={locale} />

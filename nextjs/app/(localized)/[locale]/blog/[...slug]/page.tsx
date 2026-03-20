@@ -163,7 +163,6 @@ export default async function LocalizedPostPage(props: {
         content={mainContent}
         authorDetails={authorDetails}
         locale={locale}
-        postAlternates={getPostAlternates(post)}
         next={nextPost ? { path: nextPost.url, title: nextPost.title } : undefined}
         prev={prevPost ? { path: prevPost.url, title: prevPost.title } : undefined}
       >

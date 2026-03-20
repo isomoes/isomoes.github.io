@@ -64,14 +64,14 @@ describe('genPageMetadata', () => {
     expect(metadata.alternates?.canonical).toBe('/zh/blog/ide/ai-code')
   })
 
-  it('falls back to the default locale for unlocalized pathnames', () => {
+  it('falls back to the default locale for supported unlocalized pathnames', () => {
     const metadata = genPageMetadata({
-      pathname: '/projects',
-      title: 'Projects',
+      pathname: '/about',
+      title: 'About',
       availableLocales: ['en', 'zh'],
     })
 
     expect(metadata.openGraph?.locale).toBe('en_US')
-    expect(metadata.alternates?.canonical).toBe('/en/projects')
+    expect(metadata.alternates?.canonical).toBe('/en/about')
   })
 })

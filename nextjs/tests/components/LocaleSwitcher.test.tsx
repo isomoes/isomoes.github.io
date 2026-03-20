@@ -1,6 +1,8 @@
-import { createElement } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { act, createElement } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 let mockedPathname = '/en/blog'
 
@@ -22,8 +24,8 @@ describe('buildLocaleSwitcherLinks', () => {
         pathname: '/en/blog',
       })
     ).toEqual([
-      { href: '/en/blog', locale: 'en', label: 'English', isActive: true },
-      { href: '/zh/blog', locale: 'zh', label: '\u4e2d\u6587', isActive: false },
+      { href: '/en/blog', locale: 'en', label: 'en', isActive: true },
+      { href: '/zh/blog', locale: 'zh', label: 'zh', isActive: false },
     ])
   })
 
@@ -37,8 +39,8 @@ describe('buildLocaleSwitcherLinks', () => {
         },
       })
     ).toEqual([
-      { href: '/en/blog/ide/ai-code', locale: 'en', label: 'English', isActive: true },
-      { href: '/zh/blog', locale: 'zh', label: '\u4e2d\u6587', isActive: false },
+      { href: '/en/blog/ide/ai-code', locale: 'en', label: 'en', isActive: true },
+      { href: '/zh/blog', locale: 'zh', label: 'zh', isActive: false },
     ])
   })
 
@@ -53,23 +55,93 @@ describe('buildLocaleSwitcherLinks', () => {
         },
       })
     ).toEqual([
-      { href: '/en/blog/ide/ai-code', locale: 'en', label: 'English', isActive: true },
-      { href: '/zh/blog/ide/ai-code', locale: 'zh', label: '\u4e2d\u6587', isActive: false },
+      { href: '/en/blog/ide/ai-code', locale: 'en', label: 'en', isActive: true },
+      { href: '/zh/blog/ide/ai-code', locale: 'zh', label: 'zh', isActive: false },
     ])
   })
 })
 
 describe('LocaleSwitcher', () => {
+  let container: HTMLDivElement
+  let root: Root
+
   beforeEach(() => {
-    mockedPathname = '/en/projects'
+    mockedPathname = '/en/about'
+    container = document.createElement('div')
+    document.body.innerHTML = ''
+    document.body.appendChild(container)
+    root = createRoot(container)
   })
 
-  it('renders locale links for the current pathname', () => {
-    const html = renderToStaticMarkup(createElement(LocaleSwitcher, { currentLocale: 'en' }))
+  it('renders a button-triggered locale menu with active locale state', async () => {
+    await act(async () => {
+      root.render(createElement(LocaleSwitcher, { currentLocale: 'en' }))
+    })
 
-    expect(html).toContain('href="/en/projects"')
-    expect(html).toContain('href="/zh/projects"')
-    expect(html).toContain('English')
-    expect(html).toContain('\u4e2d\u6587')
+    const trigger = container.querySelector('button[aria-haspopup="menu"]')
+
+    expect(trigger).not.toBeNull()
+    expect(trigger).toHaveTextContent('en')
+    expect(container.querySelector('[role="menu"]')).toBeNull()
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
+
+    const menu = container.querySelector('[role="menu"]')
+    const items = container.querySelectorAll('a[role="menuitem"]')
+    const activeItem = container.querySelector('a[aria-current="page"]')
+
+    expect(menu).not.toBeNull()
+    expect(items).toHaveLength(2)
+    expect(container.innerHTML).toContain('href="/en/about"')
+    expect(container.innerHTML).toContain('href="/zh/about"')
+    expect(menu).toHaveTextContent('en')
+    expect(menu).toHaveTextContent('zh')
+    expect(activeItem).toHaveTextContent('en')
+  })
+
+  it('closes the locale menu on Escape and outside click', async () => {
+    await act(async () => {
+      root.render(createElement(LocaleSwitcher, { currentLocale: 'en' }))
+    })
+
+    const trigger = container.querySelector('button[aria-haspopup="menu"]')
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
+
+    expect(container.querySelector('[role="menu"]')).not.toBeNull()
+
+    await act(async () => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    })
+
+    expect(container.querySelector('[role="menu"]')).toBeNull()
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
+
+    expect(container.querySelector('[role="menu"]')).not.toBeNull()
+
+    await act(async () => {
+      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    })
+
+    expect(container.querySelector('[role="menu"]')).toBeNull()
+  })
+
+  it('uses a theme-switch style trigger with compact locale text', async () => {
+    await act(async () => {
+      root.render(createElement(LocaleSwitcher, { currentLocale: 'en' }))
+    })
+
+    const trigger = container.querySelector('button[aria-haspopup="menu"]')
+
+    expect(trigger?.className).not.toContain('rounded-full')
+    expect(trigger?.textContent).toContain('en')
+    expect(trigger?.textContent).not.toContain('zh')
   })
 })

@@ -1,0 +1,148 @@
+---
+title: 'AI Coding'
+date: '2025-01-27'
+tags: ['coding', 'AI', 'plugins']
+summary: 'we will to introduce the defulat plugins with the lazyvim.'
+locale: en
+translationKey: ide-ai-code
+---
+
+<BilibiliVideo bvid="BV1TDfUYgELd" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## Introduction
+
+_AI coding_ is a new way to write code that leverages artificial intelligence to enhance productivity and code quality. It represents a significant shift in how developers write software, offering intelligent assistance throughout the coding process.
+
+### History of AI Coding
+
+GitHub Copilot, launched in public beta in 2021, introduced us to the world of AI-powered coding assistance. Initially, its capabilities were limited, functioning more like a **smart code snippet generator**. However, by 2023, OpenAI had made significant advancements with models like `GPT-3`, `GPT-4`, and eventually `GPT-4O`. These models, particularly with the introduction of the `O1` reasoning module, showcased a dramatic improvement in AI's ability to understand and generate code. In specific domains, **Large Language Models (LLMs)** now outperform even experienced developers.
+
+Fast forward to 2024, the integration of **Retrieval-Augmented Generation (RAG)** systems has revolutionized how LLMs interact with large codebases. By breaking down projects into smaller, manageable file changes (`diff`), developers can now focus on reviewing AI-generated code rather than writing it from scratch. This approach has significantly reduced the time spent on debugging and solving complex issues, making AI an indispensable tool in modern software development.
+
+### Features of GitHub Copilot
+
+This tool demonstrated remarkable capabilities that changed how we think about programming:
+
+- **Intelligent Code Completion**: Beyond basic autocompletion, Copilot can understand context and suggest entire functions or blocks of code
+- **Natural Language Processing**: Simply writing comments in plain English can generate corresponding code implementations
+- **Context-Aware Suggestions**: The AI analyzes your codebase and provides suggestions that match your coding style and project patterns
+
+For example, if you write a comment like "// function to calculate fibonacci sequence", Copilot can generate a complete, working implementation. Similarly, when working with APIs or common programming patterns, it can anticipate your needs and suggest appropriate code structures.
+
+What makes AI coding truly revolutionary is how it serves as both an assistant and a learning tool. While writing code, you're not just getting suggestions - you're also seeing different approaches and patterns that can improve your own coding practices.
+
+To expand on the current post, I would focus on diving deeper into the practical applications of AI coding tools, their limitations, and how developers can best leverage them. Here's how I would structure the next section:
+
+---
+
+## Example: Enhancing Development with DeepSeek Chat
+
+In this section, we'll dive into how AI coding tools like **DeepSeek Chat** can seamlessly integrate into your development workflow. We'll explore practical examples of how these tools assist with **code generation**, **multi-file collaboration**, and even **commit message creation**. Additionally, we'll discuss how to craft effective prompts to unlock the full potential of AI assistants, enabling features like **autocomplete**, **context-aware suggestions**, and more.
+
+> [!TIP]
+> All API references in this post are based on the version available as of **2025-01-27**. Please note that these details may evolve in the future.
+
+---
+
+### DeepSeek Chat APIs: Powering AI Coding
+
+At the heart of DeepSeek Chat lies its robust API ecosystem, designed to enhance your coding experience. Let’s break down the two primary APIs that make this possible:
+
+#### 1. **Chat Completions API**
+
+The `https://api.deepseek.com/chat/completions` endpoint is the cornerstone of DeepSeek Chat. It allows you to send a prompt and receive a completion, enabling features like **autocomplete** and **context-aware code generation**. Here's an example of how it works:
+
+**Request Example:**
+
+```json
+{
+  "messages": [
+    {
+      "content": "You are a helpful assistant",
+      "role": "system"
+    },
+    {
+      "content": "Write a Python function to calculate the factorial of a number.",
+      "role": "user"
+    }
+  ],
+  "model": "deepseek-chat"
+}
+```
+
+#### 2. **Code Completion API**
+
+The `https://api.deepseek.com/beta/completions` endpoint is the **Fill-In-the-Middle (FIM) Completion API**, designed to handle code completion tasks where the context is split into two parts: the `prompt` (the beginning of the code) and the `suffix` (the end of the code). This API is particularly powerful for scenarios involving **multi-file collaboration** and **context-aware suggestions**, as it allows the AI to generate code that fits seamlessly between the provided `prompt` and `suffix`.
+
+**Request Example:**
+
+```json
+{
+  "model": "deepseek-chat",
+  "prompt": "Once upon a time, ",
+  "max_tokens": 1024,
+  "suffix": "and they lived happily ever after.",
+  "temperature": 1,
+  "top_p": 1
+}
+```
+
+---
+
+### VSCode AI Assistant Plugin: **Continue**
+
+The [**Continue**](https://docs.continue.dev/customize/overview) plugin for VSCode is a powerful tool that integrates with various AI model providers to supercharge your coding workflow. It offers a high degree of customization, allowing developers to tailor the AI's behavior to their specific needs. Below, we’ll explore its key features and how they can enhance your development process.
+
+#### Key Customization Features:
+
+1. **Model Providers**:
+
+   - **Flexibility in Model Selection**: You can choose from a variety of AI model providers, including OpenAI, Anthropic, Microsoft/Azure, and Mistral. This flexibility allows you to select the best model for specific tasks, such as chat-based assistance or code autocompletion.
+   - **Task-Specific Models**: Different models can be assigned to different tasks. For example, you might use a more conversational model like GPT-4 for chat-based assistance, while relying on a specialized code model for autocomplete tasks.
+   - **Self-Hosting Support**: For those who prefer to host their own models, **Continue** supports self-hosting, giving you full control over your AI infrastructure.
+
+2. **Context Providers**:
+
+   - **Enhanced Contextual Awareness**: The plugin allows you to add additional context to your prompts by referencing code snippets, documentation, or even search results. This ensures that the AI’s suggestions are highly relevant to your current task.
+   - **Multi-File Collaboration**: By leveraging context providers, you can enable the AI to understand and generate code across multiple files, making it easier to work on large projects.
+
+3. **Slash Commands**:
+
+   - **Custom Commands**: You can create custom slash commands to streamline your workflow. For example, you might create a command to generate shell commands, write commit messages, or even automate repetitive tasks.
+   - **Task Automation**: These commands can be tailored to your specific needs, allowing you to automate complex workflows with just a few keystrokes.
+
+4. **External Tools**:
+   - **Integration with External Tools**: **Continue** supports calling external tools or functions directly from prompts. This feature is particularly useful when working with Anthropic models, as it allows you to extend the AI’s capabilities by integrating with other tools in your development stack.
+
+#### Example: Leveraging **Continue** for AI-Powered Coding
+
+To illustrate the power of **Continue**, let’s walk through a practical example. Imagine you’re working on a Python project and need to implement a function to calculate the Fibonacci sequence. Here’s how **Continue** can assist:
+
+1. **Using Slash Commands**:
+
+   - You type `/generate fibonacci` in the VSCode terminal.
+   - **Continue** analyzes your request and generates a complete implementation of the Fibonacci function, complete with comments and error handling.
+
+2. **Context-Aware Suggestions**:
+
+   - As you start typing the function, **Continue** provides context-aware suggestions, such as variable names, loop structures, and even edge-case handling.
+   - If you reference a specific algorithm or pattern from your project’s documentation, **Continue** will incorporate that context into its suggestions.
+
+3. **Multi-File Collaboration**:
+
+   - If your Fibonacci function needs to interact with other parts of your codebase, **Continue** can analyze the relevant files and ensure that the generated code integrates seamlessly.
+
+4. **Commit Message Generation**:
+   - Once you’re satisfied with the implementation, you can use a slash command like `/commit` to generate a detailed commit message summarizing your changes.
+
+---
+
+## Why This Matters
+
+The **Continue** plugin exemplifies how AI coding tools are transforming the development process. By offering customizable features and seamless integration with your workflow, it empowers developers to focus on higher-level problem-solving while the AI handles the repetitive and time-consuming aspects of coding. This not only boosts productivity but also enhances code quality by providing intelligent, context-aware suggestions.
+
+In the next section, we’ll dive deeper into how to craft effective prompts to maximize the potential of AI coding tools like **Continue**, and explore advanced techniques for integrating AI into your development workflow. Stay tuned!

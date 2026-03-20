@@ -1,0 +1,44 @@
+---
+title: 'Zed Editor'
+date: '2025-03-21'
+tags: ['editor', 'IDE', 'AI', 'Tools']
+summary: 'Zed Editor is a powerful IDE with AI capabilities, making it a versatile tool for developers.'
+locale: en
+translationKey: misc-zed-editor
+---
+<BilibiliVideo bvid="BV19LXkY7EuM" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 🤔 Background: Why I Chose Zed Editor
+
+In a previous blog post about [NeoVim-start](/blog/misc/neovim-start/), I tried using NeoVim as my primary editor. However, configuring NeoVim plugins proved challenging, especially the AI coding plugins. When working with *multiple files*, NeoVim became cumbersome to use.
+My goal was to embrace **full keyboard-driven coding**, which has been an eye-opening journey that introduced me to alternative coding workflows.
+
+For a long time, I've used `VSCode` as my main editor because it's lightweight and offers more flexibility compared to `JetBrains` IDEs. GitHub's `Copilot` has been an excellent AI coding assistant in VSCode, performing well even with complex coding tasks on `Snoot 3.7`. However, VSCode isn't optimized for a **fully keyboard-driven workflow** as it often requires using the mouse to navigate menus. For instance, when chatting with the AI panel, which typically returns lengthy responses, there's no keyboard shortcut to scroll through the panel, forcing me to reach for the mouse.
+
+> Another issue is the [inability to generate commit messages on remote machines](https://github.com/microsoft/vscode-copilot-release/issues/5792). Since the `VSCode-Copilot` plugin isn't open source, users can't fix these issues themselves.
+> Interestingly, this issue also appears in Zed Editor, but since Zed is open source, I can potentially fix the issue myself and submit a pull request.
+
+In conclusion, I wanted an editor that is **open source**, supports **AI coding**, enables **full keyboard** navigation, and provides **consistent operation** across different environments.
+
+---
+
+## 🚀 Introducing [Zed Editor](https://github.com/zed-industries/zed)
+
+"Welcome to Zed, a high-performance, multiplayer code editor from the creators of `Atom` and `Tree-sitter`." The Zed repository states. What sets Zed apart is its foundation in the `Rust` ecosystem and its use of **GPU** APIs for rendering, resulting in exceptional speed and smoothness.
+
+### 🎨 Features
+
+- **AI Coding**: Zed Editor offers robust AI coding capabilities
+  - Connect your `GitHub Copilot` account to access the NEWEST module
+  - Custom commands to reference *files*, *symbols*, *URLs*, and more
+  - Send *diff* hunks directly to AI to generate code without manual copying
+  - NOTE: **RAG** functionality is not yet integrated, so `@workspace` or `@Codebase` commands are not currently available. These features are planned for future releases.
+- **Fully Keyboard-Driven**: Zed is designed for complete keyboard control with VIM mode, eliminating the need for mouse interaction. All panels follow consistent operational logic, similar to Vim's "Everything is a Buffer" philosophy.
+
+## 📦 Conclusion
+
+Zed Editor launched in *2023*, making it just two years old, with a rapid *weekly release* cycle. Contributing to Zed offers quick feedback from the community. It's an excellent choice for developers who prioritize AI coding assistance and *keyboard-driven workflows*, perfectly matching my editor requirements. This also presents a valuable opportunity to participate in an active **open source community**.

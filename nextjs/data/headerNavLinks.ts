@@ -1,8 +1,17 @@
-const headerNavLinks = [
-  { href: '/', title: 'Home' },
-  { href: '/blog', title: 'Blog' },
-  { href: '/tags', title: 'Tags' },
-  { href: '/about', title: 'About' },
-]
+import { defaultLocale, type Locale } from '@/lib/i18n/config'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { withLocalePath } from '@/lib/i18n/paths'
 
-export default headerNavLinks
+export function getHeaderNavLinks(locale: Locale = defaultLocale) {
+  const dictionary = getDictionary(locale)
+
+  return [
+    { href: withLocalePath(locale, '/'), title: dictionary.navigation.home },
+    { href: withLocalePath(locale, '/blog'), title: dictionary.navigation.blog },
+    { href: withLocalePath(locale, '/tags'), title: dictionary.navigation.tags },
+    { href: withLocalePath(locale, '/about'), title: dictionary.navigation.about },
+    { href: withLocalePath(locale, '/projects'), title: dictionary.navigation.projects },
+  ]
+}
+
+export default getHeaderNavLinks()

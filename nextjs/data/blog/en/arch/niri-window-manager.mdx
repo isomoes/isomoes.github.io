@@ -1,0 +1,293 @@
+---
+title: 'Switching from River to Niri: Infinite Canvas Window Management'
+date: '2025-10-24'
+tags:
+  [
+    'linux',
+    'arch linux',
+    'window manager',
+    'niri',
+    'wayland',
+    'tiling',
+    'scrollable tiling',
+    'productivity',
+  ]
+summary: "Discovering Niri after hitting River's tag limitations: a scrollable-tiling Wayland compositor with infinite horizontal canvas that never resizes your windows."
+locale: en
+translationKey: arch-niri-window-manager
+---
+
+<BilibiliVideo bvid="BV1pkspzJE2Y" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## Introduction
+
+After months of productive work with River as our daily driver window manager, we hit a wall. Despite having dual monitors and River's flexible tag system (9 tags per monitor), we found ourselves constantly running out of workspace. With multiple development projects, browser research windows, communication apps, and monitoring tools all running simultaneously, even 18 available tag combinations weren't enough.
+
+But the real frustration came from another issue: **window resizing breaking application layouts**. Opening a new terminal in your carefully arranged coding workspace would resize existing windows, causing your IDE's sidebar to collapse, your browser's dev tools to become unusable, or your monitoring dashboard to switch to mobile view. These constant layout interruptions were killing productivity.
+
+This led us to discover **Niri** - a scrollable-tiling Wayland compositor that fundamentally reimagines window management with an infinite horizontal canvas where windows never resize.
+
+## The Problem with River
+
+River is an excellent window manager, but two limitations became deal-breakers for our workflow:
+
+### Tag Exhaustion Across Dual Monitors
+
+River's tag system provides 9 tags, which sounds generous until you're managing:
+- Multiple development projects (3-4 tags for different codebases)
+- Research and documentation (2-3 tags for browsers and references)
+- Communication tools (1-2 tags for email, chat, messaging)
+- Monitoring and system tools (1-2 tags)
+- Media and miscellaneous applications (1-2 tags)
+
+Even with two monitors (effectively 18 tag combinations), we constantly found ourselves either:
+- Overcrowding tags with too many windows, making navigation difficult
+- Closing applications we still needed to free up tag space
+- Spending mental energy deciding which tag to assign to new windows
+
+### Window Resizing Breaking Layouts
+
+Traditional tiling window managers (including River) automatically resize existing windows when you open new ones to maintain the tiling layout. This causes real problems:
+
+**Development Workflow Disruption**: Opening a new terminal while debugging would resize your IDE, collapsing the file tree and making the code editor too narrow. Your carefully arranged split panes would reorganize themselves.
+
+**Browser Layout Collapse**: Modern web applications use responsive design. When your browser window gets resized from tiling adjustments, complex web apps (admin panels, data dashboards, development tools) often switch to tablet or mobile layouts, hiding features behind hamburger menus and reorganizing the interface entirely.
+
+**Monitoring Dashboard Issues**: System monitoring tools with multiple panels would reorganize or hide information when resized, forcing you to scroll or expand sections that were previously visible.
+
+These weren't minor annoyances - they were workflow interruptions that happened dozens of times per day, breaking concentration and requiring manual window rearrangement.
+
+## Enter Niri: Scrollable Tiling
+
+**Niri** is a scrollable-tiling Wayland compositor that solves both problems with a simple but powerful concept: **windows are arranged in columns on an infinite horizontal strip**.
+
+### The Infinite Canvas Concept
+
+Instead of fitting windows into a fixed screen space by resizing them, Niri arranges windows in columns that extend infinitely to the right. Think of it as a long horizontal canvas where:
+
+- Each new window you open adds a new column to the right
+- Existing windows **never resize** when you open new applications
+- You navigate by scrolling left and right through your window strip
+- Each monitor has its own independent infinite strip
+
+This approach eliminates both tag exhaustion and layout-breaking resizes. You can open as many windows as needed without worrying about:
+- Running out of workspace (the canvas is infinite)
+- Breaking existing window layouts (windows never resize)
+- Complex tag management decisions (workspaces are dynamic)
+
+### Dynamic Workspaces vs Fixed Tags
+
+Niri uses **dynamic vertical workspaces** similar to GNOME:
+
+- Workspaces are arranged vertically (switch with Super+Up/Down)
+- Each monitor has independent workspaces
+- There's always one empty workspace at the bottom
+- Workspaces are created automatically when you move windows down
+- Empty workspaces disappear automatically
+
+This is fundamentally different from River's tags:
+- **River tags**: Fixed set of 9 labels you assign to windows
+- **Niri workspaces**: Dynamic spaces that grow and shrink as needed
+
+The key insight: you don't manage workspaces in Niri, you just use them. Move a window down to a new workspace when you need separation, and the system handles the rest.
+
+## Key Features
+
+Beyond solving our specific River pain points, Niri offers compelling features for modern workflow:
+
+**Built-in Screenshot UI**: No need to configure external screenshot tools. Niri has a native screenshot interface built in.
+
+**Overview Mode**: Zoom out to see all workspaces and windows at once (similar to GNOME's Activities overview), making navigation and window management intuitive.
+
+**Gestures**: Both touchpad and mouse gestures work out of the box:
+- Swipe horizontally to scroll through windows
+- Swipe vertically to switch workspaces
+- Mouse gestures for quick navigation
+
+**Window Tabs**: Group related windows into tabs within the same column, useful for organizing multiple terminals or browser windows without creating separate columns.
+
+**Monitor and Window Screencasting**: Built-in support through xdg-desktop-portal-gnome with the ability to block out sensitive windows from captures.
+
+**Live Config Reload**: Change your configuration and reload without restarting the compositor - see changes immediately.
+
+**Gradient Borders**: Configurable gradient borders with Oklab and Oklch color space support for a modern aesthetic.
+
+**Custom Animations**: Configure window animations and even use custom shaders if you want specific visual effects.
+
+**Floating Windows**: Starting from niri 25.01, full floating window support is available for applications that need it.
+
+### Configuration
+
+Niri uses KDL configuration format at `~/.config/niri/config.kdl`. Our complete configuration is available in the [arch-config repository](https://github.com/jiahaoxiang2000/arch-config/blob/master/niri/config.kdl):
+
+```kdl
+// Essential input settings
+input {
+    keyboard {
+        repeat-delay 250
+        repeat-rate 50
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+    }
+
+    mouse {
+        accel-speed -0.6
+        accel-profile "flat"
+    }
+}
+
+// Layout: gaps, column widths, and focus ring
+layout {
+    gaps 0
+    center-focused-column "always"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.5; }
+
+    // Disable focus ring and borders for cleaner look
+    focus-ring { off }
+    border { off }
+}
+
+// Multi-monitor setup
+output "DP-1" {
+    mode "3840x2160@60"
+    scale 2.4
+    position x=0 y=0
+}
+
+output "HDMI-A-1" {
+    mode "2560x1440@60"
+    scale 1.6
+    transform "270"  // Portrait mode
+    position x=1600 y=0
+}
+
+// Startup applications
+spawn-sh-at-startup "pkill fcitx5 || true; sleep 0.5; fcitx5 -d"
+spawn-sh-at-startup "pkill waybar || true; sleep 0.5; waybar &"
+
+// Turn off animations for snappier feel
+animations { off }
+```
+
+### Essential Keybindings
+
+```kdl
+binds {
+    // Navigation: Vim-style + arrow keys
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
+
+    // Move windows/columns
+    Mod+Ctrl+H { move-column-left; }
+    Mod+Ctrl+J { move-window-down; }
+    Mod+Ctrl+K { move-window-up; }
+    Mod+Ctrl+L { move-column-right; }
+
+    // Workspace navigation (vertical)
+    Mod+U { focus-workspace-down; }
+    Mod+I { focus-workspace-up; }
+    Mod+Ctrl+U { move-column-to-workspace-down; }
+    Mod+Ctrl+I { move-column-to-workspace-up; }
+
+    // Direct workspace access
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    // ... up to Mod+9
+
+    // Applications
+    Mod+T     { spawn "alacritty"; }
+    Mod+Space { spawn "fuzzel"; }
+
+    // Window management
+    Mod+Q       { close-window; }
+    Mod+F       { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+V       { toggle-window-floating; }
+    Mod+W       { toggle-column-tabbed-display; }
+
+    // Column width adjustments
+    Mod+R     { switch-preset-column-width; }
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    // Overview and screenshots
+    Mod+O { toggle-overview; }
+    Mod+S { screenshot; }
+
+    // System
+    Mod+Shift+E { quit; }
+}
+```
+
+## Getting Started Tips
+
+### Embrace Horizontal Scrolling
+
+The biggest mental shift from traditional tiling WMs is thinking horizontally instead of in discrete workspaces:
+
+- Don't try to minimize the number of open windows - the canvas is infinite
+- Use horizontal scrolling as your primary navigation method
+- Think of workspaces as *categories* of work, not as limited containers
+
+### Use Workspaces for Context Separation
+
+Unlike River's tags, use Niri workspaces to separate different contexts:
+- Workspace 1: Active development (scroll through multiple project windows)
+- Workspace 2: Communication (browsers, chat, email side by side)
+- Workspace 3: Monitoring (system tools, logs, dashboards)
+- Workspace 4: Media and research
+
+### Window Tabs for Related Content
+
+Use tabs to group related windows in the same column:
+- Multiple terminals: `Mod+W` to toggle tabbed display
+- Group browser windows for research topics
+- Stack multiple code editors together
+
+### Key Differences from River
+
+**No Tag Management**: You don't assign tags or manage which workspace a window belongs to. Just move it where you need it.
+
+**Infinite Space**: Stop worrying about running out of room. Open as many windows as your workflow requires.
+
+**Stable Layouts**: Your carefully arranged windows stay exactly the same size when you open new applications.
+
+**Less Configuration Needed**: Niri's defaults are sensible and the dynamic workspace system requires less upfront configuration than River's tag system.
+
+## Conclusion
+
+Niri represents a fresh approach to window management that solves real productivity problems. For users who've hit the limitations of traditional tiling window managers - whether it's tag exhaustion on River, layout disruption from automatic resizing, or simply wanting a more fluid workflow - Niri's infinite canvas design offers an elegant solution.
+
+**Who Should Consider Niri:**
+
+- River/i3/Sway users frustrated by workspace limitations
+- Developers with complex multi-window workflows
+- Users who maintain many applications open simultaneously
+- Anyone who's experienced layout-breaking from window resizing
+- Those who want a modern Wayland compositor with thoughtful design
+
+**The Niri Philosophy:**
+
+Niri doesn't force you to organize windows into predefined boxes. Instead, it provides an infinite canvas that adapts to your workflow. Windows maintain their layouts, workspaces grow and shrink as needed, and navigation becomes a fluid scrolling experience rather than discrete jumps between tags.
+
+The transition from River to Niri requires adjusting to horizontal thinking, but once you embrace the infinite canvas concept, there's no going back to worrying about tag exhaustion or layout-breaking resizes.
+
+Our complete Niri configuration is available in our [dotfiles repository](https://github.com/jiahaoxiang2000/arch-config). Join the [Niri community on Matrix](https://matrix.to/#/#niri:matrix.org) for support and inspiration, and check the [official documentation](https://yalter.github.io/niri/Getting-Started.html) for comprehensive setup guides.
+
+*Happy scrolling!*

@@ -1,0 +1,203 @@
+---
+title: 'From Ubuntu to NixOS: A Complete Configuration Management Journey'
+date: '2025-09-26'
+tags: ['NixOS', 'configuration', 'linux', 'dotfiles', 'journey', 'workflow', 'declarative', 'reproducible']
+summary: 'My evolution from Ubuntu discovery to NixOS mastery - a journey through Linux distributions, configuration management, and building the perfect reproducible development environment.'
+locale: en
+translationKey: misc-nixos-config-journey
+---
+
+<BilibiliVideo bvid="BV1EBnGzBEZz" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+The path from discovering Linux to mastering declarative configuration management has been a fascinating journey of constant learning, experimentation, and refinement. What started as curiosity about Ubuntu's open source ecosystem evolved into a sophisticated NixOS setup that manages every aspect of my development environment. This is the story of that evolution and why I believe **NixOS represents the future of personal computing configuration**. 🚀
+
+## The Beginning: Ubuntu and Open Source Discovery 🐧
+
+My Linux journey began with **Ubuntu** - that magical first encounter with an operating system where everything was free, customizable, and transparently built by a global community. Coming from proprietary systems, Ubuntu opened my eyes to an entirely new philosophy of computing where software wasn't just a tool, but a collaborative creation you could understand, modify, and improve.
+
+The Ubuntu experience was transformative: discovering the terminal, learning package management with `apt`, exploring the vast ecosystem of open source applications. Every new program installation was an adventure - finding alternatives to proprietary software, understanding dependencies, and gradually building a personalized computing environment.
+
+**But there was a problem**: I wasn't tracking anything. All the interesting discoveries, the perfect configurations I stumbled upon, the solutions to obscure problems - none of it was recorded, documented, or reproducible. My setup was a product of months of experimentation, but it existed only in my current system state, vulnerable to crashes, upgrades, or the inevitable urge to try something completely different.
+
+This lack of systematic tracking became increasingly frustrating as my setup became more sophisticated and my dependency on specific configurations grew.
+
+## The Arch Linux Revolution: Tiling Windows and Deep Customization ⚡
+
+The next major leap came with discovering **Arch Linux** and, more importantly, **tiling window managers**. This transition marked a fundamental shift from consuming a pre-built desktop environment to crafting a completely personalized computing experience.
+
+Tiling window managers transformed how I thought about desktop computing. Instead of overlapping windows fighting for screen space, every pixel served a purpose. The keyboard-driven workflow eliminated the constant dance between mouse and keyboard. Most importantly, it introduced me to the concept of **configuration as code** - my desktop environment was no longer a collection of GUI settings, but a set of text files I could version control, share, and iterate on.
+
+> For detailed exploration of this transition and tiling window manager philosophy, see our comprehensive guide: [Complete Guide to Window Managers on Arch Linux](/blog/arch/window-managers).
+
+This period saw the birth of my first serious configuration project: **[hypr-config](https://github.com/jiahaoxiang2000/hypr-config)** - a pure window manager configuration repository that captured my Hyprland setup. This project represented a crucial learning phase where I began to understand the value of systematically documenting and version controlling my computing environment.
+
+The hypr-config project taught me several fundamental lessons:
+- **Configuration is code**: It should be versioned, documented, and reproducible
+- **Iteration requires tracking**: You can't improve what you can't remember
+- **Sharing enables learning**: Public configurations invite feedback and inspire others
+
+## The Configuration Explosion: From Window Manager to Complete Environment 📈
+
+As my software toolkit expanded beyond just the window manager, I realized that tracking only Hyprland configuration was insufficient. My productivity depended on dozens of applications, each with their own configuration files, keybindings, and customizations. The development tools, shell environment, input methods, status bars, terminals - everything had been carefully tuned, but most of it wasn't being tracked.
+
+This realization led to **[arch-config](https://github.com/jiahaoxiang2000/arch-config)** - an ambitious expansion to track my complete `.config` folder and related dotfiles. This repository marked a major philosophical shift from managing individual applications to managing an entire computing environment.
+
+> Dive deeper into this phase: [My Arch Linux Dotfiles: A Real-World Configuration Journey](/blog/misc/arch-linux-dotfiles).
+
+The arch-config project introduced several key concepts:
+- **Modular architecture**: Git submodules for major components (Neovim, VS Code, Hyprland)
+- **Cross-platform elements**: Configurations that worked across different systems
+- **Real-world testing**: Every configuration file was battle-tested through daily use
+- **Documentation as a service**: Sharing knowledge through comprehensive README files
+
+However, even this expanded approach had limitations. I was tracking configurations, but not the software itself. System packages, dependencies, and the intricate relationships between different components remained outside the versioning system.
+
+## The Rolling Release Challenge: When Stability Meets Innovation 🎢
+
+Arch Linux's rolling release model, while providing cutting-edge software, introduced a new class of problems. The question haunted me: **"What software do I actually have installed, and what happens when I install something new?"**
+
+The rolling nature meant that system updates could potentially break carefully configured setups. New package installations might conflict with existing software or introduce unexpected dependencies. While not the primary factor in my eventual migration to NixOS, this uncertainty highlighted a fundamental limitation in traditional package management approaches.
+
+The real issue wasn't Arch Linux itself - it's an excellent distribution - but rather the inherent limitations of imperative system management:
+- **Hidden state**: The current system state was the result of hundreds of incremental changes
+- **Partial tracking**: Only configuration files were versioned, not the software itself
+- **Fragile reproducibility**: Recreating the exact same environment on another machine required extensive manual work
+- **Dependency mysteries**: Understanding the full dependency tree of installed software was nearly impossible
+
+## The NixOS Enlightenment: Declarative Everything 🎯
+
+Enter **NixOS** - a Linux distribution that fundamentally reimagines how we think about system configuration and package management. NixOS represents a paradigm shift from "configure the system you have" to "declare the system you want."
+
+The **[nixos-config](https://github.com/jiahaoxiang2000/nixos-config)** repository represents the culmination of my configuration management journey. Unlike previous approaches that tracked only configuration files, this repository manages:
+
+- **System-level configuration**: Boot loader, hardware support, services, users
+- **Package declarations**: Every installed piece of software, explicitly declared
+- **User environment**: Home Manager integration for per-user configurations
+- **Dependencies**: Complete dependency trees managed by the Nix package manager
+- **Environment variables**: System-wide and per-user variable declarations
+- **Service configuration**: systemd services, display managers, input methods
+
+### Repository Architecture 🏗️
+
+The NixOS configuration follows a clean, logical structure:
+
+```bash
+nixos-config/
+├── flake.nix           # Main entry point - defines inputs and system
+├── .nix/
+│   ├── configuration.nix   # System-level configuration
+│   ├── home.nix           # User-level packages and settings
+│   └── hardware-configuration.nix  # Hardware-specific settings
+├── .config/            # Traditional app configs (when needed)
+└── README.md           # Comprehensive documentation
+```
+
+### Key Configuration Highlights 🌟
+
+**System Configuration** (`.nix/configuration.nix`):
+```nix
+# Chinese input method with modern Wayland support
+i18n.inputMethod = {
+  type = "fcitx5";
+  enable = true;
+  fcitx5 = {
+    waylandFrontend = true;
+    addons = with pkgs; [
+      fcitx5-chinese-addons
+      fcitx5-material-color
+      fcitx5-pinyin-zhwiki
+    ];
+  };
+};
+
+# River window manager with NVIDIA support
+programs.river.enable = true;
+services.xserver.videoDrivers = [ "nvidia" ];
+hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
+```
+
+**User Environment** (`.nix/home.nix`):
+```nix
+home.packages = with pkgs; [
+  # Development environment
+  neovim
+  (vscode.override {
+    commandLineArgs = [
+      "--enable-features=UseOzonePlatform"
+      "--ozone-platform=wayland"
+    ];
+  })
+  python3 nodejs rustc gcc
+
+  # Writing and typography
+  texliveFull typst tinymist
+  source-han-serif source-han-sans source-han-mono
+
+  # Desktop environment
+  foot wmenu i3bar-river i3status-rust
+  wl-clipboard pavucontrol
+];
+```
+
+### Practical Benefits 💪
+
+**Complete Reproducibility**: The entire system can be rebuilt identically on any compatible hardware with a single command:
+```bash
+sudo nixos-rebuild switch --flake .#desktop
+```
+
+**Fearless Experimentation**: Need to try a new development tool or desktop environment? Add it to your configuration, test it, and if it doesn't work out, simply remove it from the file and rebuild. No leftover files, no broken dependencies.
+
+**Atomic Updates**: System changes are atomic - either they work completely or fail completely, with automatic rollback capabilities.
+
+**Dependency Precision**: Every dependency is explicitly declared and version-pinned, eliminating "works on my machine" problems.
+
+## Philosophy: Beyond Configuration Management 🧠
+
+NixOS represents more than just a different approach to system administration - it embodies a philosophy of **declarative infrastructure** that extends far beyond personal computing. The principles learned through managing a personal NixOS system apply directly to:
+
+- **Infrastructure as Code**: Managing server deployments and cloud resources
+- **Development Environment Consistency**: Ensuring every team member has identical development setups
+- **Reproducible Research**: Academic and scientific computing with guaranteed reproducibility
+- **Educational Resources**: Sharing complete, functional environments for learning
+
+This approach transforms configuration management from reactive problem-solving to **proactive environment design**. Instead of fixing things as they break, you declare what you want and let the system figure out how to achieve it.
+
+### The Learning Philosophy 📚
+
+What drives this entire journey is a fundamental belief: **Linux and free software represent the ultimate learning platform**. Every piece of software is open source, every configuration is transparent, every problem has a solution that can be understood, shared, and improved upon.
+
+The NixOS configuration repository isn't just personal infrastructure - it's a **knowledge sharing platform**. Other users can examine exactly how problems are solved, adapt solutions to their own needs, and contribute improvements back to the community.
+
+## The Continuous Journey 🌊
+
+This evolution from Ubuntu curiosity to NixOS mastery represents more than just technical progression - it's a journey of understanding how computing environments can be crafted, shared, and continuously improved. Each phase built upon the previous one:
+
+1. **Discovery** (Ubuntu): Learning that software can be free and community-driven
+2. **Customization** (Arch): Understanding that environments can be personally crafted
+3. **Systematization** (arch-config): Recognizing that configurations must be tracked and shared
+4. **Declarative Management** (NixOS): Realizing that entire systems can be code
+
+The journey continues. NixOS provides the foundation for exploring new tools, sharing interesting discoveries, and building increasingly sophisticated workflows. Whether it's AI-driven development tools, advanced video production pipelines, or experimental academic research environments, the declarative approach ensures that every experiment is documented, reproducible, and shareable.
+
+### Looking Forward: The Power of Sharing Knowledge 🌟
+
+What makes this journey truly meaningful isn't just personal productivity gains, but the ability to **share complete, working solutions** with the global community. The NixOS configuration repository represents not just my personal setup, but a template and inspiration for others building their own perfect computing environments.
+
+Every configuration choice, every tool integration, every problem solution is transparently available for examination, adaptation, and improvement. This openness drives continuous learning - both for me and for anyone who interacts with these configurations.
+
+The future holds exciting possibilities: more sophisticated development environments, deeper integration with AI tools, better hardware support, and most importantly, **continued learning and sharing with the amazing global community of Linux and free software enthusiasts**.
+
+*Happy declaring!* 🏞️✨
+
+---
+
+**Resources and Next Steps**:
+- Explore the complete [NixOS configuration repository](https://github.com/jiahaoxiang2000/nixos-config)
+- Review the [Arch Linux dotfiles journey](/blog/misc/arch-linux-dotfiles)
+- Understand [window manager philosophy](/blog/arch/window-managers)
+- Join the [NixOS community](https://nixos.org/community/) for support and collaboration

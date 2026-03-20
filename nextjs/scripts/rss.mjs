@@ -1,4 +1,4 @@
-import { writeFileSync, mkdirSync } from 'fs'
+import { writeFileSync, mkdirSync, rmSync } from 'fs'
 import path from 'path'
 import { slug } from 'github-slugger'
 import { escape } from 'pliny/utils/htmlEscaper.js'
@@ -8,12 +8,16 @@ import { allBlogs } from '../.contentlayer/generated/index.mjs'
 import { sortPosts } from 'pliny/utils/contentlayer.js'
 
 const outputFolder = process.env.EXPORT ? 'out' : 'public'
+const localeLanguages = {
+  en: 'en-us',
+  zh: 'zh-cn',
+}
 
 const generateRssItem = (config, post) => `
   <item>
-    <guid>${config.siteUrl}/blog/${post.slug}</guid>
+    <guid>${config.siteUrl}${post.url}</guid>
     <title>${escape(post.title)}</title>
-    <link>${config.siteUrl}/blog/${post.slug}</link>
+    <link>${config.siteUrl}${post.url}</link>
     ${post.summary && `<description>${escape(post.summary)}</description>`}
     <pubDate>${new Date(post.date).toUTCString()}</pubDate>
     <author>${config.email} (${config.author})</author>
@@ -21,16 +25,16 @@ const generateRssItem = (config, post) => `
   </item>
 `
 
-const generateRss = (config, posts, page = 'feed.xml') => `
+const generateRss = (config, posts, locale, page = 'feed.xml') => `
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
       <title>${escape(config.title)}</title>
-      <link>${config.siteUrl}/blog</link>
+      <link>${config.siteUrl}/${locale}/blog</link>
       <description>${escape(config.description)}</description>
-      <language>${config.language}</language>
+      <language>${localeLanguages[locale] ?? config.language}</language>
       <managingEditor>${config.email} (${config.author})</managingEditor>
       <webMaster>${config.email} (${config.author})</webMaster>
-      <lastBuildDate>${new Date(posts[0].date).toUTCString()}</lastBuildDate>
+      ${posts[0] ? `<lastBuildDate>${new Date(posts[0].date).toUTCString()}</lastBuildDate>` : ''}
       <atom:link href="${config.siteUrl}/${page}" rel="self" type="application/rss+xml"/>
       ${posts.map((post) => generateRssItem(config, post)).join('')}
     </channel>
@@ -38,20 +42,34 @@ const generateRss = (config, posts, page = 'feed.xml') => `
 `
 
 async function generateRSS(config, allBlogs, page = 'feed.xml') {
-  const publishPosts = allBlogs.filter((post) => post.draft !== true)
-  // RSS for blog post
-  if (publishPosts.length > 0) {
-    const rss = generateRss(config, sortPosts(publishPosts))
-    writeFileSync(`./${outputFolder}/${page}`, rss)
-  }
+  rmSync(path.join(outputFolder, page), { force: true })
+  rmSync(path.join(outputFolder, 'tags'), { recursive: true, force: true })
 
-  if (publishPosts.length > 0) {
+  for (const locale of config.locales ?? [config.defaultLocale ?? 'en']) {
+    const localePosts = sortPosts(
+      allBlogs.filter((post) => post.locale === locale && post.draft !== true)
+    )
+    const localeOutputPath = path.join(outputFolder, locale)
+
+    mkdirSync(localeOutputPath, { recursive: true })
+    writeFileSync(
+      path.join(localeOutputPath, page),
+      generateRss(config, localePosts, locale, `${locale}/${page}`)
+    )
+
+    rmSync(path.join(localeOutputPath, 'tags'), { recursive: true, force: true })
+
     for (const tag of Object.keys(tagData)) {
-      const filteredPosts = allBlogs.filter((post) => post.tags.map((t) => slug(t)).includes(tag))
-      const rss = generateRss(config, filteredPosts, `tags/${tag}/${page}`)
-      const rssPath = path.join(outputFolder, 'tags', tag)
+      const filteredPosts = localePosts.filter((post) =>
+        post.tags?.map((t) => slug(t)).includes(tag)
+      )
+      const rssPath = path.join(localeOutputPath, 'tags', tag)
+
       mkdirSync(rssPath, { recursive: true })
-      writeFileSync(path.join(rssPath, page), rss)
+      writeFileSync(
+        path.join(rssPath, page),
+        generateRss(config, filteredPosts, locale, `${locale}/tags/${tag}/${page}`)
+      )
     }
   }
 }

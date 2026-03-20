@@ -1,0 +1,160 @@
+---
+title: 'My Arch Linux Journey: May to July 2025'
+date: '2025-07-24'
+tags: ['Arch Linux', 'linux', 'journey', 'experience', 'daily-use']
+summary: 'A personal journey through two months of daily Arch Linux usage, documenting discoveries, challenges, and the learning curve from May to July 2025.'
+locale: en
+translationKey: misc-arch-linux-may-july-journey
+---
+
+<BilibiliVideo bvid="BV1CL8TznEWr" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+Two months ago, I decided to make the leap to Arch Linux as my daily driver. This post chronicles my journey from May to July 2025, sharing the ups, downs, discoveries, and lessons learned along the way. But more than just a technical journey, this became a philosophical exploration of how different operating systems shape our thinking patterns and worldviews. 🚀
+
+## The Philosophy of Operating Systems: Beyond Technical Choices 🧭
+
+### Operating Systems as Philosophies
+
+Each operating system embodies a different philosophy of human-computer interaction:
+
+**Windows: The Technical Marvel with Hidden Costs**
+
+- Philosophy: "Make it work for the masses"
+- Technical Achievement: Microsoft has accomplished something truly remarkable—creating an environment where thousands of diverse software applications can coexist and run smoothly. The backward compatibility and universal software support is genuinely awesome engineering.
+- The Transparency Problem: However, Windows feels "big" in ways that create unease. Background services run without clear purpose, indexing happens mysteriously, and default processes consume resources for unknown reasons. You're left wondering: "What is my computer doing when I'm not looking?"
+- The Open Source Dilemma: Many excellent open source tools simply don't work well on Windows. While WSL exists as a solution, running two different logic systems simultaneously expands memory requirements and creates unnecessary complexity.
+
+**macOS: The Perfected Path with No Alternatives**
+
+- Philosophy: "We know what's best for you"
+- Excellence in Focus: macOS can be absolutely superb for specific tasks like coding. When Apple decides to optimize for something, they create an environment that's simple, efficient, and genuinely excellent. Open source software works well here, and the underlying Unix logic makes many development tasks smooth and logical.
+- The Apple Way: Like all Apple products, macOS embodies the philosophy of "let's make one thing the best possible." The design decisions are thoughtful, the integrations are seamless, and the user experience is polished to perfection.
+- The Flexibility Problem: But here's the constraint—if you think there might be a better way to do something, or you want to try a different approach that suits you better, macOS simply doesn't open that door. It doesn't encourage experimentation or alternative paths.
+- Company Logic vs. User Freedom: From Apple's perspective, this makes sense. Supporting multiple ways to do things creates maintenance overhead and dilutes focus. But when you want to try the way that's most suitable for your specific needs, macOS says "no"—you must follow the prescribed path.
+
+**Linux (Arch): The Creative Freedom with Time Investment**
+
+- Philosophy: "You can do it best in your own way"
+- The Joy of Creation: Linux gives you the ability to make things truly great according to your own vision. Sometimes this means spending considerable time trying different software or writing custom logic code. But when everything finally works exactly as you envisioned—when it runs according to your mind—it feels like you've created something new rather than just used something existing. This brings profound personal happiness.
+- Unified Logic Control: Most importantly, Linux allows you to use one logical system to control all software. For example, you can use VIM keymapping to control all windows throughout your entire system. This means memorizing just one logic pattern to control everything, creating incredible efficiency and muscle memory.
+- The Time and Energy Cost: Everything has its price. Linux's cost is time and energy—you need to try many approaches, experiment extensively, and iterate until things work. But for those willing to make this investment, the reward is a computing environment that truly reflects your thinking and workflow.
+- Mindset: Embracing experimentation and accepting learning curves
+- Learning: True mastery comes through understanding and creating, not just consuming
+
+### The Transformation of Perspective
+
+This two-month journey taught me that switching operating systems isn't just about changing tools—it's about changing the way you think about problems, solutions, and the relationship between human and machine.
+
+**From Consumer to Creator:**
+Instead of simply using pre-built solutions, Arch Linux forced me to become a creator of my own computing environment. Every configuration choice became a conscious decision rather than an accepted default.
+
+**From Answers to Questions:**
+Other operating systems provide answers. Arch Linux taught me to ask better questions. "Why does this work this way?" became more valuable than "How do I make this work?"
+
+**From Individual to Community:**
+The Arch community showed me that the best solutions often come from collective wisdom. Reading others' dotfiles, learning from forum discussions, and contributing back created a sense of shared knowledge that transcends individual limitations.
+
+## Workflow Improved 🎯
+
+### Unified VIM Keymapping Across All Applications
+
+One of the most transformative aspects of my Arch Linux journey has been implementing VIM keymapping across my entire computing environment. This creates a unified muscle memory that extends from window management to coding to web browsing—truly "one logic to control everything."
+
+#### Layer 1: Window Manager - River with VIM Navigation
+
+At the foundation level, I configured **River** (as detailed in my [Wayland window managers journey](/blog/misc/linux-wayland)) to use VIM-style navigation throughout the entire desktop environment:
+
+- **`h/j/k/l`** for moving between windows and workspaces
+- **Leader key combinations** for window manipulation (resize, move, close)
+- **Tag-based organization** that maps to VIM's buffer concepts
+- **Modal thinking** applied to window management itself
+
+This means whether I'm arranging terminals, moving applications between monitors, or organizing my workspace, my fingers automatically know what to do. The window manager becomes an extension of VIM's spatial logic.
+
+#### Layer 2: Coding Environment - VSCode with Neovim Integration
+
+For development work, I use the powerful combination documented in my [VSCode + Neovim setup](/blog/ide/vscode-neovim):
+
+- **Full Neovim modal editing** within VSCode's modern interface
+- **Flash navigation** for instant code jumping with `s` key
+- **Surround operations** for efficient text manipulation
+- **Custom keybindings** that preserve VIM navigation while keeping VSCode's best features
+
+The beauty is that complex refactoring, navigation, and editing all use the same mental model as my window management. Whether I'm moving between files or moving between windows, the logic is consistent.
+
+#### Layer 3: Browser - Qutebrowser and VIM Extensions
+
+Finally, web browsing completes the unified experience:
+
+- **Qutebrowser** as my primary browser with native VIM keybindings
+- **Link hinting** using VIM-style character navigation
+- **Tab management** using familiar buffer-like commands
+- **Search and navigation** following VIM's modal patterns
+- **VIM browser extensions** as fallbacks for sites requiring other browsers
+
+This means I can navigate the web with the same efficiency as navigating code—no context switching between different mental models.
+
+### Live Streaming: Building Creator Tools from Scratch 🎬
+
+One unexpected outcome of my Arch Linux journey was diving deep into live streaming technology. What started as simple streaming setup challenges led to building two complete Rust applications that solve real problems for content creators.
+
+#### Project 1: Live Danmu with TTS - Making Chat Interactive
+
+The first project tackled a common problem: **how to make live chat more engaging**. I built [Live Danmu](/blog/tools/live-danmu), a Rust-powered system that connects to Bilibili live streams and brings chat messages to life through text-to-speech.
+
+**The Problem**: Traditional streaming setups show chat messages on screen, but streamers often miss them while focused on content. Viewers feel disconnected when their messages go unacknowledged.
+
+**The Solution**: A real-time WebSocket client that captures danmu (chat messages) and converts them to speech using TTS. Now streamers can hear every message while staying focused on their content.
+
+**Key Features**:
+
+- **Real-time Bilibili WebSocket integration** for instant message capture
+- **Intelligent TTS processing** that handles multiple languages and special characters
+- **Plugin architecture** allowing custom responses, music triggers, and interactive commands
+- **Cross-platform Rust implementation** that works seamlessly on Linux
+
+The technical achievement here wasn't just connecting to APIs—it was building a robust, extensible system that could handle the unpredictable nature of live chat while maintaining real-time performance.
+
+#### Project 2: wshowkeys_rs - Making Keystrokes Visible
+
+The second project solved a different creator problem: **showing keyboard shortcuts during tutorials and demonstrations**. I developed [wshowkeys_rs](/blog/tools/wshowkey), a Wayland-native overlay that displays keystrokes in real-time.
+
+**The Problem**: Tutorial creators and streamers needed a way to show their keyboard inputs without cluttering their screen or interrupting their workflow.
+
+**The Solution**: A transparent, floating overlay that captures keystrokes using Linux's evdev system and displays them as beautiful, auto-fading buttons over any application.
+
+**Technical Highlights**:
+
+- **Direct evdev integration** for reliable keystroke capture across multiple keyboards
+- **Wayland-native overlay** with perfect transparency and focus management
+- **Smart key combination handling** (shows "Ctrl+L" instead of separate keys)
+- **Auto-hide intelligence** that fades keys after 3 seconds of inactivity
+- **Zero-dependency operation** requiring no special permissions or setup
+
+#### The Creative Process: From Problem to Solution
+
+Both projects exemplify the Linux philosophy of "scratch your own itch." Instead of accepting limitations or using inadequate existing tools, I could build exactly what was needed:
+
+**Rapid Prototyping**: Rust's excellent ecosystem allowed quick iteration from concept to working prototype.
+
+**System Integration**: Linux's open architecture made it possible to tap into low-level systems (WebSocket APIs, evdev devices) without fighting the operating system.
+
+**Performance Focus**: Both tools needed real-time performance—dropped messages or delayed keystrokes would ruin the user experience.
+
+**Community Impact**: Open-sourcing both projects means other creators can build upon these foundations rather than starting from scratch.
+
+## Looking Forward: The Continuing Journey 🚀
+
+This Arch Linux experience represents just the beginning of a larger transformation in how I approach technology and creativity. The skills, mindset, and workflows developed over these two months continue to evolve and improve.
+
+Whether you choose Windows for compatibility, macOS for elegance, or Linux for freedom, do it with full awareness of what you're gaining and what you're trading away. And remember: the greatest minds are those that can appreciate the wisdom in choices different from their own.
+
+Happy thinking, happy learning, happy creating! 🐧🍎🪟✨
+
+---
+
+_This marks the end of my May-July 2025 Arch Linux journey documentation. The adventure continues, and I'll keep sharing discoveries as new chapters unfold._

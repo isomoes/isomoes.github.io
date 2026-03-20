@@ -1,0 +1,76 @@
+---
+title: 'NextChat with DeepSeek R1'
+date: '2025-02-21'
+tags: ['chat', 'AI', 'Tools']
+summary: 'we will to introduce the defulat plugins with the lazyvim.'
+locale: en
+translationKey: misc-chat-deepseek
+---
+
+<BilibiliVideo bvid="BV1MpPceQEE8" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 😭 Introduction
+
+### ⚠️ Account Status Update
+
+**2025-02-21 Update:** Our shared OpenAI account strategy (used for months across multiple IPs) has now been officially restricted.
+
+---
+
+## 🚀 Proxy API Access Solution
+
+To prevent future restrictions, we've transitioned from monthly subscription models to **pay-as-you-go API request pricing** with these advantages:
+
+- **Multi-model support**: Simultaneous access to OpenAI, Anthropic, and DeepSeek
+- **Cost efficiency**: Pay only for actual API usage
+
+### 🇨🇳 Domestic API Provider
+
+**Endpoint:** [https://api.deerapi.com](https://api.deerapi.com/register?aff=kyx2)  
+**API Key:** `sk-xxxxxx`
+
+Supported models:
+
+- OpenAI
+- Anthropic
+- DeepSeek
+
+---
+
+## 💻 Local Chat Client Setup
+
+Recommended client: **[NextChat](https://github.com/ChatGPTNextWeb/NextChat)**
+
+### Configuration Guide
+
+1. In client settings:
+   - **Endpoint**: `https://api.deerapi.com`
+   - **API Key**: Use the provided key above
+2. For custom models (e.g., `o3-minideepseek-reasoner`):
+   - Add via "Custom Models" section
+   - Refer to [provider documentation](https://api.deerapi.com/pricing) for model specifics
+
+---
+
+## 🛑 Known Limitations
+
+1. **File Conversion Unsupported**
+
+   - Native file conversion discontinued (cost-related decision by OpenAI)
+   - Workaround: Implement cloud-based embedding solutions
+
+2. **Local Chat Storage**
+   - ✅ Pros: Enhanced security (data stays local)
+   - ⚠️ Cons: Multi-device synchronization unavailable
+
+---
+
+## 🔧 Usage Recommendations
+
+- Download client packages from official sources
+- Regularly rotate API keys for sensitive operations
+- Monitor usage via provider dashboard

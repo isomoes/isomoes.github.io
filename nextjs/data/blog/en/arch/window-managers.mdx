@@ -1,0 +1,569 @@
+---
+title: 'Complete Guide to Window Managers on Arch Linux'
+date: '2025-08-21'
+tags:
+  [
+    'linux',
+    'arch linux',
+    'window manager',
+    'tiling',
+    'desktop environment',
+    'i3',
+    'sway',
+    'river',
+    'wayland',
+    'x11',
+  ]
+summary: 'A comprehensive guide to understanding window managers on Arch Linux, exploring different types from tiling to stacking WMs, and diving deep into our choice of River for an efficient desktop workflow.'
+locale: en
+translationKey: arch-window-managers
+---
+
+<BilibiliVideo bvid="BV1ofY9z7E72" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+When setting up Arch Linux, one of the most important decisions you'll make is choosing how to manage your desktop environment. While many users opt for full desktop environments like GNOME or KDE, **window managers offer a lightweight, highly customizable alternative** that can dramatically improve your workflow efficiency and give you complete control over your computing experience. 🚀
+
+Think of a window manager as the conductor of your desktop orchestra – it determines how windows appear, move, and interact, all while consuming minimal system resources. This guide will walk you through everything you need to know about window managers, from basic concepts to advanced River configuration.
+
+> Our configuration files are available in our [dotfiles repository](https://github.com/jiahaoxiang2000/arch-config)
+
+## What is a Window Manager? 🪟
+
+A **window manager** (WM) is a system software that controls the placement and appearance of windows within a graphical user interface. Think of it as the invisible hand that orchestrates your desktop experience! 🎭 According to the [Arch Linux Wiki](https://wiki.archlinux.org/title/Window_manager), window managers are essential components that handle:
+
+- **Window placement and sizing** 📐 - Determining where windows appear and how they're arranged
+- **Window decorations** 🎨 - Managing title bars, borders, and visual elements
+- **Focus management** 🎯 - Controlling which window receives input
+- **Virtual desktop/workspace management** 🗂️ - Organizing windows across multiple workspaces
+- **Keyboard and mouse input handling** ⌨️🖱️ - Processing your interactions with the system
+
+### Window Manager vs Desktop Environment ⚖️
+
+The key distinction between a window manager and a desktop environment (DE) is **scope and philosophy**:
+
+**Window Manager** 🎯: Focuses solely on window management, following the Unix philosophy of "do one thing and do it well." You'll typically need additional software for panels, file managers, and system settings, but this gives you complete control over your stack.
+
+**Desktop Environment** 📦: Includes a window manager plus a complete suite of applications, panels, file managers, and system tools. Think GNOME, KDE, or XFCE – everything bundled together for convenience.
+
+Window managers offer several compelling advantages:
+
+- **Performance** ⚡: Significantly lower resource usage means more RAM and CPU for your actual work
+- **Customization** 🛠️: Complete control over appearance and behavior – every pixel serves a purpose
+- **Minimalism** ✨: Only install what you actually need, reducing bloat and potential security vulnerabilities
+- **Learning** 🧠: Better understanding of how Linux desktop systems work at a fundamental level
+- **Productivity** 📈: Once mastered, keyboard-driven workflows can dramatically increase efficiency
+
+## Types of Window Managers 📚
+
+Understanding the different approaches to window management will help you choose the right tool for your workflow. Each type has its own philosophy and ideal use cases, so let's explore what makes each approach unique! 🗺️
+
+### Tiling Window Managers 🧩
+
+Tiling WMs automatically arrange windows in **non-overlapping layouts**, maximizing screen real estate and reducing the need for manual window management. Imagine your screen as a perfectly organized puzzle where every piece has its place – no wasted space, no hidden windows! 🎯
+
+**Popular Tiling Window Managers:**
+
+- **[i3](https://i3wm.org/)** 👑 - The most popular tiling WM, X11-based with excellent documentation and huge community
+- **[Sway](https://swaywm.org/)** 🌊 - i3-compatible Wayland compositor, drop-in replacement for i3 users moving to Wayland
+- **[bspwm](https://github.com/baskerville/bspwm)** 🌳 - Binary space partitioning WM with external configuration via `bspc`
+- **[dwm](https://dwm.suckless.org/)** ⚡ - Extremely lightweight from [suckless.org](https://suckless.org/), configured by modifying source code
+- **[xmonad](https://xmonad.org/)** 🧮 - Haskell-based, highly configurable through functional programming concepts
+- **[Hyprland](https://hyprland.org/)** ✨ - Modern Wayland compositor with beautiful animations and eye-candy effects
+- **[River](https://github.com/riverwm/river)** 🏞️ - Simple, tag-based Wayland compositor (our choice!) built on [wlroots](https://gitlab.freedesktop.org/wlroots/wlroots)
+
+### Stacking Window Managers 📚
+
+Stacking WMs use the **traditional overlapping window approach**, similar to Windows or macOS. If you're coming from traditional desktop environments, this familiar paradigm might be your comfort zone! 🏠
+
+**Popular Stacking Window Managers:**
+
+- **[Openbox](http://openbox.org/)** 📦 - Lightweight and highly configurable with XML-based configuration
+- **[Fluxbox](http://fluxbox.org/)** ⚡ - Based on Blackbox, focuses on speed and minimalism
+- **[IceWM](https://ice-wm.org/)** 🧊 - Lightweight with a familiar Windows-like interface and taskbar
+
+### Dynamic Window Managers 🔄
+
+Dynamic WMs can **switch between tiling and floating modes**, offering the best of both worlds. Perfect for users who want flexibility without commitment! 🤹
+
+**Popular Dynamic Window Managers:**
+
+- **[awesome](https://awesomewm.org/)** 🌟 - Lua-configurable with built-in system tray, panel, and extensive widget system
+- **[qtile](http://www.qtile.org/)** 🐍 - Python-based, making it easy to configure and extend for Python developers
+
+### Quick Comparison Guide 📊
+
+| WM Type 🏷️ | Resource Usage 💾 | Learning Curve 📈 | Customization 🛠️ | Best For 🎯 |
+|---------|----------------|----------------|---------------|----------|
+| **Tiling** | Very Low ⚡ | Steep 🧗 | High 🔧 | Productivity, Programming, Terminal-heavy workflows |
+| **Stacking** | Low 📊 | Gentle 🤝 | Medium ⚙️ | Traditional desktop users, GUI-focused work |
+| **Dynamic** | Low-Medium 📊 | Medium 🎢 | Very High 🚀 | Users wanting flexibility, mixed workflows |
+
+## River - Our Window Manager of Choice 🏞️
+
+After extensively exploring various options – from the battle-tested i3 to the feature-rich Hyprland – we settled on **River** as our primary window manager. Here's why River stands out in the crowded landscape of Wayland compositors and how we've implemented it in our Arch Linux setup! 🎯
+
+### Why River? 💡
+
+**Simplicity and Performance** ⚡: River embodies the Unix philosophy of doing one thing exceptionally well. It's a minimal, blazingly fast compositor that focuses purely on window management without unnecessary bloat. No built-in bars, no complex animations – just pure, efficient window management.
+
+**Tag-Based Organization** 🏷️: Unlike traditional workspaces that lock you into rigid structures, River uses **tags**. Think of them as flexible labels – windows can have multiple tags, and you can view multiple tags simultaneously. This provides incredibly flexible organization that adapts to your workflow rather than constraining it.
+
+**Wayland Native** 🌊: Built on the solid foundation of [wlroots](https://gitlab.freedesktop.org/wlroots/wlroots), River provides modern Wayland functionality with better security, performance, and multi-monitor support compared to X11-based solutions. It's future-proof and follows modern display server protocols.
+
+**Runtime Configuration** 🔧: River uses the `riverctl` command for configuration, allowing **dynamic changes without restarts**. Want to change your border color or add a keybinding? Just run a command – no config file editing and reloading required.
+
+**NVIDIA Compatibility** 🎮: While not officially supported, River works reasonably well with NVIDIA GPUs compared to other Wayland compositors, making it accessible to more users in the Linux gaming community.
+
+### Installation and Setup 🚀
+
+Getting River up and running is straightforward with the [AUR (Arch User Repository)](https://aur.archlinux.org/). Here's the complete setup process:
+
+```bash
+# Install River from the AUR
+sudo pacman -S river
+
+# Install essential complementary tools for a complete desktop experience
+paru -S wl-clipboard    # Clipboard utilities for copy/paste functionality  
+paru -S kanshi          # Output management for multi-monitor setups
+```
+
+### Production River Configuration 📝
+
+River configuration is handled through **shell scripts that call `riverctl` commands** – this approach gives you the full power of shell scripting for dynamic configuration! Here's our production-ready configuration based on real daily-use setup from our [dotfiles repository](https://github.com/jiahaoxiang2000/arch-config):
+
+```bash
+#!/bin/bash
+# ~/.config/river/init - Production River Configuration
+
+# =============================================================================
+# CORE RIVER SETTINGS
+# =============================================================================
+
+# Set keyboard repeat rate (delay, rate)
+riverctl keyboard-repeat 50 300
+
+# Window focus behavior
+riverctl focus-follows-cursor normal
+riverctl set-cursor-warp on-focus-change
+
+# Border styling
+riverctl border-width 2
+riverctl border-color-focused 0x93a1a1      # Focused window border
+riverctl border-color-unfocused 0x586e75    # Unfocused window border
+riverctl border-color-urgent 0xdc322f       # Urgent window border
+
+# Background color for gaps
+riverctl background-color 0x002b36
+
+# =============================================================================
+# ADVANCED MOUSE CONFIGURATION (Magic Mouse Support)
+# =============================================================================
+
+# Configure pointer acceleration and sensitivity
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" accel-profile adaptive
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" pointer-accel 0.3
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" scroll-method two-finger
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" natural-scroll enabled
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" tap enabled
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" tap-button-map lrm
+
+# =============================================================================
+# KEY BINDINGS - SYSTEM & APPLICATIONS
+# =============================================================================
+
+mod="Super"
+
+# Core applications
+riverctl map normal $mod Return spawn foot                    # Terminal (Wayland-native)
+riverctl map normal $mod Space spawn "wmenu-run"              # Application launcher
+riverctl map normal $mod D spawn "wmenu-run -i"               # Case-insensitive launcher
+
+# Browser and communication
+riverctl map normal $mod B spawn firefox                      # Web browser
+riverctl map normal $mod+Shift B spawn qutebrowser            # Vim-like browser
+
+# System utilities
+riverctl map normal $mod+Shift Q close                        # Close window
+riverctl map normal $mod+Shift X exit                         # Exit River
+riverctl map normal $mod+Shift R spawn "killall river && river" # Restart River
+
+# =============================================================================
+# MEDIA KEYS & SYSTEM CONTROL
+# =============================================================================
+
+# Volume control
+riverctl map normal None XF86AudioRaiseVolume spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+riverctl map normal None XF86AudioLowerVolume spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+riverctl map normal None XF86AudioMute spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+riverctl map normal None XF86AudioMicMute spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+# Media playback
+riverctl map normal None XF86AudioPlay spawn "playerctl play-pause"
+riverctl map normal None XF86AudioNext spawn "playerctl next"
+riverctl map normal None XF86AudioPrev spawn "playerctl previous"
+
+# =============================================================================
+# WINDOW MANAGEMENT & FOCUS
+# =============================================================================
+
+# Focus movement (Vim-like)
+riverctl map normal $mod H focus-view left
+riverctl map normal $mod J focus-view down
+riverctl map normal $mod K focus-view up
+riverctl map normal $mod L focus-view right
+
+# Alternative focus movement
+riverctl map normal $mod Left focus-view left
+riverctl map normal $mod Down focus-view down
+riverctl map normal $mod Up focus-view up
+riverctl map normal $mod Right focus-view right
+
+# Window swapping
+riverctl map normal $mod+Shift H swap left
+riverctl map normal $mod+Shift J swap down
+riverctl map normal $mod+Shift K swap up
+riverctl map normal $mod+Shift L swap right
+
+# =============================================================================
+# LAYOUT MANAGEMENT
+# =============================================================================
+
+# Toggle float
+riverctl map normal $mod+Shift Space toggle-float
+
+# Toggle fullscreen
+riverctl map normal $mod F toggle-fullscreen
+
+# =============================================================================
+# MOUSE BINDINGS
+# =============================================================================
+
+# Mouse button bindings
+riverctl map-pointer normal $mod BTN_LEFT move-view
+riverctl map-pointer normal $mod BTN_RIGHT resize-view
+riverctl map-pointer normal $mod BTN_MIDDLE toggle-float
+
+# =============================================================================
+# WINDOW RULES & AUTOMATION
+# =============================================================================
+
+# Floating window rules
+riverctl rule-add -app-id "pavucontrol" float
+riverctl rule-add -app-id "calculator" float
+riverctl rule-add -app-id "file-roller" float
+riverctl rule-add -app-id "org.kde.ark" float
+riverctl rule-add -title "Picture-in-Picture" float
+
+riverctl rule-add -app-id "telegram-desktop" tags $((1 << 7)) # Chat on tag 8
+
+# =============================================================================
+# STARTUP APPLICATIONS & SERVICES
+# =============================================================================
+
+# Essential system services
+killall -q kanshi; kanshi &                    # Output management
+killall -q fcitx5; fcitx5 -d &                 # Input method
+killall -q xremap; xremap ~/.config/xremap/config.yml &  # Key remapping
+
+# Status bar (choose one approach)
+# Option 1: Waybar
+# killall -q waybar; waybar &
+
+# Option 2: i3bar with i3status-rust (our choice)
+killall -q i3bar; i3bar-river &
+
+# Background service for automation
+killall -q ydotoold; ydotoold &                 # Automation daemon
+
+# Network and proxy setup (if configured)
+if [ -f ~/.config/river/setup-proxy.sh ]; then
+    ~/.config/river/setup-proxy.sh &
+fi
+
+```
+
+### Status Bar Configuration 📊
+
+**i3bar-river + i3status-rust Setup**: Our preferred approach uses i3bar with i3status-rust for a lightweight, efficient status bar that perfectly complements River's minimalist philosophy.
+
+**i3bar-river Configuration** (`~/.config/i3bar-river/config`):
+```json
+{
+    "position": "top",
+    "height": 30,
+    "font": "DejaVu Sans Mono 10",
+    "colors": {
+        "background": "#002b36",
+        "statusline": "#93a1a1",
+        "separator": "#586e75",
+        "focused_workspace": {
+            "border": "#b58900",
+            "background": "#b58900",
+            "text": "#002b36"
+        },
+        "active_workspace": {
+            "border": "#586e75",
+            "background": "#586e75",
+            "text": "#93a1a1"
+        },
+        "inactive_workspace": {
+            "border": "#073642",
+            "background": "#073642",
+            "text": "#93a1a1"
+        }
+    },
+    "tray_output": "primary",
+    "strip_workspace_numbers": false
+}
+```
+
+**i3status-rust Configuration** (`~/.config/i3status-rust/config.toml`):
+```toml
+[theme]
+name = "solarized-dark"
+
+[icons]
+name = "material-nf"
+
+[[block]]
+block = "cpu"
+interval = 1
+format = " $icon $utilization "
+
+[[block]]
+block = "memory"
+format = " $icon $mem_used_percents.eng(w:2) "
+format_alt = " $icon_swap $swap_used_percents.eng(w:2) "
+interval = 5
+warning_mem = 80.0
+warning_swap = 50.0
+critical_mem = 95.0
+critical_swap = 80.0
+
+[[block]]
+block = "disk_space"
+path = "/"
+format = " $icon $available.eng(w:2) "
+format_alt = " $icon $used.eng(w:2)/$total.eng(w:2) ($used_percents.eng(w:2)) "
+unit = "GB"
+interval = 20
+warning = 20.0
+alert = 10.0
+
+[[block]]
+block = "sound"
+format = " $icon $volume.eng(w:2) "
+headphones_indicator = true
+show_volume_when_muted = true
+
+
+[[block]]
+block = "time"
+interval = 1
+format = " $icon $timestamp.datetime(f:'%Y-%m-%d %H:%M:%S') "
+```
+
+### Input Method Integration 🌏
+
+**fcitx5 Setup**: Complete CJK input support that works seamlessly with River:
+
+```bash
+# In River init script - already included in main config above
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export SDL_IM_MODULE=fcitx
+
+# Start fcitx5 daemon
+killall -q fcitx5; fcitx5 -d &
+```
+
+### Advanced Key Remapping 🎯
+
+**xremap Integration**: Custom key remapping for enhanced productivity:
+
+```yaml
+# ~/.config/xremap/config.yml
+modmap:
+  - name: Global
+    remap:
+
+virtual_modifiers:
+  - CapsLock
+
+keymap:
+  - name: CapsLock-like Navigation (Alt as modifier)
+    remap:
+      # Navigation keys (Alt + vim keys)
+      CapsLock-a: home
+      CapsLock-semicolon: end
+      CapsLock-j: down
+      CapsLock-k: up
+      CapsLock-h: left
+      CapsLock-l: right
+
+      # Word navigation
+      CapsLock-u: C-left
+      CapsLock-i: C-right
+
+      # Deletion
+      CapsLock-y: backspace
+      CapsLock-o: C-backspace
+
+      # Text selection
+      CapsLock-n: C-S-left
+      CapsLock-m: C-S-right
+      CapsLock-comma: S-home
+      CapsLock-dot: S-end
+      CapsLock-b: S-left
+      CapsLock-e: S-right
+      CapsLock-slash: S-down
+      CapsLock-p: S-up
+
+      # Page navigation
+      CapsLock-d: pagedown
+      CapsLock-f: pageup
+      CapsLock-s: S-pagedown
+      CapsLock-r: S-pageup
+```
+
+### Multi-Monitor Support 🖥️🖥️
+
+**Kanshi Configuration** (`~/.config/kanshi/config`):
+```
+# Single monitor (laptop)
+profile laptop {
+    output eDP-1 mode 1920x1080 position 0,0 scale 1.0
+}
+
+# Dual monitor setup (home office)
+profile home {
+    output eDP-1 mode 1920x1080 position 0,1440 scale 1.0
+    output DP-1 mode 2560x1440@165Hz position 0,0 scale 1.0
+    exec riverctl focus-output DP-1
+}
+
+# Triple monitor setup (maximum productivity)
+profile workstation {
+    output eDP-1 mode 1920x1080 position 0,1440 scale 1.0
+    output DP-1 mode 2560x1440@165Hz position 0,0 scale 1.0
+    output HDMI-A-1 mode 1920x1080@60Hz position 2560,360 scale 1.0
+    exec riverctl focus-output DP-1
+}
+```
+
+## Getting Started Tips 🎓
+
+### For Beginners 🌱
+
+1. **Start Simple** 🎯: Begin with a basic configuration and **gradually add complexity**. Don't try to replicate your entire desktop environment on day one – focus on core functionality first.
+
+2. **Learn the Concepts** 🧠: Understanding **tags vs workspaces** is crucial! Tags are more flexible – think of them as labels you can combine, while traditional workspaces are like separate rooms.
+
+3. **Use Documentation** 📚: River's manual (`man river`, `man riverctl`) is comprehensive and well-written. The [River documentation](https://github.com/riverwm/river/wiki) on GitHub is also excellent.
+
+4. **Practice Daily** 💪: Use River as your daily driver to build muscle memory. The initial learning curve is steep, but the productivity gains are worth it!
+
+### Troubleshooting and Practical Tips 🛠️
+
+**Common Issues and Solutions**:
+
+**River Won't Start**:
+```bash
+# Check River logs for errors
+journalctl --user -u river
+
+# Test River configuration without full startup
+river -c ~/.config/river/init-test
+
+# Fallback to minimal configuration
+cp ~/.config/river/init ~/.config/river/init.backup
+echo "riverctl spawn foot" > ~/.config/river/init
+```
+
+**Status Bar Not Showing**:
+```bash
+# Check if i3bar-river is running
+pgrep -f i3bar-river
+
+# Restart status bar manually
+killall i3bar-river i3status-rust
+i3bar-river &
+
+# Debug i3status-rust output
+i3status-rs ~/.config/i3status-rust/config.toml
+```
+
+**Input Method Issues**:
+```bash
+# Verify fcitx5 environment variables
+echo $GTK_IM_MODULE $QT_IM_MODULE $XMODIFIERS
+
+# Restart input method
+killall fcitx5
+fcitx5 -d
+
+# Check input method status
+fcitx5-remote -s
+```
+
+### Real-World Configuration Resources 📚
+
+Our complete River configuration is available in the [arch-config repository](https://github.com/jiahaoxiang2000/arch-config), which contains:
+
+- **Complete River init script** with all the configurations shown above
+- **i3bar-river configuration** with custom colors and theming
+- **i3status-rust setup** with system monitoring blocks
+- **Integration scripts** for automation and productivity
+- **Session management tools** for different work modes
+- **Multi-monitor configuration** with kanshi profiles
+
+**Key Repository Sections**:
+- `river/init` - Main River configuration file
+- `i3bar-river/config` - Status bar configuration  
+- `i3status-rust/config.toml` - System information blocks
+- `kanshi/config` - Multi-monitor management
+
+**Installation from Dotfiles**:
+```bash
+# Clone the complete configuration
+git clone --recursive https://github.com/jiahaoxiang2000/arch-config.git ~/.config/dotfiles
+
+# Link River configuration
+ln -sf ~/.config/dotfiles/river ~/.config/river
+ln -sf ~/.config/dotfiles/i3bar-river ~/.config/i3bar-river  
+ln -sf ~/.config/dotfiles/i3status-rust ~/.config/i3status-rust
+
+# Make init script executable
+chmod +x ~/.config/river/init
+```
+
+This configuration represents **months of real-world usage and refinement** - every keybinding, window rule, and automation script has been battle-tested in daily development work, content creation, and system administration tasks.
+
+Ready to dive deeper? Check out our [complete dotfiles repository](https://github.com/jiahaoxiang2000/arch-config) for the full River configuration, join the [River community](https://github.com/riverwm/river/discussions) for support and inspiration, and explore our [Arch Linux dotfiles guide](/blog/misc/arch-linux-dotfiles) for the complete system setup! 🚀
+
+## Conclusion 🎯
+
+River represents an **excellent balance between functionality and simplicity** in the modern Wayland ecosystem. For Arch Linux users who value performance, customization, and minimalism, River provides a robust foundation for building an efficient, personalized desktop environment that truly serves your needs. 🏗️
+
+The transition from traditional desktop environments to a tiling window manager like River **requires investment in learning and configuration**, but the productivity gains, system performance improvements, and deep sense of control over your computing environment make it incredibly worthwhile for many users.
+
+**Who Should Consider River?** 🤔
+
+- **Developers** 👨‍💻 seeking distraction-free coding environments with efficient terminal management
+- **System administrators** 🔧 managing multiple terminal sessions and monitoring tools
+- **Power users** ⚡ who appreciate elegant software design and want maximum customization
+- **Performance enthusiasts** 🏎️ looking to squeeze every bit of efficiency from their hardware
+- **Minimalists** ✨ who prefer purposeful software without bloat
+
+**The River Philosophy** 🌊
+
+River embodies the best of Unix philosophy – doing one thing exceptionally well while playing nicely with other focused tools. It's not just a window manager; it's a foundation for building a desktop environment that's perfectly tailored to your unique workflow and preferences.
+
+Remember that **the best window manager is the one that fits your workflow and preferences**. Take time to experiment, customize, and find the setup that makes you most productive. River offers the flexibility and performance to grow with you as your needs evolve.
+
+*Happy tiling!* 🏞️✨

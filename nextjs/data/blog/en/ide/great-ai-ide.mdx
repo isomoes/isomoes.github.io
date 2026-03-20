@@ -1,0 +1,203 @@
+---
+title: 'The Better AI IDE: Software Should Serve AI First, Then Humans'
+date: '2026-02-28'
+tags: ['IDE', 'AI', 'ikanban', 'opencode', 'vibe-coding', 'keyboard-first', 'cli', 'workflow']
+summary: 'After years of IDE evolution—from JetBrains to VSCode to Neovim—we discovered that the AI era demands a fundamentally different interface. Software should serve AI first, then humans. This insight led us to build iKanban: a two-pane, keyboard-driven AI IDE where less is more.'
+locale: en
+translationKey: ide-great-ai-ide
+---
+
+<BilibiliVideo bvid="BV1t9AhztEjX" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+Our [IDE journey](/blog/ide/ide-journey) traced a path from JetBrains through VSCode to Neovim + Claude Code. Each transition stripped away complexity and moved us closer to the keyboard. But in early 2026, a deeper realization emerged: the traditional IDE was designed for _humans_ operating on code. In the age of vibe coding, the primary operator is no longer the human—it is the AI agent. Our software should serve AI first, then serve us. This inversion of priorities changes everything about how an IDE should look, feel, and function. ⌨️
+
+## The Insight: AI-First, Human-Second 🧠
+
+### How We Got Here
+
+The journey through three IDE eras taught us a consistent lesson: each generation traded visual complexity for directness. JetBrains offered integrated excellence behind layers of GUI. VSCode unified languages but still required mouse-driven panels. Neovim + Claude Code reduced the interface to two terminal windows—chat and diff—and proved that [less is more](/blog/misc/change-2025).
+
+But even the two-terminal setup was still a _human-first_ design. We typed prompts, we reviewed diffs, we drove the workflow. The AI was a powerful assistant, but the interface assumed a human at the controls at every step.
+
+The shift happened when we noticed two converging trends in 2025–2026:
+
+**Trend 1: CLI tools became the lingua franca of AI agents.** LLM agents like Claude Code and [OpenCode](/blog/tools/opencode-cli) don't click buttons or navigate menus. They call CLI commands—`git`, `rg`, `sed`, `npm`, `cargo`—in structured sequences. Every operation that once required a mouse click in a traditional IDE now has a CLI equivalent that an agent can invoke programmatically. The [multi-agent parallel workflow](/blog/tools/multi-agent-parallel) we adopted made this even clearer: agents running in isolated worktrees need no GUI at all.
+
+**Trend 2: Vibe coding reduced the human role to two activities.** In practice, our daily work with AI agents boils down to exactly two jobs: **prompting** (telling the agent what to do) and **verifying** (reviewing what the agent did). We don't manually navigate file trees, configure build systems, or set breakpoints. The agent handles implementation; we handle intent and quality control.
+
+These two trends point to a single conclusion: the ideal AI IDE should be optimized for _agent execution_ first and _human oversight_ second. The complex UI chrome of traditional IDEs—file explorers, settings panels, extension sidebars, debug consoles—exists to help humans perform tasks that agents now handle through CLI calls. That chrome is not just unnecessary in an AI-first world; it is actively harmful, consuming screen space and cognitive bandwidth that should be devoted to the two things that matter: prompting and verifying.
+
+### The Inversion Principle
+
+Traditional IDE design follows a simple model: **Human → IDE → Code**. The IDE provides tools (completion, refactoring, debugging) that help the human manipulate code.
+
+The AI-first model inverts this: **Human → Prompt → Agent → CLI Tools → Code**. The human specifies intent through natural language. The agent translates intent into a sequence of CLI operations. The human then reviews the result.
+
+In this model, the IDE's job is not to provide tools for the human—it is to provide a clean interface for two activities:
+
+1. **A prompt pane** where the human communicates intent to the agent
+2. **A verify pane** where the human reviews the agent's output (diffs, test results, logs)
+
+Everything else is overhead.
+
+## Two Major Design Decisions 🎯
+
+### Decision 1: Full Keyboard Control
+
+This decision predates the AI-first insight—it comes from our deep commitment to the VIM `hjkl` philosophy. As we documented in our [IDE journey](/blog/ide/ide-journey), mouse dependency was the intolerable disadvantage that drove us away from VSCode. Every time a hand leaves the keyboard to grab the mouse, flow state breaks.
+
+But keyboard-first design gains a new justification in the AI-first context. A keyboard-driven interface is inherently more _scriptable_ and _composable_. The same keybinding sequences a human uses can, in principle, be triggered programmatically. A mouse-driven interface, by contrast, requires spatial reasoning about pixel coordinates—something that adds unnecessary complexity for both humans and agents.
+
+Our entire computing stack reflects this commitment:
+
+- **Layer 1**: [Tiling window manager](/blog/arch/window-managers) with `hjkl` navigation
+- **Layer 2**: Neovim for all text editing with modal operations
+- **Layer 3**: [Keyboard-driven browser](/blog/tools/surfingkeys-intro) with VIM-style link hinting
+- **Layer 4**: AI IDE with keyboard-only interaction
+
+One keybinding system. One muscle memory. Zero mouse dependency.
+
+### Decision 2: Less Is More—Two Panes for Two Jobs
+
+The second decision follows directly from the vibe coding workflow analysis. If the human's job is reduced to prompting and verifying, then the IDE needs exactly two panes:
+
+| Pane | Purpose | Human Activity |
+|------|---------|----------------|
+| **Chat/Prompt Pane** | Communicate intent to the AI agent | Prompting |
+| **Changes/Diff Pane** | Review agent output, diffs, test results | Verifying |
+
+This is not minimalism for aesthetics. It is a direct mapping of the workflow to the interface. Every additional panel—file explorer, settings UI, extension sidebar—represents a task that either the agent should handle (file navigation, configuration) or that doesn't belong in the core loop (extension management).
+
+The [vibe-kanban workspace interface](/blog/tools/vibe-kanban-intro) already demonstrated this two-pane concept with its Chat Panel and Changes Panel layout. Our work with iKanban takes this further by making the two-pane design the _entire_ interface, not just one mode among many.
+
+## Why Traditional IDEs Fall Short for AI 🚫
+
+### The Mouse-Click Problem
+
+Traditional IDEs were designed around the assumption that a human would perform every operation. This led to rich graphical interfaces with toolbars, context menus, drag-and-drop panels, and visual debuggers. These interfaces are optimized for _discoverability_—helping humans find features they might not know about.
+
+But AI agents don't need discoverability. They need _programmability_. An agent doesn't browse a menu to find the "Rename Symbol" option; it calls `lsp-rename` or edits files directly. An agent doesn't click through a debug UI to set breakpoints; it runs tests and reads stack traces from stdout.
+
+The entire visual layer of a traditional IDE is invisible to the agent. It exists solely for the human—and in the AI-first model, the human's role has narrowed to prompting and verifying. The visual layer becomes dead weight.
+
+### The Feature Bloat Problem
+
+Modern IDEs accumulate features over years of development. VSCode has thousands of settings, hundreds of built-in commands, and an extension marketplace with tens of thousands of plugins. JetBrains IDEs ship with integrated database browsers, HTTP clients, Docker management, and profiling tools.
+
+Each feature adds cognitive load. Each panel competes for screen space. Each configuration option is another decision the developer must make. In the AI-first model, most of these features are either handled by the agent (through CLI tools) or irrelevant to the prompt-verify loop.
+
+The AI IDE should have _fewer_ features, not more. It should do two things exceptionally well: facilitate clear communication between human and agent, and present agent output in a reviewable format.
+
+### The CLI Revolution
+
+The rise of high-quality CLI tools in 2025–2026 made the traditional IDE's feature set redundant from the agent's perspective:
+
+- **Code search**: `rg` (ripgrep) replaces IDE search panels
+- **File navigation**: `fd`, `fzf` replace file explorer trees
+- **Git operations**: `git`, `lazygit` replace integrated Git UIs
+- **Testing**: `pytest`, `cargo test`, `npm test` replace test runner panels
+- **Debugging**: structured logging and test-driven development replace visual debuggers
+- **Refactoring**: agent-driven multi-file edits replace IDE refactoring wizards
+
+Every one of these CLI tools can be invoked by an AI agent in a single command. The agent doesn't need a GUI wrapper around `git diff`—it reads the output directly. The human reviews the same output in the verify pane.
+
+## iKanban: Our Answer 🚀
+
+### What iKanban Is
+
+[**iKanban**](https://github.com/isomoes/ikanban) is a Web/PWA interface for the [OpenCode](https://opencode.ai) AI coding agent. It unifies chat, terminal, and board workflows in a single interface designed around the AI-first, two-pane principle.
+
+The core features reflect our design philosophy:
+
+- **Integrated terminal** for direct CLI access
+- **Git operations** with AI-generated commit messages
+- **Smart tool visualization** with inline diffs and file trees
+- **Per-agent permission modes** (ask/allow/full) per session
+- **Multi-agent runs** from a single prompt using isolated worktrees
+- **Branchable conversations**: start a new session from any assistant response
+- **Task tracker** with live progress and tool summaries
+- **Model selection** with favorites, recents, and configurable density
+
+### The Two-Pane Workflow in Practice
+
+A typical iKanban session looks like this:
+
+```
+┌──────────────────────────┬──────────────────────────┐
+│                          │                          │
+│   Chat / Prompt Pane     │   Changes / Verify Pane  │
+│                          │                          │
+│   Human: "Add OAuth2     │   Modified files:        │
+│   support to the auth    │   ├── src/auth/oauth.ts  │
+│   module with Google     │   ├── src/routes/login.ts│
+│   and GitHub providers"  │   └── tests/auth.test.ts │
+│                          │                          │
+│   Agent: Working...      │   + export class OAuth2  │
+│   ├── Reading codebase   │   +   Provider {         │
+│   ├── Creating files     │   +   async authorize()  │
+│   ├── Running tests      │   +   ...                │
+│   └── All tests pass ✓   │                          │
+│                          │                          │
+└──────────────────────────┴──────────────────────────┘
+```
+
+The left pane is where intent flows from human to agent. The right pane is where results flow from agent to human. Nothing else is needed in the core loop.
+
+### Why OpenCode as the Backend
+
+iKanban builds on [OpenCode](/blog/tools/opencode-cli) rather than a proprietary agent for the same reason we migrated away from Claude Code's vendor lock-in: **provider independence**. OpenCode supports 75+ LLM providers, meaning iKanban can orchestrate agents powered by Claude, GPT, Gemini, DeepSeek, GLM, Qwen, or any future model—all through the same interface.
+
+This matters because the AI landscape changes rapidly. The model that is best today may not be best tomorrow. An AI IDE that locks you into a single provider is repeating the JetBrains mistake of language-specific silos, just at the model level instead of the language level.
+
+### Mobile-First and Remote-Ready
+
+iKanban runs as a PWA, accessible from any device with a browser. This aligns with the AI-first philosophy: if the agent does the heavy lifting through CLI tools, the human's interface can be lightweight. You can review diffs and approve changes from a phone. You can prompt an agent from a tablet. The compute happens on the server; the human interface is just a communication channel.
+
+## The Road Ahead: Multi-Agent Automation 🔮
+
+### Where We Are Now
+
+iKanban currently supports multi-agent runs from a single prompt, with each agent working in an isolated git worktree. This is the same parallel execution model we explored with [vibe-kanban](/blog/tools/vibe-kanban-intro), but integrated into a unified interface.
+
+The human still acts as the scheduler—decomposing tasks, assigning agents, reviewing outputs. As we described in our [multi-agent parallel workflow](/blog/tools/multi-agent-parallel) post, this is "Stage 2: The Product Manager" in the evolution from coder to conductor.
+
+### Where We're Going
+
+The next stage is **fully automated task execution**—what we called "Stage 3: The Company CEO." In this model, the human provides a high-level goal, and an AI scheduler decomposes it into subtasks, assigns optimal models, monitors progress, handles integration, and delivers the completed feature.
+
+```
+Current:  Human → [Decompose] → [Assign] → [Monitor] → [Review] → Done
+Future:   Human → [Goal] → Scheduler AI → [Auto-execute] → [Review] → Done
+```
+
+The human's role narrows further: from product manager to quality reviewer. The two-pane interface remains valid—the prompt pane becomes a goal-specification interface, and the verify pane becomes a results-review interface—but the middle steps are automated.
+
+This is not ready yet. Building a reliable AI scheduler requires advances in task decomposition, dependency resolution, and cross-agent coordination. But the architecture of iKanban is designed with this future in mind. The two-pane interface, the OpenCode backend, the isolated worktree execution model—all of these are building blocks for the fully automated workflow.
+
+### The Philosophical Thread
+
+Looking back across our entire journey—from JetBrains to VSCode to Neovim to iKanban—a consistent thread emerges: **each transition removed a layer of indirection between human intent and code change**.
+
+- JetBrains: Human → GUI → IDE Features → Code
+- VSCode: Human → Extensions → Code
+- Neovim + Claude Code: Human → Terminal → Agent → Code
+- iKanban: Human → Prompt → Agent → Code
+
+The AI-first IDE is not just a tool change. It is the logical endpoint of a philosophy we have been following all along: reduce friction, eliminate unnecessary intermediaries, and let the human focus on what only humans can do—deciding _what_ should be built and judging _whether_ it was built correctly.
+
+Everything else, the agent can handle.
+
+---
+
+## Related Posts 📚
+
+- [**My IDE Journey: From JetBrains to Claude Code**](/blog/ide/ide-journey) - The full IDE evolution story
+- [**My 2025 Big Changes**](/blog/misc/change-2025) - The "less is more" philosophy
+- [**OpenCode: The Open Alternative**](/blog/tools/opencode-cli) - Provider-agnostic AI coding
+- [**Multi-Agent Parallel Workflow**](/blog/tools/multi-agent-parallel) - From coder to conductor
+- [**Vibe-Kanban Introduction**](/blog/tools/vibe-kanban-intro) - Multi-agent orchestration
+- [**iKanban on GitHub**](https://github.com/isomoes/ikanban) - Source code and documentation

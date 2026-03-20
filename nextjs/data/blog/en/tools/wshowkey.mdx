@@ -1,0 +1,124 @@
+---
+title: 'Building wshowkeys_rs: A Modern Rust Take on Keystroke Display'
+date: '2025-06-20'
+tags: ['rust', 'wayland', 'gui', 'evdev', 'hyprland', 'tools']
+summary: 'Join me on a journey building wshowkeys_rs - a sleek, transparent keystroke overlay that makes your keyboard inputs shine! From console MVP to professional Wayland integration, this Rust project packs some serious visual punch.'
+locale: en
+translationKey: tools-wshowkey
+---
+
+<BilibiliVideo bvid="BV1XqKPzNEoc" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+# Building wshowkeys_rs: A Modern Rust Take on Keystroke Display
+
+Ever watched a programming tutorial and wished you could see exactly which keys the presenter was hitting? Or maybe you're creating content yourself and want to show off your lightning-fast keyboard shortcuts? Well, buckle up because I've got just the tool for you! 🚀
+
+Say hello to **wshowkeys_rs** - a **blazingly fast** Rust implementation that displays your keystrokes in real-time with a gorgeous transparent overlay. Think of it as giving your keyboard a voice, but instead of annoying clicking sounds, you get beautiful visual feedback that floats gracefully over your applications.
+
+## The Journey: From Simple Idea to Polished Tool
+
+Building wshowkeys_rs has been quite the adventure! It started as a simple console-based MVP and evolved into a **professional-grade Wayland overlay** with native Hyprland integration. Let me walk you through how this little project grew up to become something pretty special.
+
+### Version 1.1.0: The Humble Beginnings
+
+The journey began with the basics - capturing keystrokes and displaying them in a terminal. Using Rust's powerful `evdev` library, I could tap directly into `/dev/input/event*` devices to catch every single keystroke across multiple keyboards simultaneously. Pretty neat, right?
+
+The architecture was refreshingly simple: an input module grabbing keys, a render module spitting them out to the console, and an app module coordinating everything with async channels. The foundation was solid, even if the output looked like something from the early computing days!
+
+### Version 1.2.0: Going Visual with Wayland Magic
+
+This is where things got **really exciting**! I ditched the console-only approach and embraced the wonderful world of GUI overlays using `eframe/egui`. Suddenly, keystrokes weren't just text in a terminal - they were floating, transparent buttons that danced across your screen.
+
+The real game-changer was integrating with Hyprland's window management system. With some clever window rules, I could create a completely borderless, transparent overlay that wouldn't steal focus or interfere with your workflow. The overlay would appear when you pressed keys and gracefully fade away after 3 seconds of inactivity.
+
+But here's the cool part - instead of showing individual modifier keys, the system got smart about combinations. Press `Ctrl+L` and you'd see exactly that, not separate `Ctrl` and `L` buttons cluttering your screen. It's these little touches that make the difference between a tool that works and a tool that **feels right**.
+
+### Version 1.3.0: Polish and Perfection
+
+The latest version is where wshowkeys_rs really shines. I spent considerable time crafting the visual experience - consistent 32x24px buttons with perfectly optimized spacing and margins. Every function key from F1 to F12, punctuation marks, navigation keys, you name it - they all get the VIP treatment.
+
+The text rendering system became adaptive too. Single characters get one font size, while key combinations like `Ctrl+Shift+V` get another. It sounds simple, but getting the visual balance just right took some serious fine-tuning!
+
+## Under the Hood: Architecture That Just Works
+
+Let me geek out for a moment about how this thing actually works because the architecture is pretty elegant:
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Input Module  │───▶│   App Module     │───▶│  Render Module  │
+│   (evdev)       │    │  (coordination)  │    │ (egui/console)  │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+The **Input Module** is the workhorse, using `evdev` to capture raw keyboard events from multiple devices simultaneously. It's smart about modifier tracking and handles device errors gracefully - because nobody likes crashes when you unplug your keyboard!
+
+The **App Module** acts as the coordinator, managing async channels between input and rendering, handling mode selection (GUI vs console), and keeping track of application state. It's the conductor of our little orchestra.
+
+Finally, the **Render Module** comes in two flavors - the gorgeous GUI overlay for daily use, and a console mode for when you just need something simple and reliable.
+
+## Features That Make You Smile
+
+What makes wshowkeys_rs special isn't just that it works - it's that it works **beautifully**. Here's what you get out of the box:
+
+**Real-time Key Display**: Every keystroke appears instantly with intelligent key combination handling. No more guessing whether that shortcut actually registered!
+
+**Smart Modifier Handling**: The system understands context. Press `Ctrl+Shift+L` and that's exactly what you'll see, not three separate buttons confusing everyone.
+
+**Transparent Overlay**: The window is completely transparent and borderless, floating over your applications like magic. It's there when you need it, invisible when you don't.
+
+**Comprehensive Key Support**: From humble letters and numbers to function keys, punctuation, arrows, and everything in between - if you can press it, wshowkeys_rs can show it.
+
+**Multi-device Magic**: Got multiple keyboards? No problem! The tool captures from all input devices simultaneously, perfect for complex setups or external keyboards.
+
+**Auto-hide Intelligence**: Keys appear on keypress and automatically fade away after 3 seconds. It's like having a thoughtful assistant who knows exactly when to speak up and when to stay quiet.
+
+## Getting Started: It's Easier Than You Think
+
+Setting up wshowkeys_rs is refreshingly straightforward. No complex installation procedures or dependency hell - just good old-fashioned Rust simplicity:
+
+```bash
+cargo build --release
+./target/release/wshowkeys_rs
+```
+
+That's it! The overlay mode runs by default, giving you that beautiful transparent display right out of the box. If you're feeling nostalgic for the console days, just add the `--console` flag and you're back to terminal-based output.
+
+For Hyprland users (and let's be honest, who isn't loving Hyprland these days?), there's a set of window rules that makes the overlay positioning absolutely perfect. Drop them into your config and enjoy keystroke display nirvana.
+
+The best part? **No sudo required!** Modern Linux systems handle input device access gracefully for regular users, so you can run this tool without any scary permission escalations.
+
+## What's Next: The Future Looks Bright
+
+The roadmap for wshowkeys_rs is packed with exciting possibilities. Customizable themes and colors are on the horizon, because who doesn't want their keystrokes to match their desktop aesthetic? Multiple display modes and layouts will give users even more control over how their keys appear.
+
+Configuration file support is coming too, allowing for personalized settings that persist between sessions. And here's something really cool - mouse click display integration, so you can show off those perfectly timed clicks alongside your keyboard wizardry.
+
+Recording and playback features are also in the works. Imagine being able to save keystroke sessions and replay them later for tutorials or demonstrations!
+
+## The Technical Deep Dive
+
+For fellow developers curious about the implementation details, wshowkeys_rs showcases some really interesting Rust patterns. The project structure is clean and modular:
+
+- `main.rs` handles entry point logic and argument parsing
+- `app.rs` coordinates everything with async channels and error handling
+- `input.rs` manages evdev keyboard capture from multiple devices
+- `egui_render.rs` creates the beautiful GUI overlay
+- `render.rs` provides console fallback functionality
+
+The async architecture using tokio ensures non-blocking input handling, while the timeout logic smartly clears all keys 3 seconds after the last keystroke rather than timing out individual keys. It's these thoughtful design choices that make the tool feel natural to use.
+
+Error resilience is built into every layer - device disconnections, permission issues, and rendering problems are all handled gracefully. Because the last thing you want is your keystroke display crashing in the middle of an important presentation!
+
+## Wrapping Up: Why wshowkeys_rs Matters
+
+In a world full of complex tools that do too much, wshowkeys_rs is refreshingly focused. It does one thing - show your keystrokes - and it does it **exceptionally well**. Whether you're creating tutorials, debugging key bindings, or just want to add some visual flair to your desktop, this tool has got you covered.
+
+The journey from console MVP to polished Wayland overlay has been incredibly rewarding. Every version brought new capabilities while maintaining the core simplicity that makes the tool a joy to use. And with Rust's memory safety and performance characteristics, you get a tool that's both reliable and efficient.
+
+So next time you're wondering what keys you just pressed, or you want to show off your keyboard skills to the world, give wshowkeys_rs a spin. Your keystrokes deserve to be seen in all their **transparent, floating glory**!
+
+Check out the project on [GitHub](https://github.com/jiahaoxiang2000/wshowkeys_rs) and let your fingers do the talking! 🎹✨

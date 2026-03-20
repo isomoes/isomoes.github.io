@@ -1,2 +1,4 @@
 nextjs/app/tag-data.json
 temp/*
+/nextjs/public/en/search.json
+/nextjs/public/zh/search.json

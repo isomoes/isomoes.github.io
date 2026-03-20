@@ -29,6 +29,7 @@ import prettier from 'prettier'
 import {
   assertLocalizedBlogSourceFiles,
   assertLocalizedPosts,
+  getPostPathFromFlattenedPath,
   getPostSlugFromFlattenedPath,
 } from './lib/content/posts'
 import { locales } from './lib/i18n/config'
@@ -87,7 +88,7 @@ const computedFields: ComputedFields = {
   },
   path: {
     type: 'string',
-    resolve: (doc) => doc._raw.flattenedPath,
+    resolve: (doc) => getPostPathFromFlattenedPath(doc._raw.flattenedPath),
   },
   filePath: {
     type: 'string',

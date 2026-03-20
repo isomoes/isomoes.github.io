@@ -70,6 +70,11 @@ export function getPostSlugFromFlattenedPath(flattenedPath: string) {
   return parseBlogFlattenedPath(flattenedPath).slug
 }
 
+export function getPostPathFromFlattenedPath(flattenedPath: string) {
+  const { locale, slug } = parseBlogFlattenedPath(flattenedPath)
+  return `${locale}/blog/${slug}`
+}
+
 export function getPathLocale(flattenedPath: string) {
   return parseBlogFlattenedPath(flattenedPath).locale
 }

@@ -4,6 +4,7 @@ import {
   assertLocalizedPosts,
   filterPostsByLocale,
   findTranslatedPost,
+  getPostPathFromFlattenedPath,
   getPathLocale,
   getPostSlugFromFlattenedPath,
 } from '@/lib/content/posts'
@@ -55,6 +56,10 @@ describe('localized posts helpers', () => {
 
   it('extracts the slug from a canonical blog path', () => {
     expect(getPostSlugFromFlattenedPath('blog/en/ide/ai-code')).toBe('ide/ai-code')
+  })
+
+  it('builds a canonical localized blog path for navigation and search', () => {
+    expect(getPostPathFromFlattenedPath('blog/en/ide/great-ai-ide')).toBe('en/blog/ide/great-ai-ide')
   })
 
   it('throws when extracting a slug from a malformed blog path', () => {

@@ -4,20 +4,33 @@ import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Comments from '@/components/Comments'
 import Link from '@/components/Link'
+import LocaleSwitcher from '@/components/LocaleSwitcher'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/ScrollTopAndComment'
+import { type Locale } from '@/lib/i18n/config'
+import { getDateLocale, getDictionary } from '@/lib/i18n/dictionaries'
 
 interface LayoutProps {
   content: CoreContent<Blog>
   children: ReactNode
+  locale: Locale
+  postAlternates?: Partial<Record<Locale, string>>
   next?: { path: string; title: string }
   prev?: { path: string; title: string }
 }
 
-export default function PostLayout({ content, next, prev, children }: LayoutProps) {
+export default function PostLayout({
+  content,
+  locale,
+  postAlternates,
+  next,
+  prev,
+  children,
+}: LayoutProps) {
   const { path, slug, date, title } = content
+  const dictionary = getDictionary(locale)
 
   return (
     <SectionContainer>
@@ -26,11 +39,14 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
         <div>
           <header>
             <div className="space-y-1 border-b border-gray-200 pb-10 text-center dark:border-gray-700">
+              <div className="flex justify-center pb-4">
+                <LocaleSwitcher currentLocale={locale} postAlternates={postAlternates} />
+              </div>
               <dl>
                 <div>
-                  <dt className="sr-only">Published on</dt>
+                  <dt className="sr-only">{dictionary.post.publishedOn}</dt>
                   <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                    <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
+                    <time dateTime={date}>{formatDate(date, getDateLocale(locale))}</time>
                   </dd>
                 </div>
               </dl>
@@ -53,9 +69,9 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
                 {prev && prev.path && (
                   <div className="pt-4 xl:pt-8">
                     <Link
-                      href={`/${prev.path}`}
+                      href={prev.path}
                       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                      aria-label={`Previous post: ${prev.title}`}
+                      aria-label={`${dictionary.post.previousArticle}: ${prev.title}`}
                     >
                       &larr; {prev.title}
                     </Link>
@@ -64,9 +80,9 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
                 {next && next.path && (
                   <div className="pt-4 xl:pt-8">
                     <Link
-                      href={`/${next.path}`}
+                      href={next.path}
                       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                      aria-label={`Next post: ${next.title}`}
+                      aria-label={`${dictionary.post.nextArticle}: ${next.title}`}
                     >
                       {next.title} &rarr;
                     </Link>

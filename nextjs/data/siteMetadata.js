@@ -1,5 +1,7 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
+  locales: ['en', 'zh'],
+  defaultLocale: 'en',
   title: 'Isomoes Blog',
   author: 'Isomoes',
   headerTitle: 'Isomoes',
@@ -14,7 +16,7 @@ const siteMetadata = {
   github: 'https://github.com/isomoes/',
   // x: 'https://twitter.com/x',
   bilibili: 'https://space.bilibili.com/136606644',
-  rss: '/feed.xml',
+  rss: '/en/feed.xml',
   // twitter: 'https://twitter.com/Twitter',
   // facebook: 'https://facebook.com',
   // youtube: 'https://youtube.com',
@@ -88,7 +90,7 @@ const siteMetadata = {
   search: {
     provider: 'kbar', // kbar or algolia
     kbarConfig: {
-      searchDocumentsPath: `${process.env.BASE_PATH || ''}/search.json`, // path to load documents to search
+      searchDocumentsPath: `${process.env.BASE_PATH || ''}/en/search.json`, // path to load documents to search
     },
     // provider: 'algolia',
     // algoliaConfig: {

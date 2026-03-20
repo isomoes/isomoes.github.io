@@ -1,0 +1,539 @@
+---
+title: 'Vibe-Kanban: Orchestrating Multi-Agent AI Coding Workflows'
+date: '2026-01-28'
+tags: ['vibe-kanban', 'multi-agent', 'ai-coding', 'parallel-workflow', 'opencode', 'claude-code', 'productivity', 'task-scheduling']
+summary: 'A comprehensive guide to vibe-kanban, the open-source orchestration platform for managing multiple AI coding agents. Learn how to set up workspaces, configure multi-model profiles with OpenCode and Claude Code, and boost your development productivity.'
+locale: en
+translationKey: tools-vibe-kanban-intro
+---
+
+<BilibiliVideo bvid="BV15X67BGEGr" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## What is Vibe-Kanban?
+
+[**Vibe-Kanban**](https://github.com/BloopAI/vibe-kanban) is an open-source, web-based orchestration platform designed to help developers manage multiple AI coding agents working simultaneously. As AI coding agents increasingly write the world's code, human engineers now spend the majority of their time **planning, reviewing, and orchestrating tasks**. Vibe-Kanban streamlines this entire workflow.
+
+The core value proposition: **Get 10X more out of Claude Code, Gemini CLI, Codex, Amp and other coding agents**.
+
+```bash
+# Quick start
+npx vibe-kanban
+```
+
+That's it. Navigate to the local URL in your browser, complete the setup dialogs, and you're ready to orchestrate AI agents.
+
+## Core Features
+
+### Safe Parallel Execution with Git Worktrees
+
+The killer feature of vibe-kanban is **isolated parallel execution**. Every task runs in its own git worktree, preventing agents from interfering with each other or your main branch.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Main Repository                    │
+├─────────────────┬─────────────────┬─────────────────┤
+│   Worktree 1    │   Worktree 2    │   Worktree 3    │
+│   vk/task-auth  │   vk/task-api   │   vk/task-docs  │
+│   [Agent A]     │   [Agent B]     │   [Agent C]     │
+│   Running...    │   Running...    │   Running...    │
+└─────────────────┴─────────────────┴─────────────────┘
+```
+
+Each agent operates on a separate branch automatically. No conflicts. No interference. Pure parallel productivity.
+
+### Multi-Agent Support
+
+Vibe-kanban works seamlessly with multiple coding agents:
+
+- **Claude Code** - Anthropic's official CLI
+- **OpenCode** - Open-source multi-provider alternative
+- **GitHub Copilot CLI**
+- **Google Gemini CLI**
+- **OpenAI Codex**
+- **Cursor CLI**
+- **Amp**
+
+You can switch between agents or run different agents on different tasks simultaneously.
+
+### Built-in Code Review
+
+Review AI-generated code with syntax-highlighted diffs directly in the interface. Approve, edit, or reject changes before merging - treating AI contributions the same way you'd review human pull requests.
+
+### Visual Task Management
+
+The kanban board provides intuitive task organization:
+
+- Create and assign tasks to AI agents
+- Track task status (pending, running, completed)
+- Manage subtasks for complex work
+- Handle pull requests, rebasing, and merging from the UI
+
+## Simple Workflow Example: Collect System Information
+
+Let's walk through a simple, practical example. We'll use vibe-kanban to collect OS system information by running **three parallel tasks**.
+
+### The Goal
+
+Create a system information collector with three independent scripts:
+
+| Task | Output File | Information |
+|------|-------------|-------------|
+| OS Kernel | `kernel_info.md` | Kernel version, architecture, hostname |
+| GPU Information | `gpu_info.md` | GPU model, driver, VRAM |
+| Software Packages | `packages_info.md` | Installed package count, package manager |
+
+### Step 1: Create the Repository
+
+```bash
+mkdir system-info-collector && cd system-info-collector
+git init
+echo "# System Information Collector" > README.md
+git add . && git commit -m "init"
+```
+
+### Step 2: Start Vibe-Kanban
+
+```bash
+npx vibe-kanban
+```
+
+Open the browser URL and add your repository.
+
+### Step 3: Create Three Parallel Tasks
+
+In vibe-kanban, create three tasks:
+
+**Task 1: Collect OS Kernel Information**
+```
+Create a bash script `collect_kernel.sh` that collects:
+- Kernel version (uname -r)
+- System architecture (uname -m)
+- Hostname
+Save output to `kernel_info.md` in markdown format.
+```
+
+**Task 2: Collect GPU Information**
+```
+Create a bash script `collect_gpu.sh` that collects:
+- GPU model (via lspci or nvidia-smi)
+- Driver version
+- Available VRAM
+Save output to `gpu_info.md` in markdown format.
+```
+
+**Task 3: Collect Software Package Information**
+```
+Create a bash script `collect_packages.sh` that collects:
+- Total installed packages count
+- Package manager type (apt/pacman/dnf)
+- List of explicitly installed packages
+Save output to `packages_info.md` in markdown format.
+```
+
+### Step 4: Run All Tasks in Parallel
+
+Click "Run" on all three tasks. Vibe-kanban creates isolated worktrees:
+
+```
+system-info-collector/
+├── main branch (your working directory)
+│
+└── worktrees/
+    ├── vk/xxxx-collect-os-kernel/     [Agent 1 - Running]
+    ├── vk/yyyy-collect-gpu-info/      [Agent 2 - Running]
+    └── vk/zzzz-collect-packages/      [Agent 3 - Running]
+```
+
+Each agent works independently without conflicts.
+
+### Step 5: Review and Merge
+
+When tasks complete, review each in the Changes Panel:
+
+```bash
+# Example output from Agent 1 (kernel_info.md)
+## Kernel Information
+- **Version**: 6.18.6-arch1-1
+- **Architecture**: x86_64
+- **Hostname**: workstation
+```
+
+Approve and merge each task back to main. The final repository:
+
+```
+system-info-collector/
+├── README.md
+├── collect_kernel.sh
+├── collect_gpu.sh
+├── collect_packages.sh
+├── kernel_info.md
+├── gpu_info.md
+└── packages_info.md
+```
+
+### Why This Works
+
+- **No conflicts**: Each script is in a separate worktree
+- **Parallel execution**: All three agents run simultaneously
+- **Independent review**: Approve each task on its own merits
+- **Simple merge**: Clean git history with separate branches
+
+## Workspaces: The IDE-Like Interface
+
+Vibe-kanban recently introduced **Workspaces** (currently in beta) - a redesigned task execution environment with an IDE-like interface.
+
+### Enabling Workspaces
+
+Navigate to **Settings → Beta Features** and enable Workspaces. You can seamlessly switch between the classic kanban view and the new workspace interface.
+
+### Key Workspace Concepts
+
+**Workspaces**: Your primary working environment for specific tasks. Think of it as a dedicated development environment.
+
+**Repositories**: Multiple git repos can be included in a single workspace. Reference code from one repo while implementing changes in another.
+
+**Sessions**: Individual conversation threads with coding agents. Run multiple sessions within one workspace to work around token limits while maintaining context.
+
+### The Workspace Interface
+
+The workspace provides a four-panel layout:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  Command Bar (Cmd/Ctrl + K)                                │
+├──────────────────────┬─────────────────────────────────────┤
+│                      │                                     │
+│   Chat Panel         │   Changes Panel                     │
+│   (Sessions)         │   (Syntax-highlighted diffs)        │
+│                      │                                     │
+├──────────────────────┼─────────────────────────────────────┤
+│                      │                                     │
+│   Terminal           │   Browser Preview                   │
+│                      │   (Desktop/Mobile viewports)        │
+│                      │                                     │
+└──────────────────────┴─────────────────────────────────────┘
+```
+
+### Chat Panel
+
+The chat panel displays your conversations with AI agents. Key features:
+
+- Multiple concurrent sessions within one workspace
+- Start fresh sessions to work around token limits
+- Maintain workspace context across sessions
+- Switch between different agent profiles mid-conversation
+
+### Changes Panel
+
+Review all code modifications with:
+
+- Syntax-highlighted diffs
+- File-by-file or unified view
+- Inline commenting for agent feedback
+- One-click approval workflow
+
+### Integrated Tools
+
+- **Terminal**: Run commands directly in the workspace
+- **Browser Preview**: Test changes without leaving the interface
+- **Workspace Notes**: Document decisions and context
+
+## Multi-Model Configuration
+
+One of vibe-kanban's strengths is its flexible agent configuration. You can define multiple **profiles** for different models and switch between them based on task requirements.
+
+### Configuration Files Location
+
+Vibe-kanban stores configuration in `~/.local/share/vibe-kanban/`:
+
+```
+~/.local/share/vibe-kanban/
+├── config.json      # Global settings
+└── profiles.json    # Agent profiles
+```
+
+### Global Configuration (config.json)
+
+The `config.json` file controls global behavior:
+
+```json
+{
+  "config_version": "v8",
+  "theme": "SYSTEM",
+  "executor_profile": {
+    "executor": "OPENCODE"
+  },
+  "editor": {
+    "editor_type": "CUSTOM",
+    "custom_command": "/path/to/your/editor"
+  },
+  "github": {
+    "default_pr_base": "main"
+  },
+  "git_branch_prefix": "vk",
+  "beta_workspaces": true,
+  "send_message_shortcut": "ModifierEnter"
+}
+```
+
+Key settings:
+
+- `executor_profile.executor`: Default executor (`OPENCODE` or `CLAUDE_CODE`)
+- `editor.custom_command`: Custom editor command for "Open in Editor"
+- `git_branch_prefix`: Prefix for auto-created branches (default: `vk`)
+- `beta_workspaces`: Enable the new Workspaces feature
+
+### Agent Profiles (profiles.json)
+
+The `profiles.json` file defines multiple model configurations for both Claude Code and OpenCode.
+
+#### OpenCode Profiles
+
+```json
+{
+  "executors": {
+    "OPENCODE": {
+      "DEFAULT": {
+        "OPENCODE": {
+          "model": "minimax-cn/MiniMax-M2.1",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode"
+        }
+      },
+      "SONNET": {
+        "OPENCODE": {
+          "model": "anthropic/claude-sonnet-4-5",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode",
+          "env": {
+            "HTTPS_PROXY": "http://localhost:1080"
+          }
+        }
+      },
+      "OPUS": {
+        "OPENCODE": {
+          "model": "anthropic/claude-opus-4-5",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode",
+          "env": {
+            "HTTPS_PROXY": "http://localhost:1080"
+          }
+        }
+      },
+      "GEMINI": {
+        "OPENCODE": {
+          "model": "google/gemini-3-pro-preview",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode",
+          "env": {
+            "HTTPS_PROXY": "http://localhost:1080"
+          }
+        }
+      },
+      "GLM": {
+        "OPENCODE": {
+          "model": "zhipuai-coding-plan/glm-4.7",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Claude Code Profiles
+
+```json
+{
+  "executors": {
+    "CLAUDE_CODE": {
+      "DEFAULT": {
+        "CLAUDE_CODE": {
+          "model": "sonnet",
+          "dangerously_skip_permissions": true,
+          "base_command_override": "/home/user/.local/bin/claude",
+          "env": {
+            "https_proxy": "http://localhost:1080",
+            "http_proxy": "http://localhost:1080"
+          }
+        }
+      },
+      "OPUS": {
+        "CLAUDE_CODE": {
+          "model": "opus",
+          "dangerously_skip_permissions": true,
+          "base_command_override": "/home/user/.local/bin/claude",
+          "env": {
+            "http_proxy": "http://localhost:1080",
+            "https_proxy": "http://localhost:1080"
+          }
+        }
+      },
+      "GLM": {
+        "CLAUDE_CODE": {
+          "model": "glm-4.7",
+          "dangerously_skip_permissions": true,
+          "base_command_override": "/home/user/.local/bin/claude",
+          "env": {
+            "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+            "ANTHROPIC_AUTH_TOKEN": "your-api-key-here"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Profile Configuration Options
+
+| Option | Description |
+|--------|-------------|
+| `model` | Model identifier (e.g., `anthropic/claude-sonnet-4-5`) |
+| `mode` | OpenCode mode: `build` or `plan` |
+| `auto_approve` | Skip confirmation prompts |
+| `base_command_override` | Custom path to the CLI binary |
+| `env` | Environment variables (proxies, API endpoints) |
+| `dangerously_skip_permissions` | Claude Code: bypass permission checks |
+| `append_prompt` | Additional prompt text appended to all tasks |
+
+### Switching Between Profiles
+
+In the vibe-kanban UI, you can select which profile to use for each task. This allows you to:
+
+- Use **cheaper models** (MiniMax, GLM) for simple tasks
+- Use **powerful models** (Opus, Gemini Pro) for complex reasoning
+- Use **specialized models** for specific domains
+- Apply different **proxy configurations** per model
+
+### Example: Task-Optimized Model Selection
+
+```
+Task: "Fix typo in README"
+→ Profile: DEFAULT (MiniMax-M2.1) - fast and cheap
+
+Task: "Implement OAuth2 authentication flow"
+→ Profile: OPUS (claude-opus-4-5) - complex reasoning needed
+
+Task: "Translate documentation to Chinese"
+→ Profile: GLM (glm-4.7) - strong multilingual support
+```
+
+## Integration with OpenCode and Claude Code
+
+Vibe-kanban orchestrates both **OpenCode** and **Claude Code** as executors. Here's how they complement each other:
+
+### OpenCode Advantages
+
+- **Provider flexibility**: 75+ LLM providers supported
+- **No vendor lock-in**: Switch providers without changing workflow
+- **Cost optimization**: Use cheaper models for simple tasks
+- **Open source**: Community-driven development
+
+For detailed OpenCode setup, see our [OpenCode CLI Guide](/blog/tools/opencode-cli).
+
+### Claude Code Advantages
+
+- **Native Anthropic integration**: First-party support
+- **Subagent architecture**: Built-in specialized agents
+- **MCP server ecosystem**: Extensive tool integrations
+
+For Claude Code configuration, see our [Claude Code Configuration Guide](/blog/tools/claude-code-config).
+
+### Hybrid Workflow
+
+The optimal approach is a **hybrid workflow**:
+
+1. Set `OPENCODE` as the default executor for provider flexibility
+2. Configure Claude Code profiles for tasks requiring native Anthropic features
+3. Use vibe-kanban to switch between executors based on task requirements
+
+## Environment Variables
+
+Vibe-kanban supports several runtime configuration options:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | Auto-assign | Server port |
+| `HOST` | `127.0.0.1` | Backend host |
+| `VK_ALLOWED_ORIGINS` | Not set | CORS origins for reverse proxy |
+| `DISABLE_WORKTREE_CLEANUP` | Not set | Keep worktrees for debugging |
+
+### Remote Deployment
+
+For remote server deployment:
+
+1. Expose the UI via Cloudflare Tunnel or ngrok
+2. Configure SSH in Settings → Editor Integration
+3. Set `VK_ALLOWED_ORIGINS` for your domain
+
+```bash
+VK_ALLOWED_ORIGINS=https://vk.example.com npx vibe-kanban
+```
+
+## Practical Tips
+
+### Task Decomposition
+
+Effective multi-agent workflows require intelligent task decomposition:
+
+- **Independent execution**: Each subtask should complete without blocking others
+- **Clear boundaries**: Define precise scope to avoid conflicts
+- **Appropriate granularity**: Balance parallelization with coordination overhead
+
+### Model Selection Strategy
+
+Match models to task complexity:
+
+| Task Type | Recommended Model |
+|-----------|-------------------|
+| Simple fixes, docs | MiniMax, GLM (fast, cheap) |
+| Standard features | Sonnet, Gemini Pro |
+| Complex architecture | Opus |
+| Multilingual content | GLM-4.7 |
+| Creative solutions | Opus, Gemini |
+
+### Review Workflow
+
+- Don't just approve everything - review AI code like human PRs
+- Use inline comments to guide iterations
+- Set up proper test coverage before merging
+
+## Conclusion
+
+Vibe-kanban transforms how developers work with AI coding agents. Instead of single-threaded interaction with one agent, you orchestrate **multiple agents in parallel**, each working in isolated environments.
+
+The combination of:
+- **Safe parallel execution** via git worktrees
+- **Multi-agent support** across all major coding agents
+- **Flexible model profiles** for cost and capability optimization
+- **IDE-like workspaces** for focused development
+
+...creates a genuinely new paradigm for AI-assisted development.
+
+Start orchestrating your AI coding agents today:
+
+```bash
+npx vibe-kanban
+```
+
+---
+
+## Related Resources
+
+- [**Multi-Agent Parallel Workflow**](/blog/tools/multi-agent-parallel) - First experience report
+- [**OpenCode CLI Guide**](/blog/tools/opencode-cli) - Multi-provider setup
+- [**Claude Code Configuration**](/blog/tools/claude-code-config) - Complete configuration guide
+- [**Vibe-Kanban GitHub**](https://github.com/BloopAI/vibe-kanban) - Source code and issues
+- [**Vibe-Kanban Documentation**](https://vibekanban.com/docs) - Official docs

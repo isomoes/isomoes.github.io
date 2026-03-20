@@ -1,0 +1,40 @@
+---
+title: 'Manager Bot 🐧'
+date: '2025-03-05'
+tags: ['chat', 'bot', 'Tools']
+summary: 'Using QQ manager bot to manager the qq group, something ad advert or LLM chat, etc.'
+locale: en
+translationKey: misc-qq-bot
+---
+
+<BilibiliVideo bvid="BV1539ZYFEsn" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 😭 Background
+
+We manage a group that helps people find information about the postgraduate qualifying examination for Hengyang Normal University. Unfortunately, some users behave like bots, posting excessive advertisements. To address this issue, we needed an automated bot to help manage the group.
+
+---
+
+## 🤖 QQ Bot
+
+Initially, we tried using the official QQ bot, but as personal users, many features were limited for us. We needed to find an alternative bot solution for group management. After some research, we discovered [NapCatQQ](https://github.com/NapNeko/NapCatQQ).
+
+### 🎁 [NapCatQQ](https://github.com/NapNeko/NapCatQQ)
+
+NapCat is a bot framework built with TypeScript that actively calls QQ Node module interfaces through appropriate launchers or frameworks to implement bot functionality.
+
+#### About the "Magic" Version
+
+The NapCat framework accesses QQ interfaces for sending and receiving messages through some clever techniques. To make it user-friendly, NapCat implements the OneBot standard to process HTTP/WebSocket requests according to specifications, which then call the QQ interfaces that NapCat can access.
+
+### 🚀 Program on [ncatbot](https://github.com/liyihao1110/ncatbot)
+
+NcatBot is a Python SDK for NapCat that provides a convenient and easy-to-use Python interface for developing QQ bots. This SDK allows us to create and manage our QQ bot functionality using Python rather than working directly with TypeScript.
+
+## 🥳 Summary
+
+We successfully implemented NapCatQQ to manage our QQ group, and used NcatBot to program the bot's functionality. The solution is easy to use and very powerful, allowing us to automatically manage the group and implement various features like advertisement filtering and LLM chat integration.

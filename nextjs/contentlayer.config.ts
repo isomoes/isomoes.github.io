@@ -1,7 +1,8 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
-import { writeFileSync } from 'fs'
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'fs'
 import readingTime from 'reading-time'
 import { slug } from 'github-slugger'
+import matter from 'gray-matter'
 import path from 'path'
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 // Remark packages
@@ -25,9 +26,45 @@ import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
 import prettier from 'prettier'
+import {
+  assertLocalizedBlogSourceFiles,
+  assertLocalizedPosts,
+  getPostSlugFromFlattenedPath,
+} from './lib/content/posts'
+import { locales } from './lib/i18n/config'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
+
+function collectMdxFiles(directoryPath: string): string[] {
+  return readdirSync(directoryPath, { withFileTypes: true }).flatMap((entry) => {
+    const entryPath = path.join(directoryPath, entry.name)
+
+    if (entry.isDirectory()) {
+      return collectMdxFiles(entryPath)
+    }
+
+    return entry.isFile() && entry.name.endsWith('.mdx') ? [entryPath] : []
+  })
+}
+
+function preflightLocalizedBlogSourceFiles() {
+  const contentRoot = path.join(root, 'data')
+  const blogRoot = path.join(contentRoot, 'blog')
+  const sourceFiles = collectMdxFiles(blogRoot).map((absoluteFilePath) => {
+    const sourceFilePath = path.relative(contentRoot, absoluteFilePath).split(path.sep).join('/')
+
+    return {
+      flattenedPath: sourceFilePath.replace(/\.mdx$/, ''),
+      sourceFilePath,
+      frontmatter: matter(readFileSync(absoluteFilePath, 'utf8')).data,
+    }
+  })
+
+  assertLocalizedBlogSourceFiles(sourceFiles)
+}
+
+preflightLocalizedBlogSourceFiles()
 
 // heroicon mini link
 const icon = fromHtmlIsomorphic(
@@ -46,7 +83,24 @@ const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
     type: 'string',
-    resolve: (doc) => doc._raw.flattenedPath.replace(/^.+?(\/)/, ''),
+    resolve: (doc) => getPostSlugFromFlattenedPath(doc._raw.flattenedPath),
+  },
+  path: {
+    type: 'string',
+    resolve: (doc) => doc._raw.flattenedPath,
+  },
+  filePath: {
+    type: 'string',
+    resolve: (doc) => doc._raw.sourceFilePath,
+  },
+  toc: { type: 'json', resolve: (doc) => extractTocHeadings(doc.body.raw) },
+}
+
+const authorComputedFields: ComputedFields = {
+  readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
+  slug: {
+    type: 'string',
+    resolve: (doc) => doc._raw.flattenedPath.replace(/^authors\//, ''),
   },
   path: {
     type: 'string',
@@ -85,10 +139,20 @@ function createSearchIndex(allBlogs) {
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
   ) {
-    writeFileSync(
-      `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
-    )
+    const searchDocumentFileName = path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)
+
+    rmSync(path.join('public', searchDocumentFileName), { force: true })
+
+    for (const locale of locales) {
+      const localeSearchPath = path.join('public', locale)
+
+      mkdirSync(localeSearchPath, { recursive: true })
+      writeFileSync(
+        path.join(localeSearchPath, searchDocumentFileName),
+        JSON.stringify(allCoreContent(sortPosts(allBlogs.filter((post) => post.locale === locale))))
+      )
+    }
+
     console.log('Local search index generated...')
   }
 }
@@ -109,9 +173,15 @@ export const Blog = defineDocumentType(() => ({
     layout: { type: 'string' },
     bibliography: { type: 'string' },
     canonicalUrl: { type: 'string' },
+    locale: { type: 'string', required: true },
+    translationKey: { type: 'string', required: true },
   },
   computedFields: {
     ...computedFields,
+    url: {
+      type: 'string',
+      resolve: (doc) => `/${doc.locale}/blog/${getPostSlugFromFlattenedPath(doc._raw.flattenedPath)}`,
+    },
     structuredData: {
       type: 'json',
       resolve: (doc) => ({
@@ -122,7 +192,7 @@ export const Blog = defineDocumentType(() => ({
         dateModified: doc.lastmod || doc.date,
         description: doc.summary,
         image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
-        url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
+        url: `${siteMetadata.siteUrl}${doc.url}`,
       }),
     },
   },
@@ -144,7 +214,7 @@ export const Authors = defineDocumentType(() => ({
     github: { type: 'string' },
     layout: { type: 'string' },
   },
-  computedFields,
+  computedFields: authorComputedFields,
 }))
 
 export default makeSource({
@@ -181,6 +251,7 @@ export default makeSource({
   },
   onSuccess: async (importData) => {
     const { allBlogs } = await importData()
+    assertLocalizedPosts(allBlogs)
     createTagCount(allBlogs)
     createSearchIndex(allBlogs)
   },

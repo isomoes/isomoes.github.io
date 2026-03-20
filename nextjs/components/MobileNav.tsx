@@ -4,11 +4,13 @@ import { Dialog, Transition } from '@headlessui/react'
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { Fragment, useState, useEffect, useRef } from 'react'
 import Link from './Link'
-import headerNavLinks from '@/data/headerNavLinks'
+import { getHeaderNavLinks } from '@/data/headerNavLinks'
+import { defaultLocale, type Locale } from '@/lib/i18n/config'
 
-const MobileNav = () => {
+const MobileNav = ({ locale = defaultLocale }: { locale?: Locale }) => {
   const [navShow, setNavShow] = useState(false)
   const navRef = useRef(null)
+  const headerNavLinks = getHeaderNavLinks(locale)
 
   const onToggleNav = () => {
     setNavShow((status) => {

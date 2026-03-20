@@ -1,0 +1,47 @@
+---
+title: 'Neovim Start'
+date: '2025-01-23'
+tags: ['neovim', 'IDE']
+summary: 'We use Neovim as the IDE to achieve no mouse operation.'
+locale: en
+translationKey: misc-neovim-start
+---
+
+<BilibiliVideo bvid="BV1vTfVYQEoy" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+## Motivation
+
+In the past, we used VSCode as our main IDE. It has many functions that help us do different tasks on one platform. However, when we want to perform complex tasks and achieve more automation, the plugins for VSCode do not have a consistent interface. This requires us to frequently check the documentation for each plugin.
+
+Additionally, the UI interaction logic of VSCode is not great for extending to new environments, such as AI code completion. For these reasons, we want to use Neovim as our IDE to achieve no mouse operation and streamline our UI interactions, even extending the plugins.
+
+## LazyVim
+
+LazyVim is a Neovim setup powered by 💤 lazy.nvim to make it easy to customize and extend your config.
+
+### Keymaps
+
+LazyVim uses `which-key.nvim` to help you remember your keymaps. Just press any key like `<space>` and you'll see a popup with all possible keymaps starting with `<space>`.
+Here we can see the defulat keymaps on the [link](http://www.lazyvim.org/keymaps).
+
+Then we can customize the keymaps in the `lua/config/keymaps.lua` file, here override the defulat keymaps. like this:
+
+```lang-lua
+local map = vim.keymap.set
+map('n', '<leader>q', ':q<CR>')
+```
+
+this will map the `<leader>q` to `:q<CR>`, which means quit the current buffer.
+
+### Plugins
+
+LazyVim is based on the `lazy.vim`, which is a plugin manager for Neovim. You can find the plugins in the `lua/plugins` floder.
+on this floder, the `*.lua` will be automatically loaded by the `lazy.vim`.
+LazyVim is package much defualt plugins with us. You can find the plugins on the [link](http://www.lazyvim.org/plugins).
+On the last part, we will to inspect the different plugins and how to use them.
+
+### Customization
+
+On the `lua/config/` the `autocmds.lua` and `options.lua`, help we to override the default settings of the Neovim. also include the `keymaps.lua` to customize the keymaps.

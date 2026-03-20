@@ -8,7 +8,6 @@ export type Dictionary = {
     blog: string
     tags: string
     about: string
-    projects: string
   }
   search: {
     label: string
@@ -38,10 +37,6 @@ export type Dictionary = {
   about: {
     title: string
   }
-  projects: {
-    title: string
-    description: string
-  }
   post: {
     publishedOn: string
     authors: string
@@ -65,7 +60,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       blog: 'Blog',
       tags: 'Tags',
       about: 'About',
-      projects: 'Projects',
     },
     search: {
       label: 'Search',
@@ -95,10 +89,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
     about: {
       title: 'About',
     },
-    projects: {
-      title: 'Projects',
-      description: 'Selected things I am building and exploring.',
-    },
     post: {
       publishedOn: 'Published on',
       authors: 'Authors',
@@ -120,7 +110,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
       blog: '博客',
       tags: '标签',
       about: '关于',
-      projects: '项目',
     },
     search: {
       label: '搜索',
@@ -149,10 +138,6 @@ export const dictionaries: Record<Locale, Dictionary> = {
     },
     about: {
       title: '关于',
-    },
-    projects: {
-      title: '项目',
-      description: '一些我正在构建和探索的内容。',
     },
     post: {
       publishedOn: '发布时间',

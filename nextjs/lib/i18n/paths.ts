@@ -1,6 +1,6 @@
 import { defaultLocale, type Locale, locales } from './config'
 
-const LEGACY_PUBLIC_PREFIXES = ['/about', '/blog', '/projects', '/tags'] as const
+const LEGACY_PUBLIC_PREFIXES = ['/about', '/blog', '/tags'] as const
 
 function getLocalePrefixPattern() {
   return new RegExp(

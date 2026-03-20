@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
 
   const routes = locales.flatMap((locale) =>
-    ['', 'blog', 'projects', 'tags'].map((route) => ({
+    ['', 'blog', 'tags'].map((route) => ({
       url: route ? `${siteUrl}/${locale}/${route}` : `${siteUrl}/${locale}`,
       lastModified: new Date().toISOString().split('T')[0],
     }))

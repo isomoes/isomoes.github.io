@@ -79,11 +79,16 @@ describe('getLegacyRedirectTarget', () => {
     expect(getLegacyRedirectTarget('/blog/page/2')).toBe('/en/blog/page/2')
   })
 
-  it('maps legacy public pages to english localized pages', async () => {
+  it('maps supported legacy public pages to english localized pages', async () => {
     const { getLegacyRedirectTarget } = await importPathsModule()
 
-    expect(getLegacyRedirectTarget('/projects')).toBe('/en/projects')
     expect(getLegacyRedirectTarget('/about')).toBe('/en/about')
+  })
+
+  it('returns null for removed legacy projects page', async () => {
+    const { getLegacyRedirectTarget } = await importPathsModule()
+
+    expect(getLegacyRedirectTarget('/projects')).toBeNull()
   })
 
   it.each(['/en/blog/ide/ai-code', '/zh/blog/ide/ai-code'])(

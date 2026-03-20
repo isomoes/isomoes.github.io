@@ -4,7 +4,6 @@ import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 import Comments from '@/components/Comments'
 import Link from '@/components/Link'
-import LocaleSwitcher from '@/components/LocaleSwitcher'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import siteMetadata from '@/data/siteMetadata'
@@ -16,19 +15,11 @@ interface LayoutProps {
   content: CoreContent<Blog>
   children: ReactNode
   locale: Locale
-  postAlternates?: Partial<Record<Locale, string>>
   next?: { path: string; title: string }
   prev?: { path: string; title: string }
 }
 
-export default function PostLayout({
-  content,
-  locale,
-  postAlternates,
-  next,
-  prev,
-  children,
-}: LayoutProps) {
+export default function PostLayout({ content, locale, next, prev, children }: LayoutProps) {
   const { path, slug, date, title } = content
   const dictionary = getDictionary(locale)
 
@@ -39,9 +30,6 @@ export default function PostLayout({
         <div>
           <header>
             <div className="space-y-1 border-b border-gray-200 pb-10 text-center dark:border-gray-700">
-              <div className="flex justify-center pb-4">
-                <LocaleSwitcher currentLocale={locale} postAlternates={postAlternates} />
-              </div>
               <dl>
                 <div>
                   <dt className="sr-only">{dictionary.post.publishedOn}</dt>

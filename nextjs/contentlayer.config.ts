@@ -157,6 +157,40 @@ function createSearchIndex(allBlogs) {
   }
 }
 
+type ImportedBlogDocument = {
+  _raw: {
+    flattenedPath: string
+  }
+  locale: string
+  translationKey: string
+  tags?: string[]
+  draft?: boolean
+}
+
+function getImportedBlogs(importedData: unknown) {
+  if (
+    importedData &&
+    typeof importedData === 'object' &&
+    'allBlogs' in importedData &&
+    Array.isArray((importedData as { allBlogs: unknown }).allBlogs)
+  ) {
+    return (importedData as { allBlogs: ImportedBlogDocument[] }).allBlogs
+  }
+
+  if (
+    importedData &&
+    typeof importedData === 'object' &&
+    'allDocuments' in importedData &&
+    Array.isArray((importedData as { allDocuments: unknown[] }).allDocuments)
+  ) {
+    return (importedData as { allDocuments: Array<ImportedBlogDocument & { type?: string }> }).allDocuments.filter(
+      (document) => document.type === 'Blog'
+    )
+  }
+
+  throw new TypeError('Unable to read blog documents from Contentlayer importData() result')
+}
+
 export const Blog = defineDocumentType(() => ({
   name: 'Blog',
   filePathPattern: 'blog/**/*.mdx',
@@ -250,7 +284,8 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs } = await importData()
+    const importedData = await importData()
+    const allBlogs = getImportedBlogs(importedData)
     assertLocalizedPosts(allBlogs)
     createTagCount(allBlogs)
     createSearchIndex(allBlogs)

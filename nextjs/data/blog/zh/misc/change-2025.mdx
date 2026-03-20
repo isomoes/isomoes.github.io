@@ -1,0 +1,160 @@
+---
+title: '我在 2025 年的三次重大变化：转变之年'
+date: '2025-12-31'
+tags: ['life', 'reflection', '2025', 'summary', 'linux', 'ai', 'philosophy']
+summary: '回顾 2025 年的三次关键转变：拥抱 Linux 与“少即是多”的哲学、将 AI-LLM 工作流从 VSCode+Copilot 演进到 NVIM+OpenCode，以及逐渐意识到“coding is everything, everything is coding”。'
+locale: zh
+translationKey: misc-change-2025
+---
+
+<BilibiliVideo bvid="BV14diTBRENi" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+2025 年是一个深刻转变的年份——变化的不只是我使用的工具，更是我理解计算、效率，甚至整个世界的方式。有三件大事重塑了我的视角：进入 Linux 的旅程、AI 辅助开发工作流的演化，以及关于编码本质的一次哲学觉醒。这三种变化彼此衔接，最终形成了一套连贯的世界观，并持续影响着我今天面对技术与生活的方式。
+
+## Linux 之旅：发现“少即是多” 🐧
+
+### 从 Windows 到 Arch Linux
+
+转变始于 2025 年 5 月，当时我决定把 [Arch Linux](/zh/blog/misc/arch-linux) 作为自己的日常主力系统。最初只是出于对“一个轻量、灵活的 Linux 发行版”的好奇，后来却逐步演变成我与计算机关系的一次彻底重构。
+
+最开始的动力其实非常实际：Windows 让我越来越觉得不透明。后台服务不知为何在运行，索引过程神秘发生，默认进程也在消耗资源，却不知道理由。正如我在[Arch Linux 之旅](/zh/blog/misc/arch-linux-may-july-journey)中记录的那样，那个一直盘旋在我脑中的问题非常简单：_“当我没在看时，我的电脑到底在做什么？”_
+
+Arch Linux 用一种近乎激进的透明性回答了这个问题。系统里运行的每个服务，都是因为我明确安装并配置了它；每个配置文件都可读、可改、可纳入版本控制。系统只做我让它做的事——不多也不少。
+
+### 操作系统的哲学
+
+沿着这段旅程，我逐渐理解到：操作系统并不只是技术方案，它们本身也代表着不同的人机交互哲学：
+
+**Windows** 代表的是“让大众都能用起来”——它在向后兼容性上是一项惊人的工程奇迹，但也用透明性换来了便利。很多我依赖的开源工具在这个环境中并不顺手，而 WSL 虽然有帮助，却意味着同时运行两套不同逻辑系统。
+
+**macOS** 体现的是“我们知道什么最适合你”——优雅、精致，并且在某些场景下真的非常好用。但当我想尝试一种更适合自己的路径时，macOS 往往不会给我这个空间。
+
+**Linux（Arch）** 说的是：“你可以用自己的方式把它做到最好。” 是的，它需要时间和精力——要不断尝试软件、写自定义逻辑、持续迭代。但当一切最终完全按照你的想法运行起来时，那种感觉更像是你 _创造_ 了某样东西，而不只是 _使用_ 了现成东西。
+
+### 终端优先的工作流
+
+最重要的转变之一，是我从 GUI 应用转向终端工具。[我的 dotfiles 仓库](https://github.com/jiahaoxiang2000/arch-config) 很好地说明了这条路径：Fish shell 负责日常操作，[River 窗口管理器](/zh/blog/arch/window-managers) 提供原生 Wayland 平铺体验，Qutebrowser 用来进行键盘驱动的网页浏览，而 Neovim 负责一切与文本相关的工作。
+
+这并不是为了追求形式上的极简，而是为了实现 **统一的逻辑控制**。通过在整个计算环境中实施 VIM 键位映射，我建立起一套从窗口管理到编码再到浏览网页都统一的肌肉记忆。一套逻辑，控制一切：
+
+- **第一层**：使用 `h/j/k/l` 导航的 River 窗口管理器
+- **第二层**：用模态编辑处理所有文本的 Neovim
+- **第三层**：具备 VIM 风格链接提示与标签管理的 Qutebrowser
+
+结果是什么？是大幅提升的效率，以及一个真正贴合我思维方式和工作流的计算环境。“少即是多”不再只是口号，而变成了实际生活中的体验——更少应用、更少上下文切换、更少干扰，换来更多对真实工作的专注。
+
+## AI-LLM 的演化：从 Copilot 到 OpenCode 🤖
+
+### 起点：VSCode + GitHub Copilot
+
+我的 AI 辅助编码之旅始于 VSCode 中的 [GitHub Copilot](/zh/blog/ide/ai-code)。它在 2021 年以公开测试版推出，最初更像一个“聪明的代码片段生成器”。但到了 2023-2024 年，随着 GPT-4 等模型和 reasoning 模块的出现，AI 理解与生成代码的能力有了明显提升。
+
+[VSCode + Neovim + Copilot 组合](/zh/blog/ide/vscode-neovim) 是我第一次真正意义上的 AI 增强开发环境。它结合了 VSCode 的生态、Neovim 的模态编辑，以及 Copilot 的智能建议。这个配置确实有效，但它也只是一个开始。
+
+### Claude Code 革命
+
+真正的转变出现在 [Claude Code](/zh/blog/tools/claude-code-config) 上。和 Copilot 的行内建议不同，Claude Code 引入了 **agentic workflows**——自主型 AI 助手，它们可以分析代码库、执行多步骤任务，并通过 Model Context Protocol（MCP）与外部工具集成。
+
+我围绕它搭了一整套配置生态，包括多个专用 agent：
+- **Paper-Research Agent**：系统化寻找学术论文，并做质量验证
+- **Blog-Writing Agent**：把草稿打磨成可发布的博客文章
+- **Commit-Push Agent**：负责完整 Git 工作流与标准化提交信息
+- **Weekly-Report-Writing Agent**：用更正式的学术化语言生成周报
+
+[all-in-mcp server](https://github.com/jiahaoxiang2000/all-in-mcp) 进一步把 Claude Code 的能力扩展到了 IACR、Google Scholar 等学术数据库，让研究流程更加顺畅。
+
+但 Claude Code 也有一个根本性问题：**vendor lock-in**。如果 Anthropic 改了价格或政策，我的整套工作流都会受到影响。
+
+### OpenCode 方案：提供商独立性
+
+这个问题最终由 [OpenCode](/zh/blog/tools/opencode-cli) 解决——它是一个开源 AI 编码 CLI，支持 **75+ LLM providers**。迁移过程非常直接：目录结构相似，agent/command 语法兼容，MCP 集成方式也基本一致。
+
+现在，我可以根据任务自由切换提供商：
+- **DeepSeek** 负责低成本的日常编码（比 Claude 便宜 68 倍）
+- **KIMI-K2** 处理需要复杂推理和长上下文的任务
+- **Qwen-Code** 通过 Cerebras 提供快速重构能力
+- **GLM-4.6** 适合多语言和编码场景
+
+这种多提供商方案让我可以在每一步都针对 **成本**、**速度** 和 **能力** 做最优平衡——没有供应商锁定，也没有单点失败问题。
+
+### 当前状态：NVIM + OpenCode
+
+从 VSCode+Copilot → Claude Code → NVIM+OpenCode 的演化，其实一直朝着同一个方向发展：**更简单，也更可控**。每一次过渡都在减少依赖，同时提升能力：
+
+1. **VSCode+Copilot**：带 AI 建议的完整 IDE（重量级、且供应商锁定）
+2. **Claude Code**：结合 MCP 的 agent 工作流（能力强，但依赖 Anthropic）
+3. **NVIM+OpenCode**：原生终端、提供商无关、完全可定制
+
+[CodeCompanion 插件](/zh/blog/misc/neovim-ai) 让 Neovim 本身具备聊天缓冲区、内联辅助和 agent 工作流等 AI 能力。再结合 OpenCode 处理复杂任务，我就拥有了一套完全运行在终端中的 AI 增强开发环境。
+
+### GitHub 作为通用上下文层
+
+在这段演化中，我还得到一个非常关键的认识：**GitHub 就是通用上下文层**。通过用 Git 追踪所有工作——代码、配置、笔记，甚至这个博客——我实际上为 AI-LLM agent 建立了一种统一输入格式。
+
+GitHub 的 commit-diff URL 变成了一个标准化上下文，任何 AI 工具都能理解。不管我使用的是 Claude Code、OpenCode，还是未来某个现在还不存在的工具，这份上下文都保持一致并且可迁移。这正体现了“少即是多”的哲学：一个版本控制系统，一种上下文格式，却能兼容无限多的 AI 工具。
+
+## Coding is Everything, Everything is Coding 💻
+
+### 第一层含义：Coding 作为世界描述
+
+“coding is everything” 这句话，表达的是我对“用规则和逻辑描述世界”这件事的热爱。代码意味着 **秩序** 和 **可预测性**——它是一种形式化语言，用来表达事物如何运作、应该如何运作。
+
+当我给 River 窗口管理器写配置文件时，我并不只是在设置软件，而是在把我的偏好、工作流和心智模型编码成一种精确、可执行的形式。当我为 Claude Code 定义一个 agent，本质上是在形式化地表达：一个任务应该如何被处理。
+
+这会把 coding 从一种技术技能，转变成一种 **思考方式**。每个系统、每个流程、每套工作流，都可以被表达成代码——显式、可复现、可共享。
+
+### 第二层含义：一切皆可模拟
+
+“everything is coding” 更进一步：世界上的每个系统，都可以通过代码来理解、模拟或解释。这不只是比喻，而是一种看待复杂性的实际方法。
+
+在 2025 年，我开始学习 **抽象代数**，而这极大增强了我的抽象思维能力。抽象代数教会你去看见那些表面不同的结构之间的共同模式——群、环、域——并意识到同样的底层逻辑可以作用于许多不同现象。
+
+这种数学训练进一步强化了我的信念：代码是一种理解现实的通用语言。物理系统遵循微分方程（代码），生物过程遵循遗传算法（代码），社会系统遵循博弈规则（代码），甚至人类思维也可以被视为信息处理（代码）。
+
+### 综合：通过抽象建立秩序
+
+2025 年的三次变化——Linux、AI 工具，以及这次哲学上的觉醒——共同构成了一个统一整体：
+
+**Linux** 教会我，计算系统应该是透明、可控、而且极简的。每个组件都应有明确作用，而我也应理解它如何工作。
+
+**AI-LLM 的演化** 告诉我，工具应该与提供商解耦、上下文可迁移，并能持续演进。最好的工作流，是一种能拥抱新能力，却不丢失已有知识积累的工作流。
+
+**“Coding is everything”** 提供了哲学基础：世界可以通过形式系统被理解，而编码这件事，本质上就是理解并创造秩序。
+
+把这三者合起来，它们指向一种统一的方法：**用简单、透明的工具去构建对复杂系统的形式化描述，再借助 AI 放大人的理解力与行动能力。**
+
+---
+
+## 展望未来：2026 以及更远 🚀
+
+随着 2025 年结束，我也对这些发展方向会把我带向哪里充满期待：
+
+- **AI 工具演化**：继续观察多智能体系统和推理模型如何发展
+- **数学基础**：继续学习抽象代数，并进一步探索范畴论
+- **知识系统**：建立能与 AI 工作流集成的个人知识库
+
+这些变化背后的共同主线是什么？就是 **在保持控制力的同时提升抽象层次**。每一层抽象都应该让事情更简单，而不是更复杂；每一个新工具都应该减少依赖，而不是制造依赖；每一个哲学洞见都应该让思考更清晰，而不是更模糊。
+
+2025 年确实是充满转变的一年。希望 2026 年带来更多成长、更多学习，也带来更多新的冒险！🎉
+
+---
+
+## 相关文章 📚
+
+**Linux Journey**:
+- [Arch Linux Setup Guide](/zh/blog/misc/arch-linux)
+- [My Arch Linux Journey: May to July 2025](/zh/blog/misc/arch-linux-may-july-journey)
+- [My Arch Linux Dotfiles](/zh/blog/misc/arch-linux-dotfiles)
+- [Complete Guide to Window Managers](/zh/blog/arch/window-managers)
+
+**AI-LLM Evolution**:
+- [AI Coding with DeepSeek](/zh/blog/ide/ai-code)
+- [VSCode Plus Neovim: The Ultimate Editor Setup](/zh/blog/ide/vscode-neovim)
+- [Mastering Claude Code Configuration](/zh/blog/tools/claude-code-config)
+- [OpenCode: The Open Alternative](/zh/blog/tools/opencode-cli)
+- [DeepSeek Meets Claude Code](/zh/blog/tools/deepseek-claude-code)
+- [Neovim Meeting AI (CodeCompanion)](/zh/blog/misc/neovim-ai)

@@ -1,0 +1,203 @@
+---
+title: 'Markdown 指南'
+date: '2019-10-11'
+tags: ['github', 'guide']
+draft: false
+summary: '满足各种博客写作需求的 Markdown 速查表——标题、列表、图片、表格等一应俱全！一份基于 GitHub Flavored Markdown 的图文指南。'
+locale: zh
+translationKey: misc-github-markdown-guide
+---
+
+# 介绍
+
+Markdown 和 Mdx 的解析由 `unified` 以及其他 remark、rehype 包提供支持。`next-mdx-remote` 让我们可以用更灵活的方式解析 `.mdx` 和 `.md` 文件，而无需修改 webpack。
+
+这里使用的是 GitHub flavored markdown。`mdx-prism` 为代码块提供语法高亮能力。下面展示一下整体效果。
+
+下面这份 markdown 速查表改编自：https://guides.github.com/features/mastering-markdown/
+
+# 什么是 Markdown？
+
+Markdown 是一种在网页上排版文本的方式。你可以控制文档的显示效果，例如把文字设为粗体或斜体、插入图片、创建列表等等。大多数时候，Markdown 就是普通文本里加入一些非字母字符，比如 `#` 或 `*`。
+
+# 语法指南
+
+下面是一个 Markdown 语法概览，你可以在 GitHub.com 或自己的文本文件中使用这些写法。
+
+## 标题
+
+```
+# This is a h1 tag
+
+## This is a h2 tag
+
+#### This is a h4 tag
+```
+
+# 这是一个 h1 标题
+
+## 这是一个 h2 标题
+
+#### 这是一个 h4 标题
+
+## 强调
+
+```
+_This text will be italic_
+
+**This text will be bold**
+
+_You **can** combine them_
+```
+
+_这段文字会变成斜体_
+
+**这段文字会变成粗体**
+
+_你**也可以**把它们组合起来_
+
+## 列表
+
+### 无序列表
+
+```
+- Item 1
+- Item 2
+  - Item 2a
+  - Item 2b
+```
+
+- 项目 1
+- 项目 2
+  - 项目 2a
+  - 项目 2b
+
+### 有序列表
+
+```
+1. Item 1
+1. Item 2
+1. Item 3
+   1. Item 3a
+   1. Item 3b
+```
+
+1. 项目 1
+1. 项目 2
+1. 项目 3
+   1. 项目 3a
+   1. 项目 3b
+
+## 图片
+
+```
+![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png)
+Format: ![Alt Text](url)
+
+![blog image](/static/images/ocean.jpeg)
+```
+
+![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png)
+![blog image](/static/images/ocean.jpeg)
+
+## 链接
+
+```
+http://github.com - automatic!
+[GitHub](http://github.com)
+```
+
+http://github.com - automatic!
+[GitHub](http://github.com)
+
+## 引用块
+
+```
+As Kanye West said:
+
+> We're living the future so
+> the present is our past.
+```
+
+正如 Kanye West 所说：
+
+> 我们活在未来之中，
+> 所以现在已经成了过去。
+
+## 行内代码
+
+```
+I think you should use an
+`<addr>` element here instead.
+```
+
+我觉得你这里应该改用
+`<addr>` 元素。
+
+## 语法高亮
+
+下面是一个如何在 [GitHub Flavored Markdown](https://help.github.com/articles/basic-writing-and-formatting-syntax/) 中使用语法高亮的例子：
+
+````
+```js:fancyAlert.js
+function fancyAlert(arg) {
+  if (arg) {
+    $.facebox({ div: '#foo' })
+  }
+}
+```
+````
+
+下面是它的显示效果——拥有漂亮配色和代码标题样式！
+
+```js:fancyAlert.js
+function fancyAlert(arg) {
+  if (arg) {
+    $.facebox({ div: '#foo' })
+  }
+}
+```
+
+## 脚注
+
+```
+Here is a simple footnote[^1]. With some additional text after it.
+
+[^1]: My reference.
+```
+
+这里有一个简单脚注[^1]，后面还可以继续跟其他文字。
+
+[^1]: 这是我的参考说明。
+
+## 任务列表
+
+```
+- [x] list syntax required (any unordered or ordered list supported)
+- [x] this is a complete item
+- [ ] this is an incomplete item
+```
+
+- [x] 需要列表语法（支持无序列表和有序列表）
+- [x] 这是一个已完成项
+- [ ] 这是一个未完成项
+
+## 表格
+
+你可以通过组织一组词语，并用连字符 `-`（用于第一行下方）和竖线 `|`（用于分隔列）来创建表格：
+
+```
+| First Header                | Second Header                |
+| --------------------------- | ---------------------------- |
+| Content from cell 1         | Content from cell 2          |
+| Content in the first column | Content in the second column |
+```
+
+| 第一列表头 | 第二列表头 |
+| --------------------------- | ---------------------------- |
+| 单元格 1 的内容 | 单元格 2 的内容 |
+| 第一列中的内容 | 第二列中的内容 |
+
+## 删除线
+
+任何被两个波浪线包裹的内容（例如 `~~this~~`）都会显示为 ~~删除线~~。

@@ -1,0 +1,371 @@
+---
+title: '找到理想平衡：我迁移到 Sway 窗口管理器的过程'
+date: '2025-11-19'
+tags:
+  [
+    'linux',
+    'arch linux',
+    'window manager',
+    'sway',
+    'wayland',
+    'tiling',
+    'screen sharing',
+    'webrtc',
+    'i3',
+    'productivity',
+  ]
+summary: '从 River 和 Niri 到 Sway：记录我如何找到这个兼容 i3 的 Wayland 合成器，它终于解决了屏幕共享、多 DPI 显示以及通过 tabbed/stacked 布局组织工作区的问题。'
+locale: zh
+translationKey: arch-sway-window-manager
+---
+
+<BilibiliVideo bvid="BV1kgyEBeEgE" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 引言
+
+在先后尝试了 River 和 Niri 两个窗口管理器之后，我遇到了一个看起来很普通、但实际上非常关键的问题：**屏幕共享**。当你需要通过视频通话与别人协作时，能否稳定共享屏幕就是一个无法妥协的要求。正是这个看似简单的需求，让我开始在不同窗口管理器之间来回折腾，最终落脚到 Sway - 一个把现代显示协议支持与久经考验的 i3 工作流结合在一起的 Wayland 合成器。
+
+这篇文章记录了我从 River，到 Niri，中途短暂回到 X11+i3，最后定居 Sway 的整个过程，以及它为什么最终成了最符合我需求的窗口管理器。
+
+## 屏幕共享问题
+
+推动我改变的原因很直接：我需要使用 WeMeet（腾讯会议）进行远程协作。Wayland 虽然在安全性和性能上更有优势，但很多应用对屏幕共享的支持仍然不够稳定。我曾尝试在 River 上让 WeMeet 的共享功能跑起来，但最终失败，于是只好开始寻找替代方案。
+
+**回到 X11 的插曲**：在沮丧之下，我一度切回运行在 X11 上的 i3。结果屏幕共享立刻就能用了 - X11 的生态已经足够成熟，像 WeMeet 这样的应用获取屏幕内容时几乎没障碍。问题解决了吗？
+
+还没有。我的主显示器是 4K（3840x2160），副屏是 2K（2560x1440），当它们同时运行在 X11 下时，另一个问题马上暴露出来：**按显示器单独设置 DPI 缩放**。X11 在混合 DPI 场景下表现很差，你通常只能在下面几种糟糕结果里选一个：
+- 一个屏幕文字清晰，另一个屏幕文字小到难受
+- 一个屏幕阅读舒适，另一个屏幕文字发糊
+- 使用 `xrandr` 做复杂缩放补丁，但始终达不到理想效果
+
+Wayland 原生支持按显示器单独缩放，这让混合 DPI 配置几乎变得毫不费力。为了屏幕共享而退回 X11 的限制，我实在无法接受。
+
+## 发现 i3 在布局上的灵活性
+
+在 X11 上使用 i3 的过程中，我意外发现了一个功能，它顺手解决了我另一个长期存在的痛点：**tabbed 和 stacked 布局**。
+
+### 再谈工作区耗尽问题
+
+在我的 [Niri 博客文章](/zh/blog/arch/niri-window-manager) 中，我提到过自己在管理多个项目时撞上了 River 的 9-tag 上限。但 i3（以及因此兼容它的 Sway）提供了和 Niri 无限横向画布完全不同的解法：**容器布局**，也就是在单个工作区内组织多个窗口。
+
+**Tabbed 布局**：窗口会像浏览器标签页一样显示成多个标签，非常适合把相关应用归为一组：
+- 同一个项目的多个终端会话
+- 用于调研的多个浏览器窗口
+- 相关文档与代码编辑器
+
+**Stacked 布局**：窗口会垂直堆叠显示标题栏，像一叠卡片，特别适合：
+- 同时监控多个日志文件
+- 对比不同文档
+- 管理多个聊天 / 通信窗口
+
+这个发现让我眼前一亮。原来我不需要为每个上下文都分配独立工作区，而是可以这样用：
+- **工作区 1**：开发（tabbed 终端 + stacked 参考文档）
+- **工作区 2**：沟通（tabbed 聊天应用）
+- **工作区 3**：浏览器（stacked 调研窗口）
+- **工作区 4**：监控（tabbed 系统工具）
+
+突然之间，9 个工作区似乎也完全够用了。所谓“标签耗尽”问题，本质上并不是工作区数量太少，而是我之前没有充分利用容器布局在单个工作区内部做组织。
+
+## 为什么没有继续用 Niri？
+
+Niri 的无限横向画布设计，确实既新颖又优雅。那我为什么还是离开了它？
+
+**应用导航上的挑战**：当你已经在脑中建立好窗口顺序地图时，Niri 的滚动式范式体验确实很好；但一旦你要快速找到某个具体应用，就会变得比较折磨。由于没有 tags 或 workspaces 这种清晰的组织边界，我经常会：
+- 来回滚动，只为找到那个正确的窗口
+- 逐渐搞不清哪些应用还开着
+- 怀念那种“工作区 2 = 通信应用”的肌肉记忆
+
+**学习成本 vs 立即产出**：我花了整整一天尝试适应 Niri 的工作流，但始终没建立起像工作区系统那样自然的导航习惯。这并不是在批评 Niri，而是承认一个事实：有时候，肌肉记忆和已经形成的工作方式真的很重要。
+
+横向滚动这个概念对于某些工作流依旧非常出色，但对于我这种多项目并行、频繁切换上下文的工作方式来说，离散工作区加丰富容器布局的模式明显更直觉。
+
+## Sway 登场：i3 + Wayland
+
+**Sway** 可以看作运行在 Wayland 上的 i3 替代品。这种组合带来了：
+
+- **i3 兼容性**：配置与快捷键几乎完全一致
+- **Wayland 优势**：更好的安全性、真正的按显示器缩放、现代显示协议支持
+- **成熟生态**：承接多年 i3 发展成果，文档丰富，社区庞大
+- **屏幕共享**：可通过 xdg-desktop-portal 与现代应用正常协作
+
+### 两全其美
+
+Sway 几乎把我需要的一切都补齐了：
+
+1. **Wayland 上可用的屏幕共享**：通过正确集成 xdg-desktop-portal，应用可以可靠共享屏幕
+2. **多 DPI 支持**：原生按显示器缩放（我的 4K 用 2.4，2K 用 1.6）
+3. **Tabbed / Stacked 布局**：完整继承 i3 的容器布局系统
+4. **工作区组织能力**：清晰的编号工作区 + 符合肌肉记忆的快捷键
+5. **Wayland 性能体验**：无撕裂图形、更好的触控手势支持
+
+## 构建一个本地屏幕共享方案
+
+虽然 Sway 自带的屏幕共享对很多应用已经足够好用，但 WeMeet 对 Wayland 的支持仍然不理想。与其因为一个应用妥协窗口管理器，我选择自己做一个方案：**[share-screen](https://github.com/jiahaoxiang2000/share-screen)** - 一个基于 WebRTC 的本地屏幕共享应用。
+
+### 为什么要自己做？
+
+**面向局域网场景**：大多数屏幕共享都发生在局域网内（家庭办公室、会议室）。既然如此，为什么还要绕到外部服务器？
+
+**独立于视频会议软件**：不管具体哪个会议软件对 Wayland 支持得好不好，这个方案都能用。
+
+**完全掌控功能**：可以按自己需要加入音频共享、全屏模式、基于房间的访问控制等功能。
+
+### 技术概览
+
+这个屏幕共享应用主要使用：
+
+- **WebRTC**：浏览器原生的屏幕采集与点对点流媒体能力
+- **WebSocket Signaling**：用轻量服务器协调连接建立
+- **房间系统**：通过简单房间码把主播与观众连接起来
+
+**架构**：
+```
+Broadcaster's Browser (Sway + Wayland)
+    ↓ getDisplayMedia() captures screen
+    ↓ WebRTC peer connection
+    ↓ Via WebSocket signaling server (port 3001)
+    ↓ Direct peer-to-peer connection established
+    ↓
+Viewer's Browser (any device on local network)
+```
+
+**关键功能**：
+- 屏幕 + 音频共享
+- 一对多广播
+- 低延迟（仅限局域网）
+- 简单房间码
+- 观众端全屏模式
+
+这个方案让我能够继续使用 Wayland 上的 Sway，同时仍然保有稳定可用的协作型屏幕共享体验。只要设备在同一个局域网里，同事就能通过笔记本、平板甚至手机观看共享画面。
+
+## Sway 配置亮点
+
+我的完整 Sway 配置已经放在 [arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config/blob/master/sway/config) 中。下面是其中最关键的部分：
+
+### 按显示器缩放的多显示器配置
+
+```bash
+# DP-1: 4K primary display, scaled for comfortable readability
+output DP-1 mode 3840x2160@60Hz pos 0 0 scale 2.4
+
+# HDMI-A-1: 2K secondary in portrait, perfect for reading docs/code
+output HDMI-A-1 mode 2560x1440@60Hz pos 1600 0 scale 1.6 transform 90
+```
+
+纵向副屏在有效分辨率 900×1600 下，非常适合：
+- 阅读长文档
+- 查看具有长垂直上下文的代码
+- 监控聊天应用
+- 跟踪社交媒体信息流
+
+### 容器布局快捷键
+
+这是我真正改变工作区组织方式的一组快捷键：
+
+```bash
+# Switch between layouts quickly
+bindsym $mod+s layout stacking  # Stack windows vertically
+bindsym $mod+w layout tabbed    # Tab windows horizontally
+bindsym $mod+e layout toggle split  # Return to tiling
+```
+
+**真实使用示例**：
+- 正在做一个项目，同时开了 3 个终端、2 个浏览器窗口和 Slack
+- `$mod+w` → 把多个终端合成 tabbed（在工作区内快速切换）
+- `$mod+s` → 把多个浏览器窗口改成 stacked（能看到所有标题，点一下就聚焦）
+- `$mod+e` → 让 Slack 以平铺方式并排放在这些容器旁边
+
+全部都在同一个工作区里，结构清晰，导航直接，也几乎不需要思考成本。
+
+### Vim 风格导航
+
+```bash
+# Focus movement
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Window movement
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+```
+
+### 工作区管理
+
+```bash
+# Quick workspace switching (1-9)
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+# ... through $mod+9
+
+# Move window and follow
+bindsym $mod+Control+1 move container to workspace 1; workspace 1
+bindsym $mod+Control+2 move container to workspace 2; workspace 2
+# ... convenient for reorganizing workflow
+
+# Quick workspace toggle
+bindsym $mod+Tab workspace back_and_forth
+```
+
+### 窗口规则
+
+```bash
+# Float specific applications
+for_window [app_id="gdcv"] floating enable  # Dictionary lookup
+for_window [app_id="wshowkeys_rs"] floating enable  # Screencast key display
+
+# Positioned window for key overlay (bottom-left)
+for_window [app_id="wshowkeys_rs"] floating enable, move position 20 750, resize set 300 80
+
+# Float any window with "float" in its app_id (convention for quick floating)
+for_window [app_id="^float"] floating enable
+```
+
+## 工作流对比
+
+下面我用自己实际使用过的三种窗口管理器，来对比我是如何组织工作的：
+
+### River（基于 Tag）
+
+**组织方式**：9 个标签，窗口可拥有多个标签，也可同时查看多个标签
+
+**示例工作流**：
+- Tag 1：主力开发
+- Tag 2：次要项目
+- Tag 3：浏览器
+- Tag 4-7：不同上下文
+- Tag 8：沟通
+- Tag 9：媒体
+
+**问题**：并行项目一多，标签很快就不够用
+
+### Niri（无限横向画布）
+
+**组织方式**：垂直工作区，每个工作区内部是无限横向滚动
+
+**示例工作流**：
+- 工作区 1：横向滚动浏览所有开发窗口
+- 工作区 2：横向滚动浏览所有通信应用
+- 工作区 3：横向滚动浏览所有调研浏览器
+
+**问题**：在横向窗口带里定位某个具体窗口并不轻松
+
+### Sway（工作区 + 容器布局）
+
+**组织方式**：10 个工作区，每个工作区内部都可以灵活使用容器布局
+
+**示例工作流**：
+- 工作区 1：**项目 A**（tabbed 终端 + stacked 文档）
+- 工作区 2：**项目 B**（tabbed 编辑器 + 平铺浏览器）
+- 工作区 3：**沟通**（tabbed 聊天应用）
+- 工作区 4：**调研**（stacked 浏览器）
+- 工作区 5-9：按需要分配给其他上下文
+
+**优势**：工作区之间边界清晰，而每个工作区内部又有足够丰富的组织方式
+
+## 我最喜欢的 Sway 特性
+
+### 1. 用 Tabbed 容器组织上下文
+
+把相关窗口归进标签页后，你就不再需要为它们单独开工作区：
+
+```
+Workspace 1 (Development):
+┌─────────────────────────────────────┐
+│ [Terminal 1][Terminal 2][Terminal 3]│  ← Tabbed
+├─────────────────────────────────────┤
+│  Editor (full width)                │
+├─────────────────────────────────────┤
+│ [Doc 1]                             │  ← Stacked
+│ [Doc 2]                             │
+│ [Reference]                         │
+└─────────────────────────────────────┘
+```
+
+### 2. 用 Stacked 容器获得概览
+
+通过同时看到所有堆叠窗口的标题栏，你可以很快扫一眼并选中目标：
+
+```
+┌─────────────────────┐
+│ auth-service.log    │ ← Click to focus
+├─────────────────────┤
+│ api-gateway.log     │
+├─────────────────────┤
+│ database.log        │ ← Currently focused
+│                     │
+│ [LOG CONTENT HERE]  │
+│                     │
+└─────────────────────┘
+```
+
+### 3. 按显示器单独 DPI 缩放
+
+Wayland 对缩放的正确支持，让每一块屏幕都能以理想方式渲染：
+
+- 4K 显示器：Scale 2.4 → 有效分辨率 1600×900，文字大小舒适
+- 2K 竖屏：Scale 1.6 → 有效分辨率 900×1600，非常适合纵向内容
+
+没有模糊文字，没有过小字体，也不用妥协。
+
+### 4. 工作区前后切换
+
+`$mod+Tab` 可以在当前工作区和上一个工作区之间来回切换，在下面这些场景里特别好用：
+- 编码时来回查看参考文档
+- 调试时同时观察日志
+- 快速切换项目上下文
+
+### 5. Move and Follow
+
+`$mod+Control+[1-9]` 会把窗口移动到目标工作区，并且立即跟过去，大幅简化重组流程：
+- 发现某个浏览器窗口其实应该放到工作区 3
+- `$mod+Control+3` → 窗口被移动，同时你也切到了工作区 3
+- 直接继续工作，不需要额外切换
+
+## 结语
+
+从 River 到 Niri，再到 Sway，这段过程让我越来越确认：**最好的窗口管理器，不在于功能清单有多长，而在于它是否真正解决了你的实际问题**。
+
+**River** 给了我优雅的极简体验和灵活的标签系统，但我最终撞上了工作区耗尽这种现实限制。
+
+**Niri** 带来了非常有创造力的无限画布，几乎完美解决了标签数量限制，但它的导航范式并不符合我的工作习惯。
+
+**Sway** 则把 i3 经过验证的工作区模型，与 Wayland 的现代能力结合起来，一次性满足了我的核心需求：
+- 真正能用起来的屏幕共享
+- 无需妥协的多 DPI 显示支持
+- 通过容器布局实现的工作区组织能力
+- 经过长期验证的稳定性与成熟社区支持
+
+Tabbed 和 stacked 容器布局，是让我觉得“只有”10 个工作区也完全足够的关键启发。再加上 Wayland 对缩放和屏幕共享的支持，Sway 最终给了我一个真正平衡的方案。
+
+### 谁适合考虑 Sway？
+
+**非常适合**：
+- 想从 i3 迁移到 Wayland 的用户
+- 多显示器且 DPI 需求不一致的用户
+- 想要稳定成熟、文档丰富方案的人
+- 已经适应 i3 风格平铺，但也想获得现代显示协议能力的开发者
+
+**可能没那么适合**：
+- 更喜欢无限画布模式的用户（更适合继续用 Niri）
+- 想要炫酷动画和视觉特效的人（可以试试 Hyprland）
+- 完全没有平铺 WM 经验的新手（更适合先从 DE 开始）
+
+### 资源
+
+- **我的完整 Sway 配置**：[arch-config/sway](https://github.com/jiahaoxiang2000/arch-config/blob/master/sway/config)
+- **本地屏幕共享方案**：[share-screen](https://github.com/jiahaoxiang2000/share-screen)
+- **Sway 官方文档**：[swaywm.org](https://swaywm.org)
+- **i3 用户指南**（大部分同样适用）：[i3wm.org/docs/userguide.html](https://i3wm.org/docs/userguide.html)
+- **之前的 WM 文章**：[River 指南](/zh/blog/arch/window-managers)，[Niri 使用体验](/zh/blog/arch/niri-window-manager)
+
+窗口管理器这条路，始终是一场不断探索和持续打磨的过程。Sway 代表了我当前找到的最佳平衡点，但 Linux 桌面生态的多样性，也意味着总会有新的东西值得尝试。关键不是追逐流行或者堆砌功能，而是找到真正解决 *你自己* 问题的工具。
+
+*祝你平铺愉快！*

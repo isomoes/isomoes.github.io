@@ -1,0 +1,126 @@
+---
+title: 'AutoHotkey Windows：平铺导航与类 Vim 控制'
+date: '2025-08-05'
+tags: ['AutoHotkey', 'Windows', 'productivity', 'vim', 'tiling', 'workflow']
+summary: '一套完整的 AutoHotkey 配置，把平铺式窗口导航和类 Vim 控制带到 Windows 11，同时也分享为什么“简单”最终让我重新回到 Windows。'
+locale: zh
+translationKey: misc-ahk-win
+---
+
+<BilibiliVideo bvid="BV1sitEzUEGd" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+借助 AutoHotkey v2.0，Windows 11 也可以拥有强大的平铺式窗口管理和类 Vim 导航，而且不需要承担额外的复杂度。这篇文章介绍我的 [ahk-win](https://github.com/jiahaoxiang2000/ahk-win) 项目，它为 Windows 带来了 **Win+HJKL** 导航以及完整的键盘控制。🚀
+
+## 使用 Win+HJKL 进行平铺窗口导航 🖥️
+
+这个系统的核心功能，是通过 **Win+HJKL** 热键实现类 Vim 的窗口焦点切换：
+
+- **Win+H** - 聚焦左侧窗口
+- **Win+J** - 聚焦下方窗口
+- **Win+K** - 聚焦上方窗口
+- **Win+L** - 聚焦右侧窗口
+
+### 智能距离算法
+
+导航系统采用了一套智能距离计算方式，会综合考虑：
+- **方向邻近性**：比较对应边缘（左对左、上对上），让导航更加符合直觉
+- **窗口重叠**：如果窗口在垂直/水平轴上没有重叠，会施加额外惩罚
+- **多显示器支持**：在多屏之间也能自然切换，避免莫名跳转
+
+这样就能形成一种自然、可预测的窗口切换体验，接近原生平铺窗口管理器的行为。
+
+## 虚拟桌面管理 🔄
+
+通过 **Win+Shift+H/L** 可以在 Windows 虚拟桌面之间切换：
+
+- **Win+Shift+H** - 切换到上一个桌面并自动聚焦
+- **Win+Shift+L** - 切换到下一个桌面并自动聚焦
+
+切换后，系统会自动聚焦第一个可用窗口，不需要再手动激活。
+
+## 完整的类 Vim 文本导航 ⌨️
+
+把 **Esc** 当作修饰键后，就可以在所有 Windows 应用中获得接近完整的类 Vim 文本编辑体验：
+
+### 基础移动
+- **Esc+H/J/K/L** - 方向键移动
+- **Esc+A** - Home（行首）
+- **Esc+;** - End（行尾）
+
+### 单词级移动
+- **Esc+U** - 上一个单词（Ctrl+Left）
+- **Esc+I** - 下一个单词（Ctrl+Right）
+
+### 文本选择
+- **Esc+N/M** - 选中上一个/下一个单词
+- **Esc+,/.** - 选到行首/行尾
+- **Esc+B/E** - 选中左/右字符
+- **Esc+//P** - 选中下一行/上一行
+
+### 页面导航
+- **Esc+D/F** - Page Down/Up
+- **Esc+S/R** - 选择 Page Down/Up
+
+### 编辑
+- **Esc+Y** - Backspace
+- **Esc+O** - 删除前一个单词（Ctrl+Backspace）
+
+## 安装与配置 🛠️
+
+### 要求
+1. 安装 [AutoHotkey v2.0](https://www.autohotkey.com/v2/)
+2. 从 [GitHub releases](https://github.com/jiahaoxiang2000/ahk-win/releases) 下载 `key.ahk`
+3. 双击运行脚本，或将其编译为可执行文件后运行
+
+### 开机自启动配置
+如果希望 Windows 启动时自动运行：
+
+```batch
+# Use the included startup.bat script
+1. Run startup.bat once to test compilation
+2. Copy startup.bat to shell:startup folder (Win+R → shell:startup)
+3. Script compiles and starts automatically on boot
+```
+
+这个启动脚本会处理进程管理，检测是否已有实例在运行，并确保始终启用最新版本。
+
+## 为什么又回到 Windows？🤔
+
+在经历了我那段[高强度的 Arch Linux 旅程](/zh/blog/misc/arch-linux-may-july-journey)之后，重新回到 Windows 并不是倒退，而是一个基于**简洁与速度**的主动选择。
+
+### 实用主义选择的哲学
+
+**Windows 的 GUI 优势**：Windows 在它擅长的事情上确实做得很好——无缝运行各种 GUI 应用。游戏、成熟的创作工具以及大量历史软件，都可以直接运行，不需要兼容层或额外折腾。
+
+**通过 WSL 进行开发**：对于开发工作，WSL 能提供我需要的 Linux 环境，而不必维护两套独立系统。这种混合方案带来了：
+- Linux 命令行工具和开发环境
+- 需要时可直接使用原生 Windows GUI 应用
+- 只维护一套系统的成本
+
+**避免双系统复杂度**：相比同时维护 Linux 和 Windows，这种方案能在避免以下复杂性的同时，保留两边的优点：
+- 双启动管理
+- 文件系统同步
+- 工具重复安装
+- 不同工作流之间来回切换
+
+### 简洁原则
+
+**更快做决策**：Windows 能减少 Linux 丰富选择所带来的“我到底该用哪个工具”的决策疲劳。当你只是想快速完成工作时，少一些但可靠的选项，反而更能提升效率。
+
+**保留既有工作流**：多年积累下来的 Windows 肌肉记忆和既有工作流，不应该轻易丢掉。AutoHotkey 让我们可以在不推倒重来的前提下完成深度定制。
+
+**保留工具资产**：与其放弃那些仍然有价值的 Windows 专属工具和脚本，不如在它们的基础上，加入类 Vim 的高效改进，让它们变得更顺手。
+
+---
+
+## 结语 🎯
+
+这套 AutoHotkey 配置说明，Windows 同样可以拥有平铺窗口管理器级别的效率，而不必牺牲兼容性和稳定性。从 Linux 之旅中得到的关键启发并不是“哪个系统绝对更强”，而是：最适合你的系统，是那个最能减少你工作流摩擦的系统。
+
+如果你的工作流离不开 GUI 应用、游戏兼容性以及成熟的 Windows 工具，那么增强后的 Windows 键盘导航，完全可以在不引入整套新系统学习成本的前提下带来明显的效率提升。
+
+有时候，最优雅的解决方案并不一定是最复杂的那个。😊

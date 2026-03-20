@@ -1,0 +1,203 @@
+---
+title: '更好的 AI IDE：软件应先服务 AI，再服务人类'
+date: '2026-02-28'
+tags: ['IDE', 'AI', 'ikanban', 'opencode', 'vibe-coding', 'keyboard-first', 'cli', 'workflow']
+summary: '经过从 JetBrains 到 VSCode 再到 Neovim 的多年 IDE 演进，我们发现 AI 时代需要一种根本不同的界面。软件应该先服务 AI，再服务人类。正是这一洞见，促使我们构建了 iKanban：一个双栏、键盘驱动、少即是多的 AI IDE。'
+locale: zh
+translationKey: ide-great-ai-ide
+---
+
+<BilibiliVideo bvid="BV1t9AhztEjX" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+我们的[IDE 之旅](/zh/blog/ide/ide-journey)记录了从 JetBrains 到 VSCode，再到 Neovim + Claude Code 的路径。每一次迁移都在剥离复杂性，让我们更接近键盘。但到了 2026 年初，我们有了一个更深层的认识：传统 IDE 是为操作代码的_人类_设计的。而在 vibe coding 时代，主要操作者已经不再是人，而是 AI agent。我们的软件应该先服务 AI，再服务我们。这种优先级的倒置，改变了 IDE 应该呈现、交互和运作的全部方式。⌨️
+
+## 洞见：AI 优先，人类第二 🧠
+
+### 我们是怎么走到这里的
+
+穿越三代 IDE 的过程给了我们一个稳定的结论：每一代都在用更直接的方式替换视觉复杂性。JetBrains 通过多层 GUI 提供高度集成的卓越体验。VSCode 统一了不同语言，但依然需要依赖鼠标操作各类面板。Neovim + Claude Code 则把界面压缩成两个终端窗口：聊天和 diff，并证明了[少即是多](/zh/blog/misc/change-2025)。
+
+但即便是双终端方案，本质上仍然是_人类优先_的设计。我们写 prompt，我们审查 diff，我们主导整个工作流。AI 是一个强大的助手，但界面默认假设每一步都由人来控制。
+
+真正的转变发生在我们注意到 2025-2026 年两个逐渐汇合的趋势时：
+
+**趋势 1：CLI 工具成为 AI agents 的通用语言。** 像 Claude Code 和 [OpenCode](/zh/blog/tools/opencode-cli) 这样的 LLM agent 不会点按钮，也不会浏览菜单。它们会按结构化顺序调用 CLI 命令：`git`、`rg`、`sed`、`npm`、`cargo`。传统 IDE 中过去需要鼠标点击才能完成的几乎每个操作，现在都有 agent 可以编程调用的 CLI 对应物。我们采用的[多 agent 并行工作流](/zh/blog/tools/multi-agent-parallel)更是把这点展示得非常清楚：在隔离 worktree 中运行的 agents 根本不需要 GUI。
+
+**趋势 2：Vibe coding 把人的角色压缩成两件事。** 在实践中，我们与 AI agents 的日常协作最终只剩下两个任务：**prompting**（告诉 agent 要做什么）和 **verifying**（审查 agent 做了什么）。我们不再手动浏览文件树、配置构建系统或设置断点。实现交给 agent；意图和质量控制交给我们。
+
+这两个趋势指向同一个结论：理想的 AI IDE 应该首先为_agent 执行_优化，其次才为_人类监督_优化。传统 IDE 复杂的界面外壳——文件浏览器、设置面板、扩展侧栏、调试控制台——本来是为了帮助人类完成现在 agent 已经可以通过 CLI 调用处理的任务。在 AI 优先的世界里，这些界面元素不仅不再必要，甚至有害：它们会占据本应用于 prompting 和 verifying 的屏幕空间与认知带宽。
+
+### 倒置原则
+
+传统 IDE 的设计遵循一个简单模型：**Human → IDE → Code**。IDE 提供各种工具（补全、重构、调试）来帮助人类操作代码。
+
+AI 优先模型则将其倒置为：**Human → Prompt → Agent → CLI Tools → Code**。人类通过自然语言表达意图，agent 再将其翻译成一系列 CLI 操作，最后由人类审查结果。
+
+在这个模型中，IDE 的职责不再是为人类提供工具，而是为两项活动提供干净的界面：
+
+1. **一个 prompt pane**，让人类与 agent 沟通意图
+2. **一个 verify pane**，让人类审查 agent 的输出（diff、测试结果、日志）
+
+除此之外的一切，都是额外负担。
+
+## 两个关键设计决策 🎯
+
+### 决策 1：完全键盘控制
+
+这个决定其实早于 AI 优先的洞见，它来自我们对 VIM `hjkl` 哲学的长期投入。正如我们在[IDE 之旅](/zh/blog/ide/ide-journey)中写到的那样，对鼠标的依赖是促使我们离开 VSCode 的最大缺点。每当手离开键盘去拿鼠标，心流就会中断。
+
+但在 AI 优先语境下，键盘优先又获得了新的正当性。一个由键盘驱动的界面天然更容易_scriptable_，也更容易_composable_。理论上，人类使用的同一组快捷键序列也可以被程序触发。而鼠标驱动的界面则要求围绕像素坐标进行空间推理，这对人和 agent 都是额外复杂度。
+
+我们的整套计算栈都体现了这种承诺：
+
+- **第 1 层**：[平铺窗口管理器](/zh/blog/arch/window-managers)，使用 `hjkl` 导航
+- **第 2 层**：Neovim，负责全部文本编辑与 modal 操作
+- **第 3 层**：[键盘驱动浏览器](/zh/blog/tools/surfingkeys-intro)，提供 VIM 风格链接提示
+- **第 4 层**：AI IDE，只通过键盘交互
+
+一套按键系统。一套肌肉记忆。零鼠标依赖。
+
+### 决策 2：少即是多 - 两个面板对应两个任务
+
+第二个决定直接来自对 vibe coding 工作流的分析。如果人的工作已经缩减为 prompting 和 verifying，那么 IDE 就只需要两个 pane：
+
+| 面板 | 用途 | 人类活动 |
+|------|------|----------|
+| **聊天/Prompt 面板** | 与 AI agent 沟通意图 | Prompting |
+| **变更/Diff 面板** | 审查 agent 输出、diff 和测试结果 | Verifying |
+
+这不是为了审美而做的极简主义，而是把工作流直接映射到界面。每多一个面板——文件浏览器、设置 UI、扩展侧栏——都代表一种本该由 agent 处理的任务（如文件导航、配置），或是根本不属于核心循环的任务（如扩展管理）。
+
+[vibe-kanban workspace interface](/zh/blog/tools/vibe-kanban-intro) 已经通过 Chat Panel 和 Changes Panel 的布局展示了这种双栏概念。我们在 iKanban 中进一步推进，把双栏设计变成了_整个_界面，而不是众多模式中的一种。
+
+## 为什么传统 IDE 不适合 AI 🚫
+
+### 鼠标点击问题
+
+传统 IDE 的设计建立在一个假设上：每个操作都由人类亲自完成。因此它们发展出了丰富的图形界面：工具栏、右键菜单、可拖拽面板和可视化调试器。这些界面的优化目标是_可发现性_——帮助人类找到自己尚不了解的功能。
+
+但 AI agents 不需要可发现性，它们需要_可编程性_。Agent 不会浏览菜单寻找“Rename Symbol”；它会调用 `lsp-rename` 或直接编辑文件。Agent 不会点开调试 UI 去下断点；它会运行测试并从 stdout 中读取栈追踪。
+
+传统 IDE 的整个可视层对 agent 来说都是不可见的。它的存在只是为了人类；而在 AI 优先模型下，人类的角色已经被收缩到 prompting 和 verifying。于是这层可视界面就成了负担。
+
+### 功能膨胀问题
+
+现代 IDE 会在多年演进中不断堆积功能。VSCode 有数千项设置、数百条内置命令，以及一个拥有数万插件的扩展市场。JetBrains IDE 则内置数据库浏览器、HTTP 客户端、Docker 管理和性能分析工具。
+
+每一个功能都会增加认知负担。每一个面板都会争夺屏幕空间。每一个配置项都是开发者必须额外做出的一个决定。在 AI 优先模型里，这些功能大多数要么已经由 agent 通过 CLI 工具处理，要么与 prompt-verify 主循环无关。
+
+AI IDE 应该拥有_更少_的功能，而不是更多。它应该把两件事做到极致：促进人和 agent 之间的清晰沟通，以及以可审查的形式呈现 agent 的输出。
+
+### CLI 革命
+
+2025-2026 年间高质量 CLI 工具的崛起，让传统 IDE 的功能集合从 agent 的角度看变得冗余：
+
+- **代码搜索**：`rg`（ripgrep）替代 IDE 搜索面板
+- **文件导航**：`fd`、`fzf` 替代文件树
+- **Git 操作**：`git`、`lazygit` 替代集成 Git UI
+- **测试**：`pytest`、`cargo test`、`npm test` 替代测试运行面板
+- **调试**：结构化日志和测试驱动开发替代可视化调试器
+- **重构**：agent 驱动的多文件编辑替代 IDE 重构向导
+
+这些 CLI 工具中的每一个都可以由 AI agent 用一条命令调用。Agent 不需要 `git diff` 的 GUI 包装层——它直接读取输出即可。人类则在 verify pane 中审查同样的输出。
+
+## iKanban：我们的答案 🚀
+
+### iKanban 是什么
+
+[**iKanban**](https://github.com/isomoes/ikanban) 是 [OpenCode](https://opencode.ai) AI coding agent 的一个 Web/PWA 界面。它把聊天、终端和看板工作流统一到一个界面中，并围绕 AI 优先、双栏原则进行设计。
+
+它的核心功能正体现了我们的设计哲学：
+
+- **集成终端**，直接访问 CLI
+- **Git 操作**，支持 AI 生成 commit message
+- **智能工具可视化**，带有内联 diff 与文件树
+- **按 agent 维度设置权限模式**（ask/allow/full）
+- **单个 prompt 触发多 agent 运行**，基于隔离 worktree
+- **可分叉的对话**：从任意 assistant 回复开启新会话
+- **任务追踪器**：实时显示进度与工具摘要
+- **模型选择**：支持 favorites、recents 和可配置密度
+
+### 实际中的双栏工作流
+
+一个典型的 iKanban 会话大概是这样：
+
+```
+┌──────────────────────────┬──────────────────────────┐
+│                          │                          │
+│   Chat / Prompt Pane     │   Changes / Verify Pane  │
+│                          │                          │
+│   Human: "Add OAuth2     │   Modified files:        │
+│   support to the auth    │   ├── src/auth/oauth.ts  │
+│   module with Google     │   ├── src/routes/login.ts│
+│   and GitHub providers"  │   └── tests/auth.test.ts │
+│                          │                          │
+│   Agent: Working...      │   + export class OAuth2  │
+│   ├── Reading codebase   │   +   Provider {         │
+│   ├── Creating files     │   +   async authorize()  │
+│   ├── Running tests      │   +   ...                │
+│   └── All tests pass ✓   │                          │
+│                          │                          │
+└──────────────────────────┴──────────────────────────┘
+```
+
+左侧 pane 是意图从人类流向 agent 的地方。右侧 pane 是结果从 agent 流回人类的地方。核心循环里不需要别的东西。
+
+### 为什么选择 OpenCode 作为后端
+
+iKanban 建立在 [OpenCode](/zh/blog/tools/opencode-cli) 之上，而不是专有 agent，原因与我们从 Claude Code 的 vendor lock-in 中迁移出来完全一致：**provider independence**。OpenCode 支持 75+ LLM providers，这意味着 iKanban 可以统一调度由 Claude、GPT、Gemini、DeepSeek、GLM、Qwen 或未来任何模型驱动的 agents——全部通过同一个界面完成。
+
+这很重要，因为 AI 领域变化极快。今天最好的模型，明天可能就不是最好的。一个把你锁定在单一 provider 上的 AI IDE，不过是在模型层面重演 JetBrains 按语言分裂的旧问题而已。
+
+### Mobile-First 与 Remote-Ready
+
+iKanban 以 PWA 形式运行，任何带浏览器的设备都可以访问。这与 AI 优先哲学高度一致：如果繁重工作由 agent 通过 CLI 工具完成，那么人类的界面就可以足够轻量。你可以在手机上审查 diff、批准变更，也可以在平板上给 agent 下 prompt。计算发生在服务器端；人类界面只是一个沟通通道。
+
+## 前方道路：多 Agent 自动化 🔮
+
+### 我们现在所处的位置
+
+iKanban 目前已经支持从单个 prompt 启动多个 agent 运行，每个 agent 都在独立的 git worktree 中工作。这与我们在 [vibe-kanban](/zh/blog/tools/vibe-kanban-intro) 中探索的并行执行模型相同，只是现在被整合进了统一界面。
+
+目前人类仍然扮演调度者——拆解任务、分配 agent、审查输出。正如我们在[多 agent 并行工作流](/zh/blog/tools/multi-agent-parallel)一文中所说，这就是从 coder 走向 conductor 过程中的“Stage 2: The Product Manager”。
+
+### 我们将走向哪里
+
+下一阶段是**全自动任务执行**——也就是我们所说的“Stage 3: The Company CEO”。在这个模型中，人类只提供高层目标，而一个 AI scheduler 会负责拆解子任务、分配最合适的模型、监控进度、处理集成，并交付最终完成的功能。
+
+```
+Current:  Human → [Decompose] → [Assign] → [Monitor] → [Review] → Done
+Future:   Human → [Goal] → Scheduler AI → [Auto-execute] → [Review] → Done
+```
+
+此时人类的角色会进一步收缩：从产品经理变成质量审查者。双栏界面依然成立——prompt pane 变成目标描述界面，verify pane 变成结果审查界面——只是中间步骤被自动化了。
+
+这一步现在还没有准备好。要构建可靠的 AI scheduler，还需要在任务拆解、依赖解析和跨 agent 协调上继续进步。但 iKanban 的架构已经为这个未来做了准备。双栏界面、OpenCode 后端、隔离 worktree 的执行模型——这些都是通向全自动工作流的基础模块。
+
+### 贯穿始终的哲学线索
+
+回看我们从 JetBrains 到 VSCode，再到 Neovim，最终到 iKanban 的整个历程，会发现一条稳定的主线：**每一次迁移都移除了一层人类意图与代码变更之间的中介**。
+
+- JetBrains：Human → GUI → IDE Features → Code
+- VSCode：Human → Extensions → Code
+- Neovim + Claude Code：Human → Terminal → Agent → Code
+- iKanban：Human → Prompt → Agent → Code
+
+AI 优先 IDE 不只是一次工具替换，它是我们一直在坚持的一种哲学所推导出的自然终点：减少摩擦，消除不必要的中间层，让人类专注于只有人类才能做的事——决定_该构建什么_，以及判断_是否构建正确_。
+
+其他一切，agent 都可以处理。
+
+---
+
+## 相关文章 📚
+
+- [**我的 IDE 之旅：从 JetBrains 到 Claude Code**](/zh/blog/ide/ide-journey) - 完整的 IDE 演进故事
+- [**我在 2025 年的大变化**](/zh/blog/misc/change-2025) - “少即是多”的哲学
+- [**OpenCode：开放替代方案**](/zh/blog/tools/opencode-cli) - Provider-agnostic AI coding
+- [**多 Agent 并行工作流**](/zh/blog/tools/multi-agent-parallel) - 从 coder 到 conductor
+- [**Vibe-Kanban 简介**](/zh/blog/tools/vibe-kanban-intro) - 多 agent 编排
+- [**GitHub 上的 iKanban**](https://github.com/isomoes/ikanban) - 源码与文档

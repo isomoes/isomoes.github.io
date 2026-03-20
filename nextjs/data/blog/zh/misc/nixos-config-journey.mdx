@@ -1,0 +1,203 @@
+---
+title: '从 Ubuntu 到 NixOS：一段完整的配置管理之旅'
+date: '2025-09-26'
+tags: ['NixOS', 'configuration', 'linux', 'dotfiles', 'journey', 'workflow', 'declarative', 'reproducible']
+summary: '记录我从发现 Ubuntu 到掌握 NixOS 的演变过程——一段关于 Linux 发行版、配置管理以及构建可复现开发环境的旅程。'
+locale: zh
+translationKey: misc-nixos-config-journey
+---
+
+<BilibiliVideo bvid="BV1EBnGzBEZz" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+从接触 Linux 到掌握声明式配置管理，这一路都是不断学习、试验和打磨的过程。最初只是出于对 Ubuntu 开源生态的好奇，后来逐渐发展成一套能够管理我整个开发环境的 NixOS 配置。这篇文章想讲的，就是这段演变过程，以及为什么我认为 **NixOS 代表了个人计算配置的未来**。🚀
+
+## 起点：Ubuntu 与开源世界的发现 🐧
+
+我的 Linux 之旅始于 **Ubuntu**——那种第一次遇到一个“所有东西都免费、可定制，而且由全球社区透明构建”的操作系统时的兴奋感，确实很特别。对一个长期使用专有系统的人来说，Ubuntu 打开了一种全新的计算哲学：软件不只是工具，它也是你可以理解、修改、改进的共同创作成果。
+
+Ubuntu 的体验让我产生了很大的变化：开始接触终端、学习用 `apt` 做包管理、探索庞大的开源应用生态。每安装一个新程序都像一次冒险——去寻找专有软件的替代品，理解依赖关系，并一点点构建属于自己的计算环境。
+
+**但问题也出现了**：那时我没有追踪任何东西。那些有趣的发现、偶然调出来的完美配置、以及解决冷门问题的方法，都没有被记录、整理或变成可复现的形式。我的系统是好几个月试验的结果，但它只存在于当前这一台机器的状态里，一旦遇到崩溃、升级，或者单纯想换一种玩法，这些积累就可能消失。
+
+随着系统越来越复杂、我对特定配置的依赖越来越强，这种缺乏系统性记录的方式也越来越令人沮丧。
+
+## Arch Linux 革命：平铺窗口与深度定制 ⚡
+
+下一个巨大转折，是我接触到 **Arch Linux**，以及更重要的——**平铺窗口管理器**。这次转变意味着我不再只是使用一个预构建好的桌面环境，而是开始亲手打造一个完全个性化的计算体验。
+
+平铺窗口管理器改变了我对桌面计算的理解。窗口不再互相遮挡、争夺屏幕空间，而是让每一个像素都服务于当前任务。键盘驱动的工作流减少了鼠标与键盘之间来回切换的动作。更重要的是，它让我第一次真正理解了 **configuration as code** 这个概念——我的桌面环境不再是一堆 GUI 选项，而是一组可以版本控制、共享、迭代的文本文件。
+
+> 如果你想更详细了解这次转变以及平铺窗口管理器的理念，可以阅读这篇完整指南：[Arch Linux 上的窗口管理器完整指南](/zh/blog/arch/window-managers)。
+
+这个阶段诞生了我第一个认真维护的配置项目：**[hypr-config](https://github.com/jiahaoxiang2000/hypr-config)**。它是一个纯窗口管理器配置仓库，记录了我的 Hyprland 配置。这个项目是一个非常关键的学习阶段，让我开始真正理解，为什么要系统地记录并用版本控制管理自己的计算环境。
+
+hypr-config 让我学到了几个基础原则：
+- **配置就是代码**：它应该被版本控制、被文档化、并且可复现
+- **迭代需要追踪**：记不住的东西就无法持续改进
+- **分享促进学习**：公开配置会带来反馈，也能启发别人
+
+## 配置爆炸：从窗口管理器到完整环境 📈
+
+随着我的软件工具箱不再局限于窗口管理器，我开始意识到，只追踪 Hyprland 配置远远不够。我的效率依赖于几十个应用，每个应用都有自己的配置文件、快捷键和定制方式。开发工具、shell 环境、输入法、状态栏、终端——所有这些都被仔细调过，但大部分根本没有被纳入追踪。
+
+这个认识催生了 **[arch-config](https://github.com/jiahaoxiang2000/arch-config)**——一个更有野心的仓库，用来追踪我完整的 `.config` 文件夹以及相关 dotfiles。这个仓库代表了一次重要的观念转变：我不再是在管理“某一个应用”，而是在管理“整个计算环境”。
+
+> 关于这个阶段，可以进一步阅读：[我的 Arch Linux Dotfiles：一段真实配置之旅](/zh/blog/misc/arch-linux-dotfiles)。
+
+arch-config 项目引入了几个关键概念：
+- **模块化架构**：为核心组件（Neovim、VS Code、Hyprland）使用 Git submodule
+- **跨平台元素**：某些配置可以在不同系统间共享
+- **真实场景验证**：每个配置文件都经历了日常使用的检验
+- **文档即服务**：通过完整 README 把经验分享出去
+
+不过，这种扩展后的方式依然有局限。我追踪了配置，却没有追踪软件本身。系统包、依赖关系，以及不同组件之间错综复杂的联系，依然游离在版本控制体系之外。
+
+## 滚动更新的挑战：当稳定性遇上创新 🎢
+
+Arch Linux 的滚动更新模型虽然能带来前沿软件，但也带来了一类新的问题。我不断问自己：**“我到底装了哪些软件？而当我再装一个新东西时，会发生什么？”**
+
+滚动更新意味着，系统更新随时可能破坏你精心调好的环境。安装新包可能和已有软件冲突，也可能引入你没有预料到的依赖。虽然这并不是我最终迁移到 NixOS 的唯一原因，但它确实暴露了传统包管理方式的一个根本局限。
+
+真正的问题并不是 Arch Linux 本身——它依然是个非常优秀的发行版——而是传统命令式系统管理方式天生的缺点：
+- **隐藏状态**：当前系统状态是数百次累积变更的结果
+- **追踪不完整**：只有配置文件被版本控制，软件本身没有
+- **复现脆弱**：要在另一台机器上重建完全相同的环境，需要大量手工操作
+- **依赖迷雾**：几乎不可能彻底弄清已安装软件的完整依赖树
+
+## NixOS 的启发：一切都声明式 🎯
+
+然后就是 **NixOS** —— 一个从根本上重新思考系统配置和包管理方式的 Linux 发行版。NixOS 带来的变化，本质上是从“配置现有系统”转变为“声明你想要的系统”。
+
+**[nixos-config](https://github.com/jiahaoxiang2000/nixos-config)** 仓库，代表了我整段配置管理之旅的阶段性总结。与以前只追踪配置文件的做法不同，这个仓库同时管理：
+
+- **系统级配置**：引导器、硬件支持、服务、用户
+- **软件包声明**：每一个安装的软件都显式写出来
+- **用户环境**：通过 Home Manager 管理用户级配置
+- **依赖关系**：由 Nix 包管理器统一维护完整依赖树
+- **环境变量**：系统级与用户级变量的声明
+- **服务配置**：systemd 服务、显示管理器、输入法等
+
+### 仓库架构 🏗️
+
+NixOS 配置遵循一种干净而清晰的结构：
+
+```bash
+nixos-config/
+├── flake.nix           # Main entry point - defines inputs and system
+├── .nix/
+│   ├── configuration.nix   # System-level configuration
+│   ├── home.nix           # User-level packages and settings
+│   └── hardware-configuration.nix  # Hardware-specific settings
+├── .config/            # Traditional app configs (when needed)
+└── README.md           # Comprehensive documentation
+```
+
+### 关键配置亮点 🌟
+
+**系统配置**（`.nix/configuration.nix`）：
+```nix
+# Chinese input method with modern Wayland support
+i18n.inputMethod = {
+  type = "fcitx5";
+  enable = true;
+  fcitx5 = {
+    waylandFrontend = true;
+    addons = with pkgs; [
+      fcitx5-chinese-addons
+      fcitx5-material-color
+      fcitx5-pinyin-zhwiki
+    ];
+  };
+};
+
+# River window manager with NVIDIA support
+programs.river.enable = true;
+services.xserver.videoDrivers = [ "nvidia" ];
+hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
+```
+
+**用户环境**（`.nix/home.nix`）：
+```nix
+home.packages = with pkgs; [
+  # Development environment
+  neovim
+  (vscode.override {
+    commandLineArgs = [
+      "--enable-features=UseOzonePlatform"
+      "--ozone-platform=wayland"
+    ];
+  })
+  python3 nodejs rustc gcc
+
+  # Writing and typography
+  texliveFull typst tinymist
+  source-han-serif source-han-sans source-han-mono
+
+  # Desktop environment
+  foot wmenu i3bar-river i3status-rust
+  wl-clipboard pavucontrol
+];
+```
+
+### 实际收益 💪
+
+**完整可复现**：只需一条命令，就能在任意兼容硬件上重建整个系统：
+```bash
+sudo nixos-rebuild switch --flake .#desktop
+```
+
+**放心试验**：想尝试新的开发工具或桌面环境？直接把它加到配置里、测试，如果不满意，再从文件里删掉重建即可。不会残留垃圾文件，也不会留下破碎依赖。
+
+**原子更新**：系统变更是原子的——要么全部成功，要么整体失败，而且支持自动回滚。
+
+**精确依赖管理**：每个依赖都被显式声明并固定版本，能大幅减少 “works on my machine” 问题。
+
+## 哲学：超越配置管理 🧠
+
+NixOS 不只是系统管理方式不同，它还体现了一种 **声明式基础设施** 的哲学，而这套思路远不止适用于个人电脑。通过管理个人 NixOS 系统学到的原则，同样可以直接应用到：
+
+- **Infrastructure as Code**：管理服务器部署与云资源
+- **开发环境一致性**：确保团队成员拥有完全相同的开发环境
+- **可复现实验研究**：在学术与科研场景中保证结果可复现
+- **教学资源**：共享完整、可运行的学习环境
+
+这种方式把配置管理从“出了问题再修”转变成 **主动设计环境**。你不再是哪里坏了补哪里，而是先声明自己想要什么，然后让系统去决定如何实现。
+
+### 学习哲学 📚
+
+推动我走完整段旅程的核心信念是：**Linux 和自由软件，是最好的学习平台**。每一份软件都开源，每一项配置都透明，每一个问题都有可能被理解、分享、并继续改进。
+
+NixOS 配置仓库不只是我个人的基础设施，它也是一个 **知识共享平台**。其他用户可以清楚地看到问题是如何被解决的，把方案改造成适合自己的形式，甚至继续向社区贡献改进。
+
+## 持续中的旅程 🌊
+
+从 Ubuntu 时期的好奇，到 NixOS 阶段的掌控，这段演变不仅仅是技术升级，更是一段关于“计算环境如何被构建、共享并不断改进”的理解之旅。每一个阶段都建立在前一个阶段之上：
+
+1. **发现**（Ubuntu）：理解软件可以是自由的、由社区推动的
+2. **定制**（Arch）：意识到环境可以真正为自己打造
+3. **系统化**（arch-config）：认识到配置必须被追踪和分享
+4. **声明式管理**（NixOS）：领悟到整个系统本身也可以是代码
+
+旅程还在继续。NixOS 为我提供了一个稳定基础，让我可以继续探索新工具、分享有趣发现，并构建越来越成熟的工作流。无论是 AI 驱动的开发工具、高级视频制作流程，还是实验性的学术研究环境，声明式方法都能保证每一次尝试都被记录、可复现、可共享。
+
+### 展望未来：分享知识的力量 🌟
+
+让这段旅程真正有意义的，并不仅仅是个人效率提升，而是我能把 **完整、可运行的解决方案** 分享给更广泛的社区。这个 NixOS 配置仓库不只是我的个人配置，也可以成为别人打造理想计算环境时的模板与灵感来源。
+
+每一次配置选择、每一次工具整合、每一个问题的解决过程，都以透明方式开放给别人审视、改造和继续完善。这种开放性会不断推动学习——不仅对我自己如此，对所有接触到这些配置的人也如此。
+
+未来还有很多值得期待的方向：更成熟的开发环境、更深入的 AI 工具集成、更好的硬件支持，以及最重要的——**继续与全球 Linux 和自由软件社区一起学习与分享**。
+
+*Happy declaring!* 🏞️✨
+
+---
+
+**资源与下一步**：
+- 探索完整的 [NixOS 配置仓库](https://github.com/jiahaoxiang2000/nixos-config)
+- 回顾[Arch Linux dotfiles 之旅](/zh/blog/misc/arch-linux-dotfiles)
+- 了解[窗口管理器哲学](/zh/blog/arch/window-managers)
+- 加入 [NixOS community](https://nixos.org/community/) 获取帮助并参与交流

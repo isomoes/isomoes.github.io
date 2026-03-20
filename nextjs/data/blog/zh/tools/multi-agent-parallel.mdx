@@ -1,0 +1,175 @@
+---
+title: '多 Agent 并行工作流：从写代码的人到指挥调度者'
+date: '2026-01-16'
+tags: ['multi-agent', 'opencode', 'vibe-kanban', 'parallel-workflow', 'ai-coding', 'productivity', 'task-scheduling']
+summary: '分享我第一次使用 vibe-kanban 和 OpenCode 进行多 agent 并行工作流的体验。学会把任务拆解后交给 AI 并行执行，生产力会大幅提升，开发者的角色也会从编码者转向编排者。'
+locale: zh
+translationKey: tools-multi-agent-parallel
+---
+
+<BilibiliVideo bvid="BV1KHrkBeEno" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 第一次真正走进多 Agent 领域
+
+在和单 agent AI 编程助手相处了几个月之后，我们终于开始认真尝试 **多 agent 并行工作流**。这次体验非常有冲击力——不只是生产力更高了，更重要的是，我们开始重新理解开发者在整个流程中的角色。
+
+核心概念看起来其实很简单：与其等一个 AI agent 做完一件事再开始下一件，不如让 **多个 agent 并行运行**，同时处理项目中的不同部分。而实现这一点的关键组合，就是用 [**vibe-kanban**](https://github.com/BloopAI/vibe-kanban) 负责任务调度，再用 [**OpenCode**](/zh/blog/tools/opencode-cli) 统一接入多个模型提供商。
+
+这不只是“更快”而已，它实际上是在重新定义我们处理复杂开发任务的方式。当你能把一个大项目拆成多个相互独立的小块，再让多个 AI agent 同时推进时，整个工作流都会改变。
+
+## OpenCode 的优势：提供商灵活性
+
+多 agent 并行之所以能真正跑起来，一个关键前提是 **OpenCode 的 provider-agnostic 架构**。正如我们在 [OpenCode CLI 指南](/zh/blog/tools/opencode-cli) 里介绍过的那样，OpenCode 支持 75+ LLM provider，这意味着你可以为每个具体任务选择最适合的模型。
+
+在我们的并行工作流中，通常会同时用到多个 provider：
+
+- **GLM-4.6**（Z.AI）处理多语言能力要求高的任务
+- **MiniMax** 负责更偏创意类内容生成
+- **Gemini**（Google）处理研究和分析类任务
+- **ChatGPT**（OpenAI）处理复杂推理
+- **Claude Sonnet**（Anthropic）负责更细腻的代码生成
+
+这种 provider 多样性不只是“多几个选项”这么简单，而是在 **为每一个并行任务做最优匹配**。文档任务交给一个模型，复杂重构交给另一个模型，而且它们可以同时运行。
+
+## 并行带来的生产力倍增
+
+过去两天里，我们高强度使用了多 agent 并行模式，生产力提升非常明显。我们当时正在推进 **毕业论文**，输出速度相比之前的单 agent 工作流明显更高。
+
+最大的变化在于：我们不再采用那种线性流程——先等一个 AI 辅助任务结束，再启动下一个——而是进入了 **并行执行模型**。当一个 agent 在查相关工作时，另一个 agent 可以同时重构代码，第三个 agent 则在写文档。
+
+**一个典型的并行流程示意：**
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Main Project                       │
+├─────────────────┬─────────────────┬─────────────────┤
+│   Agent 1       │   Agent 2       │   Agent 3       │
+│   Research      │   Code Impl     │   Documentation │
+│   ────────►     │   ────────►     │   ────────►     │
+│   [Running]     │   [Running]     │   [Running]     │
+└─────────────────┴─────────────────┴─────────────────┘
+```
+
+但真正厉害的地方，其实还不只是一个项目内部并行。由于所有事情都能同时推进，你甚至可以 **顺带处理其他小项目**。当主线论文工作由多个 agent 并发推进时，旁边还可以同时跑：
+
+- 一些 side project 的 bug fix
+- 开源贡献的文档更新
+- 未来研究方向的资料搜集
+
+这才是 **真正的并行优势**——不只是加速一个任务，而是让你整个工作组合都同时前进。
+
+## 任务拆解：并行化的关键
+
+有效的多 agent 工作流，关键就在于 **聪明的任务拆解**。那种体积巨大、边界模糊的大任务，其实没法并行；你必须先把它拆成可以独立执行的单元。
+
+结合我们之前在 [subagent 架构](/zh/blog/misc/claude-subagent) 中总结的经验，高质量任务拆解通常遵循这些原则：
+
+**独立执行**：每个子任务都应该能在不依赖其他子任务输出的情况下完成。如果任务 B 依赖任务 A 的结果，那它们就没法真正并行。
+
+**边界清晰**：每个任务都要有明确 scope。范围模糊，最后一定会重叠、冲突。
+
+**粒度合适**：太细会把时间浪费在协调成本上；太粗又会错失并行机会。
+
+**以功能开发为例的拆解方式：**
+
+```
+Feature: User Authentication System
+├── Task 1: Database schema design         [Agent A]
+├── Task 2: API endpoint implementation    [Agent B]
+├── Task 3: Frontend login component       [Agent C]
+├── Task 4: Unit test suite               [Agent D]
+└── Task 5: API documentation             [Agent E]
+```
+
+这些任务都可以立刻开工。虽然最后仍然需要做一些整合工作，但 **主体实现阶段已经大规模并行化** 了。
+
+## Vibe-Kanban：给混乱建立秩序
+
+想同时管理多个并行 AI agent，没有一套靠谱的调度系统基本不可能。这就是 [**vibe-kanban**](https://github.com/BloopAI/vibe-kanban) 发挥作用的地方——它提供了可视化任务管理与调度基础设施，让多个并发工作流真正可控。
+
+Kanban 这种形式，本来就非常适合并行执行：
+
+- **可视化任务追踪**：清楚看到哪些在跑、哪些待处理、哪些已完成
+- **在制品限制**：避免并发过头（即使用的是 AI，也依然有管理上限）
+- **优先级管理**：确保关键路径任务优先分配资源
+- **状态同步**：随时掌握所有 agent 的推进情况
+
+目前，我们的调度还是 **手动完成** 的——由人来决定什么任务分给哪个 agent、什么时候开始、怎么整合结果。这样是能跑的，但也确实需要持续投入注意力。
+
+## 进化方向：从手动调度到自动调度
+
+现阶段的多 agent 工作流，仍然需要人类充当 **scheduler**，做这些决定：
+
+- 哪些任务可以并行
+- 每个任务分配哪个模型
+- 什么时候检查结果并整合输出
+- 如何处理依赖和冲突
+
+但这显然不会是终点。更自然的下一步，是出现 **专门做调度的 AI scheduler**，自动管理整个多 agent 工作流。
+
+想象一下，未来你给出的不再是一堆具体任务，而只是一个高层 **目标**：
+
+```
+Goal: "Implement complete user authentication with OAuth support,
+       full test coverage, and API documentation"
+
+Scheduler AI:
+├── Analyzes goal
+├── Generates task decomposition
+├── Assigns optimal models to each task
+├── Monitors progress
+├── Handles integration
+└── Delivers completed feature
+```
+
+这个 scheduler 会理解任务依赖、模型能力以及最优并行策略——而且不再需要你手动干预每一步。
+
+## 角色转变
+
+这种和 AI 协作方式的变化，实际上对应着开发者角色的一次根本转变：
+
+**阶段 1：Coder** - 传统开发模式，每一行代码都自己写，AI 只是高级自动补全。
+
+**阶段 2：Product Manager** - 当前多 agent 状态。你负责拆需求、给 AI agent 分派任务、审阅输出、整合结果。你不再直接写所有代码，而是在管理 AI 资源。
+
+**阶段 3：Company CEO** - 未来有 AI scheduler 后的状态。你只提供战略方向和目标，由 AI 系统自动完成拆解、分配、执行和整合。你把精力集中在高层决策与质量把控上。
+
+我们现在正处于从阶段 1 向阶段 2 过渡的过程中。光是这个转变带来的生产力增益就已经很可观了，而阶段 3 会把这种变化推得更远。
+
+## 两天并行实践后的几点经验
+
+在高强度并行实验之后，我总结了几条最重要的经验：
+
+**先把任务边界定义清楚。** 模糊的任务定义只会带来重叠、冲突和 agent 资源浪费。前期多花一点时间把每个任务说清楚，非常值得。
+
+**模型要和任务匹配。** 不要所有事情都交给同一个模型。正如我们在 [OpenCode 指南](/zh/blog/tools/opencode-cli#多提供商配置-) 中提到的，不同 provider 在不同任务上各有所长。把这种差异利用起来。
+
+**监控，而不是微管理。** 定期检查进展即可，不要总想着中断 agent。相信流程，在预定检查点审阅结果。
+
+**预留整合时间。** 并行执行只是成功的一半。你还需要时间整合输出、处理冲突，并保证代码库整体一致性。
+
+**接受上下文切换。** 当多个 agent 同时在跑时，你真的可以去做别的事。不要只是盯着它们转，利用好并行执行释放出来的时间。
+
+## 展望未来
+
+多 agent 并行工作流，正在成为 AI 辅助开发中的一次真实范式转变。把 [**OpenCode 的 provider 灵活性**](/zh/blog/tools/opencode-cli) 和 vibe-kanban 这样的任务调度工具结合起来，会打开许多单 agent 模式根本做不到的可能性。
+
+我们现在仍然处在早期阶段。手动调度确实能用，但认知负担也不低；工具在不断成熟，不过离“无缝”还差一些距离。但生产力提升是真实存在的，而且非常明显。
+
+随着 AI 调度系统逐渐成熟，阶段 3（CEO 模式）变得可行时，我们会看到软件开发方式发生更大的变化。今天就开始学习如何高效编排 AI agent 的开发者，会在这个 AI-native 的未来里占据更有利的位置。
+
+问题已经不是“多 agent 并行工作流会不会成为标准实践”，而是——你会多快开始采用它。
+
+---
+
+## 相关资源
+
+- [**OpenCode CLI 指南**](/zh/blog/tools/opencode-cli) - 多 provider AI 编程配置
+- [**Claude Code Subagents**](/zh/blog/misc/claude-subagent) - 专用 agent 架构
+- [**Claude Code Configuration**](/zh/blog/tools/claude-code-config) - 完整配置指南
+- [**vibe-kanban**](https://github.com/BloopAI/vibe-kanban) - AI 工作流任务调度工具
+- [**OpenCode Documentation**](https://opencode.ai/docs/) - 官方文档

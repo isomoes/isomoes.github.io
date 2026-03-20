@@ -1,0 +1,569 @@
+---
+title: 'Arch Linux 窗口管理器完全指南'
+date: '2025-08-21'
+tags:
+  [
+    'linux',
+    'arch linux',
+    'window manager',
+    'tiling',
+    'desktop environment',
+    'i3',
+    'sway',
+    'river',
+    'wayland',
+    'x11',
+  ]
+summary: '一份关于 Arch Linux 窗口管理器的完整指南，带你了解从平铺到堆叠等不同类型的 WM，并深入介绍我们为何选择 River 来构建高效桌面工作流。'
+locale: zh
+translationKey: arch-window-managers
+---
+
+<BilibiliVideo bvid="BV1ofY9z7E72" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+在搭建 Arch Linux 时，你要做出的一个最重要决定，就是如何管理自己的桌面环境。很多用户会选择 GNOME 或 KDE 这样的完整桌面环境，但**窗口管理器提供了一种更轻量、可高度定制的替代方案**，它不仅能显著提升工作流效率，还能让你彻底掌控自己的计算体验。🚀
+
+你可以把窗口管理器想象成桌面交响乐团的指挥家 - 它决定窗口如何出现、如何移动、如何交互，同时只消耗极少的系统资源。这篇文章会带你从基础概念一路了解窗口管理器，并进一步深入到 River 的高级配置。
+
+> 我们的配置文件已经放在 [dotfiles 仓库](https://github.com/jiahaoxiang2000/arch-config) 中
+
+## 什么是窗口管理器？ 🪟
+
+**窗口管理器**（Window Manager，WM）是一类系统软件，用来控制图形用户界面中窗口的位置与外观。你可以把它理解为在幕后编排桌面体验的那只“无形之手”！🎭 根据 [Arch Linux Wiki](https://wiki.archlinux.org/title/Window_manager) 的说明，窗口管理器主要负责：
+
+- **窗口摆放与尺寸控制** 📐 - 决定窗口出现在哪里，以及如何排列
+- **窗口装饰** 🎨 - 管理标题栏、边框和其他视觉元素
+- **焦点管理** 🎯 - 控制哪个窗口接收输入
+- **虚拟桌面 / 工作区管理** 🗂️ - 在多个工作区之间组织窗口
+- **键盘与鼠标输入处理** ⌨️🖱️ - 处理你与系统的交互
+
+### 窗口管理器 vs 桌面环境 ⚖️
+
+窗口管理器与桌面环境（DE）之间最核心的区别，在于**范围与设计理念**：
+
+**窗口管理器** 🎯：只专注于窗口管理，遵循 Unix 的“只做一件事，并把它做好”的哲学。通常你还需要额外安装面板、文件管理器和系统设置工具，但这也意味着你能完全掌控自己的软件栈。
+
+**桌面环境** 📦：包含窗口管理器，以及完整的一整套应用、面板、文件管理器和系统工具。像 GNOME、KDE、XFCE 都属于这种“一站式打包”的方案，使用起来更省心。
+
+窗口管理器有几个很吸引人的优势：
+
+- **性能** ⚡：资源占用显著更低，把更多 RAM 和 CPU 留给真正的工作负载
+- **可定制性** 🛠️：外观和行为都能完全掌控 - 每一个像素都服务于你的需求
+- **极简主义** ✨：只安装你真正需要的东西，减少臃肿和潜在安全风险
+- **学习价值** 🧠：能更深入理解 Linux 桌面系统底层是如何运作的
+- **生产力** 📈：熟练后，以键盘驱动为核心的工作流会极大提高效率
+
+## 窗口管理器的类型 📚
+
+了解不同的窗口管理方式，有助于你为自己的工作流选出最合适的工具。每种类型都有自己的理念和适用场景，下面我们就来看看它们分别有什么特点。🗺️
+
+### 平铺式窗口管理器 🧩
+
+平铺式 WM 会自动把窗口排列成**互不重叠的布局**，最大化利用屏幕空间，同时减少手动整理窗口的需求。你可以把屏幕想象成一块被精确拼好的拼图 - 每一块都有自己的位置，没有浪费空间，也没有被遮住的窗口！🎯
+
+**常见的平铺式窗口管理器：**
+
+- **[i3](https://i3wm.org/)** 👑 - 最流行的平铺式 WM，基于 X11，文档完善，社区庞大
+- **[Sway](https://swaywm.org/)** 🌊 - 与 i3 兼容的 Wayland 合成器，是 i3 用户迁移到 Wayland 的自然替代品
+- **[bspwm](https://github.com/baskerville/bspwm)** 🌳 - 基于二叉空间划分的 WM，通过 `bspc` 进行外部配置
+- **[dwm](https://dwm.suckless.org/)** ⚡ - 来自 [suckless.org](https://suckless.org/) 的超轻量 WM，通过修改源代码完成配置
+- **[xmonad](https://xmonad.org/)** 🧮 - 基于 Haskell，可通过函数式编程思想实现高度定制
+- **[Hyprland](https://hyprland.org/)** ✨ - 现代 Wayland 合成器，拥有漂亮动画和丰富视觉效果
+- **[River](https://github.com/riverwm/river)** 🏞️ - 简洁、基于标签的 Wayland 合成器（我们的选择！），基于 [wlroots](https://gitlab.freedesktop.org/wlroots/wlroots) 构建
+
+### 堆叠式窗口管理器 📚
+
+堆叠式 WM 使用的是**传统的窗口重叠方式**，和 Windows 或 macOS 类似。如果你来自传统桌面环境，这种熟悉的范式通常会让你更容易上手。🏠
+
+**常见的堆叠式窗口管理器：**
+
+- **[Openbox](http://openbox.org/)** 📦 - 轻量且高度可定制，使用基于 XML 的配置
+- **[Fluxbox](http://fluxbox.org/)** ⚡ - 基于 Blackbox，强调速度与极简
+- **[IceWM](https://ice-wm.org/)** 🧊 - 轻量，并带有类似 Windows 的熟悉界面与任务栏
+
+### 动态窗口管理器 🔄
+
+动态 WM 可以**在平铺与浮动模式之间切换**，兼顾两种世界的优点。非常适合那些既想要灵活性、又不想被单一模式绑定的用户。🤹
+
+**常见的动态窗口管理器：**
+
+- **[awesome](https://awesomewm.org/)** 🌟 - 可用 Lua 配置，内置系统托盘、面板与丰富的小部件系统
+- **[qtile](http://www.qtile.org/)** 🐍 - 基于 Python，方便 Python 开发者进行配置与扩展
+
+### 快速对比指南 📊
+
+| WM 类型 🏷️ | 资源占用 💾 | 学习曲线 📈 | 可定制性 🛠️ | 最适合 🎯 |
+|---------|----------------|----------------|---------------|----------|
+| **平铺式** | 很低 ⚡ | 陡峭 🧗 | 高 🔧 | 生产力、编程、重终端工作流 |
+| **堆叠式** | 低 📊 | 平缓 🤝 | 中等 ⚙️ | 传统桌面用户、以 GUI 为主的工作 |
+| **动态式** | 低到中等 📊 | 中等 🎢 | 很高 🚀 | 需要灵活性、混合型工作流的用户 |
+
+## River - 我们选择的窗口管理器 🏞️
+
+在深入尝试过许多方案之后 - 从久经考验的 i3 到功能丰富的 Hyprland - 我们最终把 **River** 作为主力窗口管理器。接下来就来说说，River 为什么能在众多 Wayland 合成器中脱颖而出，以及我们是如何在 Arch Linux 中落地使用它的。🎯
+
+### 为什么是 River？ 💡
+
+**简洁与性能** ⚡：River 完美体现了 Unix 哲学，只专注把一件事做到极致。它是一个极简、极速的合成器，专注纯粹的窗口管理，没有额外臃肿内容。没有内置 bar，没有复杂动画 - 只有高效纯粹的窗口管理。
+
+**基于标签的组织方式** 🏷️：和把你锁死在固定结构里的传统工作区不同，River 使用的是 **tags（标签）**。你可以把它们理解成灵活的标签系统 - 一个窗口可以拥有多个标签，你也可以同时查看多个标签。这种组织方式不会限制你的工作流，而是会随着你的习惯灵活调整。
+
+**原生 Wayland** 🌊：River 基于稳定成熟的 [wlroots](https://gitlab.freedesktop.org/wlroots/wlroots) 构建，相比基于 X11 的方案，它提供了更现代的 Wayland 能力，包括更好的安全性、性能和多显示器支持。它足够面向未来，也遵循现代显示服务器协议。
+
+**运行时配置** 🔧：River 通过 `riverctl` 命令完成配置，因此你可以**无需重启就动态修改设置**。想改边框颜色？想加快捷键？直接运行命令即可，不需要编辑配置文件后再重载。
+
+**NVIDIA 兼容性** 🎮：虽然不算官方支持重点，但相比其他 Wayland 合成器，River 在 NVIDIA 显卡上的表现相对更稳定，也因此让更多 Linux 游戏用户能够使用它。
+
+### 安装与配置 🚀
+
+借助 [AUR（Arch User Repository）](https://aur.archlinux.org/)，安装和启动 River 非常直接。下面是完整流程：
+
+```bash
+# Install River from the AUR
+sudo pacman -S river
+
+# Install essential complementary tools for a complete desktop experience
+paru -S wl-clipboard    # Clipboard utilities for copy/paste functionality  
+paru -S kanshi          # Output management for multi-monitor setups
+```
+
+### 生产环境 River 配置 📝
+
+River 的配置通过**调用 `riverctl` 命令的 shell 脚本**来完成 - 这种方式可以把 shell 脚本的灵活性完全用于动态配置！下面这份生产可用配置，来自我们日常实际使用并沉淀下来的 [dotfiles 仓库](https://github.com/jiahaoxiang2000/arch-config)：
+
+```bash
+#!/bin/bash
+# ~/.config/river/init - Production River Configuration
+
+# =============================================================================
+# CORE RIVER SETTINGS
+# =============================================================================
+
+# Set keyboard repeat rate (delay, rate)
+riverctl keyboard-repeat 50 300
+
+# Window focus behavior
+riverctl focus-follows-cursor normal
+riverctl set-cursor-warp on-focus-change
+
+# Border styling
+riverctl border-width 2
+riverctl border-color-focused 0x93a1a1      # Focused window border
+riverctl border-color-unfocused 0x586e75    # Unfocused window border
+riverctl border-color-urgent 0xdc322f       # Urgent window border
+
+# Background color for gaps
+riverctl background-color 0x002b36
+
+# =============================================================================
+# ADVANCED MOUSE CONFIGURATION (Magic Mouse Support)
+# =============================================================================
+
+# Configure pointer acceleration and sensitivity
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" accel-profile adaptive
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" pointer-accel 0.3
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" scroll-method two-finger
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" natural-scroll enabled
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" tap enabled
+riverctl input "pointer-1452-613-Apple_Inc._Magic_Mouse_2" tap-button-map lrm
+
+# =============================================================================
+# KEY BINDINGS - SYSTEM & APPLICATIONS
+# =============================================================================
+
+mod="Super"
+
+# Core applications
+riverctl map normal $mod Return spawn foot                    # Terminal (Wayland-native)
+riverctl map normal $mod Space spawn "wmenu-run"              # Application launcher
+riverctl map normal $mod D spawn "wmenu-run -i"               # Case-insensitive launcher
+
+# Browser and communication
+riverctl map normal $mod B spawn firefox                      # Web browser
+riverctl map normal $mod+Shift B spawn qutebrowser            # Vim-like browser
+
+# System utilities
+riverctl map normal $mod+Shift Q close                        # Close window
+riverctl map normal $mod+Shift X exit                         # Exit River
+riverctl map normal $mod+Shift R spawn "killall river && river" # Restart River
+
+# =============================================================================
+# MEDIA KEYS & SYSTEM CONTROL
+# =============================================================================
+
+# Volume control
+riverctl map normal None XF86AudioRaiseVolume spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+riverctl map normal None XF86AudioLowerVolume spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+riverctl map normal None XF86AudioMute spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+riverctl map normal None XF86AudioMicMute spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+# Media playback
+riverctl map normal None XF86AudioPlay spawn "playerctl play-pause"
+riverctl map normal None XF86AudioNext spawn "playerctl next"
+riverctl map normal None XF86AudioPrev spawn "playerctl previous"
+
+# =============================================================================
+# WINDOW MANAGEMENT & FOCUS
+# =============================================================================
+
+# Focus movement (Vim-like)
+riverctl map normal $mod H focus-view left
+riverctl map normal $mod J focus-view down
+riverctl map normal $mod K focus-view up
+riverctl map normal $mod L focus-view right
+
+# Alternative focus movement
+riverctl map normal $mod Left focus-view left
+riverctl map normal $mod Down focus-view down
+riverctl map normal $mod Up focus-view up
+riverctl map normal $mod Right focus-view right
+
+# Window swapping
+riverctl map normal $mod+Shift H swap left
+riverctl map normal $mod+Shift J swap down
+riverctl map normal $mod+Shift K swap up
+riverctl map normal $mod+Shift L swap right
+
+# =============================================================================
+# LAYOUT MANAGEMENT
+# =============================================================================
+
+# Toggle float
+riverctl map normal $mod+Shift Space toggle-float
+
+# Toggle fullscreen
+riverctl map normal $mod F toggle-fullscreen
+
+# =============================================================================
+# MOUSE BINDINGS
+# =============================================================================
+
+# Mouse button bindings
+riverctl map-pointer normal $mod BTN_LEFT move-view
+riverctl map-pointer normal $mod BTN_RIGHT resize-view
+riverctl map-pointer normal $mod BTN_MIDDLE toggle-float
+
+# =============================================================================
+# WINDOW RULES & AUTOMATION
+# =============================================================================
+
+# Floating window rules
+riverctl rule-add -app-id "pavucontrol" float
+riverctl rule-add -app-id "calculator" float
+riverctl rule-add -app-id "file-roller" float
+riverctl rule-add -app-id "org.kde.ark" float
+riverctl rule-add -title "Picture-in-Picture" float
+
+riverctl rule-add -app-id "telegram-desktop" tags $((1 << 7)) # Chat on tag 8
+
+# =============================================================================
+# STARTUP APPLICATIONS & SERVICES
+# =============================================================================
+
+# Essential system services
+killall -q kanshi; kanshi &                    # Output management
+killall -q fcitx5; fcitx5 -d &                 # Input method
+killall -q xremap; xremap ~/.config/xremap/config.yml &  # Key remapping
+
+# Status bar (choose one approach)
+# Option 1: Waybar
+# killall -q waybar; waybar &
+
+# Option 2: i3bar with i3status-rust (our choice)
+killall -q i3bar; i3bar-river &
+
+# Background service for automation
+killall -q ydotoold; ydotoold &                 # Automation daemon
+
+# Network and proxy setup (if configured)
+if [ -f ~/.config/river/setup-proxy.sh ]; then
+    ~/.config/river/setup-proxy.sh &
+fi
+
+```
+
+### 状态栏配置 📊
+
+**i3bar-river + i3status-rust 方案**：我们更偏好的方式是使用 i3bar 搭配 i3status-rust，构建一个轻量、高效的状态栏，这也非常契合 River 的极简理念。
+
+**i3bar-river 配置**（`~/.config/i3bar-river/config`）：
+```json
+{
+    "position": "top",
+    "height": 30,
+    "font": "DejaVu Sans Mono 10",
+    "colors": {
+        "background": "#002b36",
+        "statusline": "#93a1a1",
+        "separator": "#586e75",
+        "focused_workspace": {
+            "border": "#b58900",
+            "background": "#b58900",
+            "text": "#002b36"
+        },
+        "active_workspace": {
+            "border": "#586e75",
+            "background": "#586e75",
+            "text": "#93a1a1"
+        },
+        "inactive_workspace": {
+            "border": "#073642",
+            "background": "#073642",
+            "text": "#93a1a1"
+        }
+    },
+    "tray_output": "primary",
+    "strip_workspace_numbers": false
+}
+```
+
+**i3status-rust 配置**（`~/.config/i3status-rust/config.toml`）：
+```toml
+[theme]
+name = "solarized-dark"
+
+[icons]
+name = "material-nf"
+
+[[block]]
+block = "cpu"
+interval = 1
+format = " $icon $utilization "
+
+[[block]]
+block = "memory"
+format = " $icon $mem_used_percents.eng(w:2) "
+format_alt = " $icon_swap $swap_used_percents.eng(w:2) "
+interval = 5
+warning_mem = 80.0
+warning_swap = 50.0
+critical_mem = 95.0
+critical_swap = 80.0
+
+[[block]]
+block = "disk_space"
+path = "/"
+format = " $icon $available.eng(w:2) "
+format_alt = " $icon $used.eng(w:2)/$total.eng(w:2) ($used_percents.eng(w:2)) "
+unit = "GB"
+interval = 20
+warning = 20.0
+alert = 10.0
+
+[[block]]
+block = "sound"
+format = " $icon $volume.eng(w:2) "
+headphones_indicator = true
+show_volume_when_muted = true
+
+
+[[block]]
+block = "time"
+interval = 1
+format = " $icon $timestamp.datetime(f:'%Y-%m-%d %H:%M:%S') "
+```
+
+### 输入法集成 🌏
+
+**fcitx5 配置**：为 River 提供无缝可用的完整 CJK 输入支持：
+
+```bash
+# In River init script - already included in main config above
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export SDL_IM_MODULE=fcitx
+
+# Start fcitx5 daemon
+killall -q fcitx5; fcitx5 -d &
+```
+
+### 高级按键重映射 🎯
+
+**xremap 集成**：通过自定义按键映射进一步提升效率：
+
+```yaml
+# ~/.config/xremap/config.yml
+modmap:
+  - name: Global
+    remap:
+
+virtual_modifiers:
+  - CapsLock
+
+keymap:
+  - name: CapsLock-like Navigation (Alt as modifier)
+    remap:
+      # Navigation keys (Alt + vim keys)
+      CapsLock-a: home
+      CapsLock-semicolon: end
+      CapsLock-j: down
+      CapsLock-k: up
+      CapsLock-h: left
+      CapsLock-l: right
+
+      # Word navigation
+      CapsLock-u: C-left
+      CapsLock-i: C-right
+
+      # Deletion
+      CapsLock-y: backspace
+      CapsLock-o: C-backspace
+
+      # Text selection
+      CapsLock-n: C-S-left
+      CapsLock-m: C-S-right
+      CapsLock-comma: S-home
+      CapsLock-dot: S-end
+      CapsLock-b: S-left
+      CapsLock-e: S-right
+      CapsLock-slash: S-down
+      CapsLock-p: S-up
+
+      # Page navigation
+      CapsLock-d: pagedown
+      CapsLock-f: pageup
+      CapsLock-s: S-pagedown
+      CapsLock-r: S-pageup
+```
+
+### 多显示器支持 🖥️🖥️
+
+**Kanshi 配置**（`~/.config/kanshi/config`）：
+```
+# Single monitor (laptop)
+profile laptop {
+    output eDP-1 mode 1920x1080 position 0,0 scale 1.0
+}
+
+# Dual monitor setup (home office)
+profile home {
+    output eDP-1 mode 1920x1080 position 0,1440 scale 1.0
+    output DP-1 mode 2560x1440@165Hz position 0,0 scale 1.0
+    exec riverctl focus-output DP-1
+}
+
+# Triple monitor setup (maximum productivity)
+profile workstation {
+    output eDP-1 mode 1920x1080 position 0,1440 scale 1.0
+    output DP-1 mode 2560x1440@165Hz position 0,0 scale 1.0
+    output HDMI-A-1 mode 1920x1080@60Hz position 2560,360 scale 1.0
+    exec riverctl focus-output DP-1
+}
+```
+
+## 入门建议 🎓
+
+### 给新手的建议 🌱
+
+1. **从简单开始** 🎯：先从基础配置起步，再**逐步增加复杂度**。不要在第一天就试图复刻整套桌面环境 - 先把核心功能跑顺。
+
+2. **先理解概念** 🧠：搞懂 **tags 和 workspaces 的区别**非常关键！标签更灵活 - 你可以把它们看作可组合的标记，而传统工作区更像一间间彼此分开的房间。
+
+3. **善用文档** 📚：River 的手册（`man river`、`man riverctl`）内容详尽、写得也很好。GitHub 上的 [River 文档](https://github.com/riverwm/river/wiki) 同样值得认真阅读。
+
+4. **每天都用** 💪：把 River 当作日常主力环境，逐渐建立肌肉记忆。前期学习曲线确实陡，但换来的效率提升非常值得！
+
+### 故障排查与实用建议 🛠️
+
+**常见问题与解决方案**：
+
+**River 无法启动**：
+```bash
+# Check River logs for errors
+journalctl --user -u river
+
+# Test River configuration without full startup
+river -c ~/.config/river/init-test
+
+# Fallback to minimal configuration
+cp ~/.config/river/init ~/.config/river/init.backup
+echo "riverctl spawn foot" > ~/.config/river/init
+```
+
+**状态栏没有显示**：
+```bash
+# Check if i3bar-river is running
+pgrep -f i3bar-river
+
+# Restart status bar manually
+killall i3bar-river i3status-rust
+i3bar-river &
+
+# Debug i3status-rust output
+i3status-rs ~/.config/i3status-rust/config.toml
+```
+
+**输入法问题**：
+```bash
+# Verify fcitx5 environment variables
+echo $GTK_IM_MODULE $QT_IM_MODULE $XMODIFIERS
+
+# Restart input method
+killall fcitx5
+fcitx5 -d
+
+# Check input method status
+fcitx5-remote -s
+```
+
+### 真实配置资源 📚
+
+我们的完整 River 配置已经放在 [arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config) 中，其中包括：
+
+- **完整的 River init 脚本**，包含上文展示的所有配置
+- **i3bar-river 配置**，带有自定义配色与主题
+- **i3status-rust 配置**，提供系统监控模块
+- **自动化与效率提升集成脚本**
+- **适配不同工作模式的会话管理工具**
+- **基于 kanshi 的多显示器配置**
+
+**仓库中的关键部分**：
+- `river/init` - River 主配置文件
+- `i3bar-river/config` - 状态栏配置  
+- `i3status-rust/config.toml` - 系统信息模块
+- `kanshi/config` - 多显示器管理
+
+**通过 Dotfiles 安装**：
+```bash
+# Clone the complete configuration
+git clone --recursive https://github.com/jiahaoxiang2000/arch-config.git ~/.config/dotfiles
+
+# Link River configuration
+ln -sf ~/.config/dotfiles/river ~/.config/river
+ln -sf ~/.config/dotfiles/i3bar-river ~/.config/i3bar-river  
+ln -sf ~/.config/dotfiles/i3status-rust ~/.config/i3status-rust
+
+# Make init script executable
+chmod +x ~/.config/river/init
+```
+
+这套配置代表了**数月真实使用与持续打磨的结果** - 每一个快捷键、窗口规则和自动化脚本，都已经在日常开发、内容创作和系统管理中经历过充分验证。
+
+想继续深入？欢迎查看我们的[完整 dotfiles 仓库](https://github.com/jiahaoxiang2000/arch-config)获取全部 River 配置，加入 [River 社区](https://github.com/riverwm/river/discussions)获得支持与灵感，也可以阅读我们的 [Arch Linux dotfiles 指南](/zh/blog/misc/arch-linux-dotfiles) 了解完整系统搭建流程！🚀
+
+## 结语 🎯
+
+在现代 Wayland 生态中，River 在功能与简洁之间实现了**非常出色的平衡**。对于看重性能、可定制性与极简体验的 Arch Linux 用户来说，River 提供了一个坚实基础，让你能够构建真正服务于自己需求的高效个性化桌面环境。🏗️
+
+从传统桌面环境转向 River 这样的平铺式窗口管理器，**确实需要投入时间去学习和配置**，但它带来的效率提升、系统性能改善，以及那种对计算环境拥有深度掌控感的体验，对很多用户来说都非常值得。
+
+**谁适合考虑使用 River？** 🤔
+
+- **开发者** 👨‍💻 希望拥有少干扰、终端管理高效的编码环境
+- **系统管理员** 🔧 需要同时管理多个终端会话和监控工具
+- **高级用户** ⚡ 欣赏优雅软件设计，并希望最大化定制空间
+- **性能爱好者** 🏎️ 想把硬件效率压榨到极致
+- **极简主义者** ✨ 偏好没有臃肿、功能明确的软件
+
+**River 的哲学** 🌊
+
+River 体现了 Unix 哲学最迷人的一面 - 把一件事做到极致，同时又能和其他专注型工具良好协作。它不只是一个窗口管理器，更像是一个地基，让你搭建出完全贴合自身工作流与偏好的桌面环境。
+
+请记住，**最好的窗口管理器，永远是最符合你工作流与个人偏好的那个**。给自己一些时间去尝试、去调整、去找到最顺手的那套配置。River 足够灵活，也足够高效，能够随着你的需求变化一起成长。
+
+*祝你平铺愉快！* 🏞️✨

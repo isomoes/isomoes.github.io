@@ -1,0 +1,293 @@
+---
+title: '从 River 切换到 Niri：无限画布式窗口管理'
+date: '2025-10-24'
+tags:
+  [
+    'linux',
+    'arch linux',
+    'window manager',
+    'niri',
+    'wayland',
+    'tiling',
+    'scrollable tiling',
+    'productivity',
+  ]
+summary: '在撞上 River 的标签限制之后发现 Niri：一个采用 scrollable-tiling 设计的 Wayland 合成器，拥有无限横向画布，并且永远不会调整你现有窗口的尺寸。'
+locale: zh
+translationKey: arch-niri-window-manager
+---
+
+<BilibiliVideo bvid="BV1pkspzJE2Y" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 引言
+
+在把 River 作为日常主力窗口管理器高效使用了几个月之后，我们还是碰到了瓶颈。虽然已经有双显示器，再加上 River 灵活的标签系统（每个显示器 9 个 tag），我们依然经常觉得工作空间不够用。多个开发项目、浏览器调研窗口、沟通应用以及监控工具同时开着时，即便理论上有 18 种 tag 组合，依旧不够分。
+
+但真正让人崩溃的，其实是另一个问题：**窗口尺寸变化会破坏应用布局**。当你在一个精心排好的编码工作区里新开一个终端时，已有窗口会被重新缩放，导致 IDE 侧边栏折叠、浏览器开发者工具变得难用，或者监控面板直接切到移动端布局。这种反复打断布局的行为，会实实在在地拖慢工作效率。
+
+于是我们发现了 **Niri** - 一个采用 scrollable-tiling 设计的 Wayland 合成器，它用“窗口永不缩放的无限横向画布”重新定义了窗口管理方式。
+
+## River 的问题
+
+River 本身是一个很优秀的窗口管理器，但对我们的工作流来说，有两个限制最终变成了不能忽视的问题：
+
+### 双显示器下的标签耗尽
+
+River 提供 9 个标签，听起来已经不少了，但当你需要同时管理以下内容时，很快就会感觉捉襟见肘：
+- 多个开发项目（3-4 个标签给不同代码库）
+- 调研与文档（2-3 个标签给浏览器与参考资料）
+- 通信工具（1-2 个标签给邮件、聊天、消息）
+- 监控与系统工具（1-2 个标签）
+- 媒体和其他零散应用（1-2 个标签）
+
+即使有两台显示器（理论上等于 18 种标签组合），我们依然经常陷入下面两种情况之一：
+- 某些标签塞进太多窗口，导致导航困难
+- 为了腾出 tag 空间，不得不关掉还在用的应用
+- 不断消耗脑力去决定新窗口到底该分配到哪个标签
+
+### 窗口缩放会破坏布局
+
+传统平铺式窗口管理器（包括 River）在打开新窗口时，会自动调整已有窗口尺寸，以维持平铺布局。这会带来很现实的问题：
+
+**开发工作流被打断**：调试时新开一个终端，IDE 就会被挤压到文件树折叠，代码编辑区也变得太窄。原本精心安排的分屏布局会自行重排。
+
+**浏览器布局崩掉**：现代 Web 应用大量依赖响应式设计。当浏览器窗口因为平铺调整而被缩小时，复杂 Web 应用（管理后台、数据面板、开发工具）往往会切换到平板甚至手机布局，把关键功能藏进汉堡菜单里，整个界面结构也会重新组织。
+
+**监控面板出问题**：带有多块面板的系统监控工具在尺寸变化后，会重新排列甚至隐藏部分信息，逼得你不断滚动或展开之前本来就能直接看到的区域。
+
+这些并不是“小烦恼” - 它们每天会发生几十次，频繁打断专注状态，并迫使你手动重新整理窗口。
+
+## Niri 登场：可滚动平铺
+
+**Niri** 是一个 scrollable-tiling 的 Wayland 合成器，它用一个简单却强大的概念，同时解决了上面两个问题：**窗口会被排列在一条无限延展的横向列带上**。
+
+### 无限画布的概念
+
+Niri 不会通过缩小窗口来把所有内容硬塞进固定屏幕空间，而是把窗口按列排列，并无限向右延展。你可以把它理解为一块很长的横向画布：
+
+- 每打开一个新窗口，就在右侧新增一列
+- 当你打开新应用时，已有窗口**永远不会缩放**
+- 你通过左右滚动来浏览整条窗口带
+- 每个显示器都有自己独立的无限横向带
+
+这种方式同时解决了标签耗尽和布局被破坏的问题。你可以无限制地继续打开窗口，而不用担心：
+- 空间不够用（画布本身是无限的）
+- 现有布局被破坏（窗口不会缩放）
+- 还要做复杂 tag 管理决策（工作区是动态的）
+
+### 动态工作区 vs 固定标签
+
+Niri 使用的是**动态垂直工作区**，这一点和 GNOME 有些类似：
+
+- 工作区按垂直方向排列（使用 Super+Up/Down 切换）
+- 每个显示器拥有独立工作区
+- 底部永远会保留一个空工作区
+- 当你把窗口向下移动时，会自动创建新工作区
+- 空工作区会自动消失
+
+这与 River 的 tags 有本质区别：
+- **River 的 tags**：固定的 9 个标签，需要你给窗口分配标签
+- **Niri 的 workspaces**：会根据需要动态增减的空间
+
+这里最关键的思路变化是：在 Niri 里，你不需要主动“管理工作区”，你只需要直接使用它们。需要分离上下文时，把窗口移到下面的新工作区，剩下的交给系统处理。
+
+## 关键特性
+
+除了正面解决我们在 River 上遇到的痛点，Niri 还为现代工作流提供了不少很有吸引力的功能：
+
+**内置截图界面**：不需要额外折腾外部截图工具，Niri 自带原生截图 UI。
+
+**概览模式**：可以缩小查看所有工作区和窗口（有点像 GNOME 的 Activities 概览），让导航和窗口管理更直观。
+
+**手势支持**：触控板和鼠标手势都开箱即用：
+- 水平滑动可以滚动浏览窗口
+- 垂直滑动可以切换工作区
+- 鼠标手势可用于快速导航
+
+**窗口标签页**：可以把相关窗口放进同一列中的标签页里，适合组织多个终端或浏览器窗口，而不用额外开新列。
+
+**显示器与窗口录屏 / 投屏**：通过 xdg-desktop-portal-gnome 提供内建支持，还可以在采集中屏蔽敏感窗口。
+
+**配置热重载**：修改配置后无需重启合成器，重新加载即可立即看到变化。
+
+**渐变边框**：支持使用 Oklab 和 Oklch 色彩空间来配置渐变边框，视觉效果更现代。
+
+**自定义动画**：你可以配置窗口动画，甚至使用自定义 shader 来实现特定视觉效果。
+
+**浮动窗口**：从 niri 25.01 开始，已经提供完整的浮动窗口支持，适合那些确实需要浮动行为的应用。
+
+### 配置
+
+Niri 使用 KDL 格式配置文件，路径是 `~/.config/niri/config.kdl`。我们的完整配置已经放在 [arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config/blob/master/niri/config.kdl) 中：
+
+```kdl
+// Essential input settings
+input {
+    keyboard {
+        repeat-delay 250
+        repeat-rate 50
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+    }
+
+    mouse {
+        accel-speed -0.6
+        accel-profile "flat"
+    }
+}
+
+// Layout: gaps, column widths, and focus ring
+layout {
+    gaps 0
+    center-focused-column "always"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.5; }
+
+    // Disable focus ring and borders for cleaner look
+    focus-ring { off }
+    border { off }
+}
+
+// Multi-monitor setup
+output "DP-1" {
+    mode "3840x2160@60"
+    scale 2.4
+    position x=0 y=0
+}
+
+output "HDMI-A-1" {
+    mode "2560x1440@60"
+    scale 1.6
+    transform "270"  // Portrait mode
+    position x=1600 y=0
+}
+
+// Startup applications
+spawn-sh-at-startup "pkill fcitx5 || true; sleep 0.5; fcitx5 -d"
+spawn-sh-at-startup "pkill waybar || true; sleep 0.5; waybar &"
+
+// Turn off animations for snappier feel
+animations { off }
+```
+
+### 核心快捷键
+
+```kdl
+binds {
+    // Navigation: Vim-style + arrow keys
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
+
+    // Move windows/columns
+    Mod+Ctrl+H { move-column-left; }
+    Mod+Ctrl+J { move-window-down; }
+    Mod+Ctrl+K { move-window-up; }
+    Mod+Ctrl+L { move-column-right; }
+
+    // Workspace navigation (vertical)
+    Mod+U { focus-workspace-down; }
+    Mod+I { focus-workspace-up; }
+    Mod+Ctrl+U { move-column-to-workspace-down; }
+    Mod+Ctrl+I { move-column-to-workspace-up; }
+
+    // Direct workspace access
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    // ... up to Mod+9
+
+    // Applications
+    Mod+T     { spawn "alacritty"; }
+    Mod+Space { spawn "fuzzel"; }
+
+    // Window management
+    Mod+Q       { close-window; }
+    Mod+F       { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+V       { toggle-window-floating; }
+    Mod+W       { toggle-column-tabbed-display; }
+
+    // Column width adjustments
+    Mod+R     { switch-preset-column-width; }
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    // Overview and screenshots
+    Mod+O { toggle-overview; }
+    Mod+S { screenshot; }
+
+    // System
+    Mod+Shift+E { quit; }
+}
+```
+
+## 入门建议
+
+### 接受“横向思维”
+
+从传统平铺式 WM 转到 Niri，最大的心智变化就是：你需要开始横向思考，而不是执着于离散工作区：
+
+- 不要再努力减少打开窗口的数量 - 画布本来就是无限的
+- 把横向滚动当作主要导航方式
+- 把工作区理解为不同工作的*类别*，而不是有限的容器
+
+### 用工作区分离上下文
+
+和 River 的 tags 不同，在 Niri 里你应该把工作区用来区分不同上下文：
+- 工作区 1：当前开发（横向滚动多个项目窗口）
+- 工作区 2：沟通（浏览器、聊天、邮件并排）
+- 工作区 3：监控（系统工具、日志、面板）
+- 工作区 4：媒体与调研
+
+### 用窗口标签组织相关内容
+
+使用标签页，把相关窗口放进同一列中：
+- 多个终端：使用 `Mod+W` 切换标签式显示
+- 按研究主题分组浏览器窗口
+- 把多个代码编辑器叠在一起管理
+
+### 和 River 的关键区别
+
+**不再需要管理标签**：你不需要再给窗口分配 tags，也不需要纠结某个窗口应该属于哪个工作区。直接把它移到你需要的位置即可。
+
+**无限空间**：不用再担心空间耗尽。只要你的工作流需要，就可以继续开窗口。
+
+**稳定布局**：新开应用时，你已经排好的窗口会保持原尺寸不变。
+
+**更少的前期配置**：Niri 的默认设置很合理，而且动态工作区系统相比 River 的标签系统，通常需要更少前期配置工作。
+
+## 结语
+
+Niri 为窗口管理提供了一种很新的思路，而且它解决的是非常真实的生产力问题。对于那些已经撞上传统平铺式窗口管理器限制的用户来说 - 无论是 River 上的 tag 耗尽、自动缩放打乱布局，还是单纯想要更流动的工作方式 - Niri 的无限画布设计都提供了一个优雅的解决方案。
+
+**哪些人适合考虑 Niri：**
+
+- 被工作区限制困扰的 River/i3/Sway 用户
+- 拥有复杂多窗口工作流的开发者
+- 习惯同时保持很多应用打开的用户
+- 曾经被窗口缩放打乱布局折磨过的人
+- 想体验设计用心的现代 Wayland 合成器的用户
+
+**Niri 的哲学：**
+
+Niri 不会逼你把窗口塞进预定义的盒子里。相反，它提供的是一块可以适应你工作流的无限画布。窗口保持自己的布局，工作区会按需生长和收缩，导航也从“在标签之间离散跳转”变成一种流动的滚动体验。
+
+从 River 转向 Niri，确实需要先适应横向思维，但一旦你真正接受了无限画布这个概念，就很难再回到那个总担心 tag 用完、或者布局被缩放破坏的世界。
+
+我们的完整 Niri 配置已经放在 [dotfiles 仓库](https://github.com/jiahaoxiang2000/arch-config) 中。欢迎加入 [Matrix 上的 Niri 社区](https://matrix.to/#/#niri:matrix.org) 获取支持与灵感，也可以查看[官方文档](https://yalter.github.io/niri/Getting-Started.html)获取更完整的安装与配置说明。
+
+*祝你滚动愉快！*

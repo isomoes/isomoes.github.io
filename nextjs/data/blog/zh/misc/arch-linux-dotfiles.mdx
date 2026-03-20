@@ -1,0 +1,367 @@
+---
+title: '我的 Arch Linux Dotfiles：一段真实的配置之旅'
+date: '2025-07-30'
+tags: ['Arch Linux', 'dotfiles', 'configuration', 'development', 'setup']
+summary: '深入介绍我的个人 Arch Linux 配置仓库，展示一套真实可用的 dotfiles，用于开发、窗口管理与日常计算。'
+locale: zh
+translationKey: misc-arch-linux-dotfiles
+---
+
+<BilibiliVideo bvid="BV1AihAz5EW1" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+在之前那篇 [Arch Linux 配置指南](/zh/blog/misc/arch-linux) 的基础上，这篇文章重点展示我的个人 [arch-config](https://github.com/jiahaoxiang2000/arch-config) dotfiles 仓库——这是一套真实运行、支撑我日常 Arch Linux 开发环境的配置。🚀
+
+## 为什么要分享我的 Dotfiles？💻
+
+相比给出泛泛的应用推荐，我更愿意直接分享自己经过数月日常使用不断演化而来的真实配置文件。这个仓库代表的是一套实践导向、经得起实际检验的 Arch Linux 配置，适用于开发、内容创作和系统管理。
+
+[arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config) 里存放的是你可以直接查看、学习和改造的真实配置。每一份配置都不是纸上谈兵，而是通过实际使用一点点打磨出来的。
+
+## 仓库结构与架构 🏗️
+
+[arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config) 采用模块化方式来组织主要配置组件，并通过 git submodule 管理关键部分：
+
+### 核心结构
+
+```
+arch-config/
+├── fish/           # Fish shell 配置
+├── waybar/         # 状态栏配置
+├── qutebrowser/    # 主力浏览器配置
+├── foot/           # 终端模拟器
+├── git/            # Git 全局设置
+├── autostart/      # 会话启动应用
+├── hypr/           # Hyprland 配置（子模块）
+├── river/          # River 窗口管理器
+├── i3bar-river/    # River 使用的 i3bar
+├── i3status-rust/  # Rust 状态栏
+├── nvim/           # Neovim 配置（子模块）
+├── Code/User/      # VS Code 配置（子模块）
+├── zed/            # Zed 编辑器配置（子模块）
+└── ...             # 其他工具配置
+```
+
+### Git Submodule 架构
+
+仓库通过 git submodule 管理主要配置组件：
+
+- **Hyprland**： [hypr-config](https://github.com/jiahaoxiang2000/hypr-config) - Wayland 合成器
+- **Neovim**： [nvim-config](https://github.com/jiahaoxiang2000/nvim-config) - 文本编辑器
+- **VS Code**： [vscode-config](https://github.com/jiahaoxiang2000/vscode-config) - IDE 设置
+- **Zed**： [zed-conf](https://github.com/jiahaoxiang2000/zed-conf) - 现代编辑器
+
+这种模块化方式让主要组件可以独立版本化，同时又能保持统一的 dotfiles 结构。
+
+## 安装与配置 🚀
+
+### 快速开始
+
+1. **克隆仓库**：
+
+   ```fish
+   git clone --recursive https://github.com/jiahaoxiang2000/arch-config.git ~/.config-backup
+   cd ~/.config-backup
+   ```
+
+2. **创建符号链接**（推荐方式）：
+
+   ```fish
+   ln -sf ~/.config-backup/fish ~/.config/fish
+   ln -sf ~/.config-backup/waybar ~/.config/waybar
+   ln -sf ~/.config-backup/qutebrowser ~/.config/qutebrowser
+   # Add more as needed
+   ```
+
+3. **更新子模块**：
+   ```fish
+   git submodule update --init --recursive
+   ```
+
+### 验证方法 🔍
+
+完成配置后，可以这样检查配置是否生效：
+
+### 配置目录检查
+
+大多数应用都会在 `~/.config/` 下创建自己的配置目录。你可以通过列出这个目录，查看目前有哪些配置已经存在：
+
+```fish
+ls ~/.config/
+```
+
+## 关键配置亮点 🎯
+
+### Fish Shell 环境（`fish/config.fish`）
+
+这个 shell 配置负责处理开发环境相关设置：
+
+```fish
+# Input method support for GUI applications
+set -x GTK_IM_MODULE fcitx
+set -x QT_IM_MODULE fcitx
+set -x XMODIFIERS @im=fcitx
+
+# Custom translation functions
+function tozh
+    trans-cli "$argv"
+end
+
+function toen
+    trans-cli -f zh -t en "$argv"
+end
+
+# Node.js environment with fnm
+if type -q fnm
+    fnm env | source
+end
+
+# Cross-platform Homebrew support
+if test (uname) = "Darwin"
+    if test -f /opt/homebrew/bin/brew
+        eval (/opt/homebrew/bin/brew shellenv)
+    end
+end
+```
+
+### Wayland 窗口管理
+
+**Hyprland 合成器**（子模块：[hypr-config](https://github.com/jiahaoxiang2000/hypr-config)）
+
+- 完整的 Wayland 合成器配置
+- 自定义快捷键与窗口规则
+- 显示器配置与动画效果
+
+**River 窗口管理器**（`river/`）
+
+- 极简 Wayland 合成器
+- 动态平铺窗口管理
+- 相比 Hyprland 更轻量的替代方案
+
+**Waybar 状态栏**（`waybar/config.jsonc` 与 `waybar/style.css`）
+
+- 系统信息展示
+- 自定义模块与样式
+- 与系统服务集成
+
+**i3bar 集成**（`i3bar-river/` 与 `i3status-rust/`）
+
+- 适用于 River 窗口管理器的状态栏
+- 基于 Rust 的状态信息显示
+- 极简系统监控
+
+### 开发环境
+
+**Neovim**（子模块：[nvim-config](https://github.com/jiahaoxiang2000/nvim-config)）
+
+- 完整的 Vim 配置
+- 插件管理与自定义快捷键
+- 语言服务器集成
+
+**VS Code**（子模块：[vscode-config](https://github.com/jiahaoxiang2000/vscode-config)）
+
+- 扩展与设置
+- 工作区配置
+- 自定义主题与快捷键
+
+**Zed Editor**（子模块：[zed-conf](https://github.com/jiahaoxiang2000/zed-conf)）
+
+- 现代编辑器配置
+- 性能优化
+
+### 浏览器与 Web 工具
+
+**Qutebrowser**（`qutebrowser/config.py`）
+
+- 类 Vim 浏览体验
+- 自定义快捷键与搜索引擎
+- 隐私与性能优化
+
+**Firefox**（系统管理的 profiles）
+
+- 传统浏览器选择
+- 扩展与隐私配置
+- 作为 Qutebrowser 方案的补充
+
+**Surfingkeys**（`Surfingkeys-conf.js`）
+
+- 浏览器键盘导航扩展
+- 自定义快捷键与命令
+- 可在不同浏览器中使用
+
+### 终端与系统工具
+
+**Foot Terminal**（`foot/foot.conf`）
+
+- 原生 Wayland 终端模拟器
+- 配色方案与字体设置
+
+**Git 配置**（`git/ignore`）
+
+- 全局忽略规则
+- 开发工作流优化
+
+## 实际使用中的应用分类 📋
+
+基于我当前真实系统中 **163 个显式安装的软件包**，下面是支撑我日常工作流的主要工具：
+
+> **注意**：这里列出的只是通过 pacman/AUR 安装到系统中的应用。很多额外工具是通过特定语言的包管理器安装的（例如通过 Rust `cargo` 安装 Typst、通过 Node.js `npm` 安装 Claude Code、通过 pip/pipx 安装 Python 包等）。实际开发工具链比系统包列表看起来要丰富得多。
+
+### 开发环境 💻
+
+**编辑器与 IDE：**
+
+- **neovim** - 主力文本编辑器，配置较深
+- **visual-studio-code-bin** - 用于大型项目的全功能 IDE
+- **zed** - 适合快速编辑的现代高速编辑器
+- **emacs-wayland** - 某些特殊工作流下的备选编辑器
+- **vim** - 终端中的兜底编辑器
+
+**编程语言与工具：**
+
+- **rustup** - Rust 工具链管理
+- **python-pip, python-pipx** - Python 包管理
+- **jdk17-openjdk, maven** - Java 开发环境
+- **github-cli** - Git 仓库管理
+- **ast-grep, tree-sitter-cli** - 代码分析工具
+
+### 系统与窗口管理 🪟
+
+**窗口管理器：**
+
+- **hyprland** - 带动画效果的主力 Wayland 合成器
+- **river** - 更轻量的替代窗口管理器
+
+**系统工具：**
+
+- **waybar** - 带自定义模块的状态栏
+- **i3bar-river-git, i3status-rust-git** - River WM 状态栏集成
+- **foot, kitty** - 原生 Wayland 终端
+- **htop, neofetch** - 系统监控与信息查看
+- **yay, paru-bin** - 用于包管理的 AUR helper
+
+### 媒体与内容创作 🎬
+
+**视频与直播：**
+
+- **obs-studio, obs-streamfx-unstable** - 专业直播/录制工具
+- **vlc** - 通用媒体播放器
+- **kdenlive** - 视频剪辑套件
+- **wlrobs** - 适用于 OBS 的 Wayland 屏幕捕获
+
+**音频：**
+
+- **pipewire, pipewire-pulse, pipewire-jack** - 现代音频服务器
+- **pavucontrol** - 音频控制界面
+
+**创作工具：**
+
+- **bambustudio-nvidia-bin** - 支持 GPU 加速的 3D 打印切片工具
+- **hyprshot** - 截图工具
+- **wshowkeys-mao-git** - 用于录屏展示按键的工具
+
+### 生产力与办公 📝
+
+**办公套件：**
+
+- **wps-office-365** - 带云集成的完整办公套件
+- **wps-office-365-fonts, wps-office-365-xiezuo** - 增强写作工具
+- **okular** - 支持标注的高级 PDF 阅读器
+
+**文档处理：**
+
+- **texlive-meta** - 完整 LaTeX 发行版
+- **多个 texlive 语言包** - 国际化文档支持
+- **biber** - 参考文献处理工具
+
+**文件管理：**
+
+- **nemo** - 功能丰富的文件管理器
+- **unrar, unzip, zip** - 压缩包处理工具
+
+### 网络与通信 🌐
+
+**浏览器：**
+
+- **firefox** - 通用场景下的主浏览器
+- **qutebrowser** - 键盘驱动浏览器
+
+**通信工具：**
+
+- **telegram-desktop** - 即时通讯平台
+- **linuxqq, wechat-bin** - 中文社交平台
+- **thunderbird** - 邮件客户端
+
+**网络工具：**
+
+- **wireshark-qt** - 网络协议分析
+- **tigervnc** - 远程桌面访问
+- **aria2** - 高级下载管理器
+
+### 专项与开发工具 🔧
+
+**输入法：**
+
+- **fcitx5** - 输入法框架
+- **fcitx5-chinese-addons, fcitx5-material-color** - 中文输入与主题支持
+
+**语言与翻译：**
+
+- **translate-shell** - 命令行翻译工具
+- **python-gtts** - 文本转语音
+
+**硬件与测试：**
+
+- **geekbench** - 系统跑分测试
+- **picoscope7, ps7-lib\*** - 示波器软件与库
+- **evtest** - 输入设备测试
+- **sysbench** - 系统性能测试
+
+**开发基础设施：**
+
+- **uv** - 快速 Python 包管理器
+- **fnm, nvm** - Node.js 版本管理
+- **platformio-core** - 嵌入式系统开发
+- **v2raya** - 代理管理界面
+
+---
+
+## 如何开始使用我的配置 🚀
+
+### 使用这个仓库
+
+1. **先浏览配置**：查看 [arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config) 理解整体结构
+2. **按需挑选**：不必整套照搬，只取适合你工作流的部分即可
+3. **修改并定制**：把我的配置当作起点，逐步改造成自己的方案
+4. **欢迎贡献改进**：如果你找到更好的配置方式，也欢迎提交 pull request
+
+### 这种方式的主要优势
+
+- **真实使用验证**：每份配置都经历了数月日常使用
+- **模块化设计**：Git submodule 让主要组件可以独立更新
+- **跨平台元素**：例如 Fish shell 配置可以同时在 Linux 和 macOS 上工作
+- **版本控制**：便于追踪改动和必要时回滚
+- **易于分享**：方便和他人协作、交流配置思路
+
+## 为什么 Dotfiles 很重要 🎯
+
+相比从零开始自己摸索，或者照着泛泛教程一路搭，使用经过验证的 dotfiles 能带来：
+
+- **立即可用的生产力**：直接进入一个可工作的环境
+- **最佳实践学习**：从真实演化出来的配置中学习
+- **节省时间**：少走大量微调和试错的弯路
+- **获得灵感**：发现自己原本可能不会注意到的工具与工作流
+
+## 下一步 📚
+
+- 查看 [arch-config 仓库](https://github.com/jiahaoxiang2000/arch-config) 及其子模块
+- 回顾[最初的 Arch Linux 配置指南](/zh/blog/misc/arch-linux)了解系统层配置
+- 深入阅读各个配置文件，理解背后的取舍
+- 从 shell 配置开始，再逐步引入其他组件
+
+请记住：这些是 _我的_ 配置，是为了 _我的_ 工作流优化出来的。更好的使用方式是把它们当作灵感来源，再根据你的需求做调整，而不是盲目照搬。
+
+祝你在 Arch 上折腾愉快！🐧

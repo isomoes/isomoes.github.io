@@ -1,0 +1,40 @@
+---
+title: '管理机器人 🐧'
+date: '2025-03-05'
+tags: ['chat', 'bot', 'Tools']
+summary: '使用 QQ 管理机器人来管理 QQ 群，比如处理广告内容、接入 LLM 聊天等。'
+locale: zh
+translationKey: misc-qq-bot
+---
+
+<BilibiliVideo bvid="BV1539ZYFEsn" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 😭 背景
+
+我们管理着一个帮助大家了解衡阳师范学院考研信息的群。不幸的是，有些用户像机器人一样不断发布大量广告。为了解决这个问题，我们需要一个自动化机器人来协助管理群聊。
+
+---
+
+## 🤖 QQ 机器人
+
+一开始我们尝试过官方 QQ 机器人，但作为个人用户，很多功能都受到限制。于是我们开始寻找其他适合群管理的机器人方案，最终发现了 [NapCatQQ](https://github.com/NapNeko/NapCatQQ)。
+
+### 🎁 [NapCatQQ](https://github.com/NapNeko/NapCatQQ)
+
+NapCat 是一个使用 TypeScript 构建的机器人框架，它通过合适的启动器或框架主动调用 QQ Node 模块接口，从而实现机器人功能。
+
+#### 关于“魔法版”
+
+NapCat 框架通过一些巧妙的方法访问 QQ 的收发消息接口。为了方便用户使用，NapCat 实现了 OneBot 标准，用规范化的 HTTP/WebSocket 请求来处理消息，再去调用 NapCat 能访问到的 QQ 接口。
+
+### 🚀 基于 [ncatbot](https://github.com/liyihao1110/ncatbot) 编程
+
+NcatBot 是 NapCat 的一个 Python SDK，为开发 QQ 机器人提供了方便且易用的 Python 接口。借助这个 SDK，我们可以使用 Python 来创建和管理 QQ 机器人的功能，而不是直接处理 TypeScript。
+
+## 🥳 总结
+
+我们成功使用 NapCatQQ 来管理 QQ 群，并通过 NcatBot 编写机器人功能。这个方案易于使用而且功能强大，可以帮助我们自动管理群聊，并实现广告过滤、LLM 聊天集成等多种功能。

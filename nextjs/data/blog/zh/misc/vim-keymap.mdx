@@ -1,0 +1,72 @@
+---
+title: 'Vim 快捷键'
+date: '2025-05-02'
+tags: ['vim', 'KeyMaps', 'Tools']
+summary: '满足各种需求的 Vim 键位图！一份基于 Vim KeyMaps 的图文指南。'
+locale: zh
+translationKey: misc-vim-keymap
+---
+
+<BilibiliVideo bvid="BV1VtVFz3EQ9" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 背景
+
+过去我们主要把 Vim 当成一个基础文本编辑器来使用，并没有真正发挥它强大的能力。
+为了提升效率，我们现在开始学习更进阶的 Vim 技巧，并尝试更接近无鼠标的工作方式。
+
+因为我们在 VSCode 中使用 Vim 扩展，所以会参考它的 [roadmap](https://github.com/VSCodeVim/Vim/blob/master/ROADMAP.md)，学习并在 VSCode 里使用 Vim 命令。
+
+## 一些实用命令
+
+> 这里只列出一部分实用命令，更多内容请参考 [Vim Cheat Sheet](https://vim.rtorr.com/)
+
+### 移动：如何跳转
+
+- `f` & `t` - 查找并跳转。
+- `;`& `,` - 对 `f` 和 `t` 进行重复与撤销。
+
+文本对象移动
+
+- `(` & `)` - 移动到句子的开头或结尾。
+- `{` & `}` - 移动到段落的开头或结尾。
+
+位置跳转
+
+- `ctrl + o` - 跳转到上一个位置。
+- `ctrl + i` - 跳转到下一个位置。
+
+滚动
+
+- `zz` - 将当前行放到窗口中央。
+- `zt` - 将当前行移动到窗口顶部。
+- `zb` - 将当前行移动到窗口底部。
+
+### 搜索
+
+- `/` `?` - 向前或向后搜索，然后按 `n` 重复搜索。
+- `*` `#` - 搜索光标下的单词。
+
+### 文本编辑
+
+- `p` `y` - 粘贴与复制。
+- `r` `R` - 替换与整体替换。
+- `c{motion}` - 对某个移动范围内的文本进行修改。
+- `>>` `<<` - 缩进与取消缩进。
+- `.` - 重复上一次操作。
+- `q{a-z}` - 录制宏。
+- `@{a-z}` - 执行宏。
+
+### Ctrl 命令
+
+- `ctrl + d` / `ctrl + u` - 向下/向上滚动半页。
+- `ctrl + o` / `ctrl + i` - 在跳转列表中回到上一个/下一个位置。
+- `ctrl + r` - 重做。
+
+> **注意：**
+> 在 Windows 上，`ctrl + c` 和 `ctrl + v` 在大多数应用里通常用于复制和粘贴。
+> 但在 Vim 中，`ctrl + c` 更接近 `Esc`（取消/中断），而 `ctrl + v` 会进入 Visual Block 模式。
+> _为了避免键盘使用上的混淆，这里我们通过 `settings.json` 中的 `"vim.useCtrlKeys": false` 设置关闭了 `ctrl+ANY` 相关命令。_

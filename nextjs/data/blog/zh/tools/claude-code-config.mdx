@@ -1,0 +1,640 @@
+---
+title: '精通 Claude Code：完整配置指南'
+date: '2025-09-30'
+tags: ['claude-code', 'configuration', 'mcp', 'subagents', 'workflow', 'academic-research', 'development-tools']
+summary: '一份关于如何配置 Claude Code 的完整指南，涵盖专用 agents、自定义 slash commands 与 MCP servers。借助 claude-conf 生态和强大的学术研究能力，升级你的 AI 编程工作流。'
+locale: zh
+translationKey: tools-claude-code-config
+---
+
+<BilibiliVideo bvid="BV19GHnznEc5" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 为什么配置很重要 🎯
+
+Claude Code 开箱即用已经很强，但它真正的潜力，只有在你 **按照自己的工作流去配置它** 之后才会被释放出来。你可以把这个差别理解成：从一个基础文本编辑器，升级到完全为自己定制的 IDE——体验会是质变。
+
+一套配置得当的 Claude Code，实际上会彻底改变你和 AI 协作的方式。你得到的不再只是一个通用聊天机器人，而是一组 **针对具体任务设计的专用 AI 助手**，例如学术检索、博客写作或 Git 工作流。这些 agent 理解各自领域的细节，也更容易持续产出高质量结果。
+
+除了专用 agent，自定义配置还能通过 slash commands 给你带来 **一步直达的快捷入口**。例如同时检索多个学术数据库、从零散笔记快速生成正式周报，这些复杂流程都可以被压缩到一条命令里。
+
+真正改变游戏规则的，是通过 MCP（Model Context Protocol）server 进行的 **外部能力集成**。这些 server 可以把 Claude Code 连接到 IACR、Google Scholar、GitHub 仓库以及其他外部工具，让你在不离开开发环境的前提下完成更多事情。再加上配置中的 **标准化工作流**，你不仅能保持输出质量一致，也能在多个项目里节省大量时间。
+
+这篇文章会带你一步步搭建完整的 Claude Code 配置生态，从基础设置一直讲到进阶的学术研究能力。读完之后，你会拥有一个真正个性化、像在和一支专家团队协作一样的 AI 开发环境。
+
+## claude-conf 仓库 📦
+
+[**claude-conf 仓库**](https://github.com/jiahaoxiang2000/claude-conf/) 提供了一套面向学术与技术工作流的生产级配置模板。它不只是一些零散文件，而是一个 **完整配置生态**。
+
+### 项目结构
+
+```
+.claude/
+├── agents/              # Specialized AI assistants
+│   ├── academic-search.md
+│   ├── blog-writing.md
+│   ├── commit-push.md
+│   ├── paper-research.md
+│   └── weekly-report-writing.md
+├── commands/            # Custom slash commands
+│   ├── find-paper.md
+│   ├── search-papers.md
+│   ├── weekly-report.md
+│   └── wpaper.md
+├── settings.json        # Core configuration
+└── .mcp.json           # MCP server setup
+```
+
+这个结构遵循 Claude Code 的配置约定，并且按功能清晰分层。这样的分离设计是很有意义的：**Agents** 负责自主完成复杂、多步骤任务，会自己判断和调用多个工具；而 **Commands** 更像是标准化快捷入口，适合那些你希望反复以一致方式执行的常见操作。
+
+### 核心特性
+
+claude-conf 主要围绕三大核心工作流展开。对于 **学术研究** 🎓，你可以同时检索 IACR、Google Scholar、CryptoBib 和 Crossref，并内置质量验证与 peer-review 过滤。也就是说，你找到的不是“随便一些论文”，而是 _真正符合学术质量标准的研究材料_。
+
+在 **内容创作** ✍️ 方面，它能帮助你进行博客润色、学术报告撰写和技术文档写作。不同 writing agent 了解对应场景下的格式规范、语言风格和文章结构，因此更容易产出可直接使用的内容。
+
+最后，**开发工作流** 🔧 会通过自动化 Git 操作、智能代码管理和清晰的项目组织方式被进一步优化。从标准化 commit message 到 changelog 管理，这些工具能让你的开发实践更稳定、更专业。
+
+## 核心配置文件 ⚙️
+
+在进入专用 agents 和自定义 commands 之前，先看看 Claude Code 配置的基础。真正控制整体行为的核心文件主要有两个：`settings.json` 用于 Claude 的行为设置，`.mcp.json` 用于外部工具集成。
+
+### settings.json
+
+`settings.json` 是 Claude Code 核心行为的控制中心。它决定哪些操作可以自动执行、哪些需要确认，以及 Claude 如何和外部工具交互。下面是 claude-conf 中使用的配置：
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(git add:*)"],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "env": {},
+  "includeCoAuthoredBy": true
+}
+```
+
+**关键设置说明：**
+
+**`permissions`** 是安全层，用来控制 Claude Code 在不询问你的前提下可以做什么。它有三个数组：_`allow`_ 存放预先允许的操作（这里允许的是相对安全、可回退的 git staging 行为），_`deny`_ 用于显式禁止高风险命令，_`ask`_ 则表示执行前必须确认的操作。通过这种细粒度权限控制，Claude 既能高效帮忙，又不会越过安全边界。
+
+把 **`enableAllProjectMcpServers`** 设为 true，意味着启动 Claude Code 时，会自动启用 `.mcp.json` 中定义的所有 MCP server。这样一来，学术研究工具、GitHub 集成等外部能力都会自动就位，无需手动开启。
+
+**`includeCoAuthoredBy`** 会在 Git commit 里把 Claude 标记为共同作者。这种做法既透明，也常常符合学术或团队场景下的署名要求。启用后，每次 commit message 里都会带上一行 “Co-Authored-By: Claude”。
+
+完整设置文档请参考 [官方 Claude Code settings 文档](https://docs.anthropic.com/en/docs/claude-code/settings)。
+
+### .mcp.json
+
+`.mcp.json` 用于配置 Model Context Protocol server，也就是扩展 Claude Code 能力的外部工具：
+
+```json
+{
+  "mcpServers": {
+    "all-in-mcp": {
+      "type": "stdio",
+      "command": "pipx",
+      "args": ["run", "all-in-mcp"],
+      "env": {
+        "APAPER": "true",
+        "GITHUB_REPO_MCP": "true"
+      }
+    }
+  }
+}
+```
+
+这个配置会启用 `all-in-mcp` server（下文会详细介绍），它提供学术论文检索和 GitHub 仓库相关工具。
+
+## 专用 Agents 🤖
+
+接下来进入 claude-conf 的核心：**specialized agents**。这些 agent 是围绕特定任务设计的自主 AI 助手，拥有更聚焦的专长、定制化工具权限和适合各自场景的提示词。你可以把它们想象成一支随叫随到的专家团队——有研究馆员、专业编辑，也有 Git 工作流专家。
+
+### 1. Blog-Writing Agent ✍️
+
+**用途**：把草稿内容整理成适合发布的博客文章
+
+**适用场景**：
+- 草稿读起来支离破碎
+- bullet points 需要改写成自然段落
+- 内容需要做格式优化和可读性增强
+
+**核心能力**：
+
+blog-writing agent 很擅长把粗糙、分散的笔记，改写成前后连贯、容易阅读的段落。它会合理使用 **加粗**、_斜体_ 和少量表情 📝 来增强表达，又不会显得太浮夸。除了格式优化，它还会补充合适的参考链接和权威资源，帮助文章论证更扎实，同时处理段落过渡和结尾收束。
+
+**示例**：
+```bash
+claude "This tutorial feels choppy. Help me make it flow better."
+# Automatically triggers blog-writing agent
+
+# Or explicitly:
+/agents blog-writing "Polish this React hooks draft"
+```
+
+### 2. Paper-Research Agent 📚
+
+**用途**：系统化检索学术论文，并进行严格质量验证
+
+**适用场景**：
+- 做 research project 的文献综述
+- 需要寻找某个主题下的高质量论文
+- 密码学研究中需要 peer-reviewed 来源
+
+**核心能力**：
+- 同时检索 IACR、CryptoBib、Google Scholar 和 Crossref
+- 进行 peer-review 和引用质量过滤
+- 对候选论文做深入分析
+- 提炼关键贡献与研究方法
+
+**研究流程**：
+
+这个 agent 会遵循一种非常接近学术研究最佳实践的四阶段方法。首先是 **初步检索**，在 IACR ePrint 和专门的密码学数据库中广泛搜索；接着是 **相关性评估**，依据主题匹配、时间和引用模式筛选论文；然后是关键的 **质量验证**，用 CryptoBib 交叉确认 peer-review 状态与学术可靠性；最后对精选论文进行 **深度分析**，提取核心发现、方法与研究意义。
+
+**示例**：
+```bash
+/agents paper-research "Find recent papers on zero-knowledge proofs"
+```
+
+### 3. Academic-Search Agent 🔍
+
+**用途**：跨多个平台进行全面论文检索
+
+**适用场景**：
+- 在较宽主题范围内做初步探索
+- 需要引用量和 metadata 信息
+- 需要多平台覆盖以提高检索完整性
+
+**与 Paper-Research 的区别**：
+
+这两个 agent 在研究流程中其实是互补关系。**academic-search** 更强调 _广度_，适合在多个平台上先做主题扫描，帮你建立全局视野；而 **paper-research** 更强调 _深度_，会加入更严格的质量过滤和验证，适合在需要可靠引用来源时使用。
+
+**示例**：
+```bash
+/agents academic-search "Machine learning in cybersecurity papers"
+```
+
+### 4. Weekly-Report-Writing Agent 📊
+
+**用途**：生成带有学术表达风格的正式进展报告
+
+**适用场景**：
+- 研究进度记录
+- 技术成果总结
+- 正式状态汇报
+
+**核心能力**：
+
+这个 agent 可以把随手记下的零碎笔记，整理成结构清晰、语言得体的专业报告。它知道如何突出技术亮点、保持适度正式的语气，并把内容组织成真正可提交给导师、主管或研究小组的段落化报告。
+
+**示例**：
+```bash
+/agents weekly-report-writing "Write report on GPU profiling work"
+```
+
+### 5. Commit-Push Agent 🚀
+
+**用途**：从 stage 到 push 的完整 Git 工作流
+
+**适用场景**：
+- 功能开发完成
+- bug fix 已经准备提交
+- 想保持一致的 commit message 风格
+
+**核心能力**：
+
+commit-push agent 会把 Git 工作流从头到尾处理完整，并保持专业规范。它会生成标准化 commit message，遵循 conventional commit 格式并附上恰当 emoji（如 ✨ 表示 feature、🐛 表示 fix、📝 表示文档），让 Git history 更容易阅读。除此之外，它还会管理 changelog 更新、执行 stage-commit-push 整个序列，并在每一步通过 git status 做检查。
+
+**示例**：
+```bash
+claude "Added user authentication, ready to commit"
+# Triggers commit-push agent automatically
+```
+
+## 自定义 Slash Commands ⚡
+
+如果说 agents 更像会自主思考的顾问，那么 **slash commands** 则更像是标准化宏命令。它们适合那些你经常反复执行、而且希望每次表现一致的工作流。command 文件定义在 `.claude/commands/` 里，本质上就是简单的 markdown 文件。
+
+### Command 结构
+
+```markdown
+---
+name: command-name
+description: What this command does
+---
+
+# Your command's prompt/instructions
+You are a specialized assistant for [specific task]...
+```
+
+### 可用 Commands
+
+**`/search-papers`** - 多平台学术论文搜索
+```bash
+/search-papers cryptographic protocols
+# Searches IACR, Google Scholar, Crossref, and CryptoBib
+```
+
+**`/find-paper`** - 定向检索某篇论文
+```bash
+/find-paper "Homomorphic Encryption Survey"
+```
+
+**`/wpaper`** - 以严格标准辅助学术写作
+```bash
+/wpaper methodology for neural network experiment
+```
+
+**`/weekly-report`** - 生成专业进展报告
+```bash
+/weekly-report completed GPU profiling optimization
+```
+
+### Commands 与 Agents 的区别
+
+理解什么时候该用 command，什么时候该用 agent，非常重要。**command** 更适合简单、单步、结果可预期的操作，比如固定数据库里的论文搜索、标准格式报告生成、快速执行某个模板化查询。它们的优势在于输出稳定。
+
+**agent** 则适用于多步骤工作流，需要根据上下文做判断、需要质量验证流程、或者涉及复杂决策时。换句话说，能脚本化的场景适合 command，需要智能决策的场景更适合 agent。
+
+## MCP 集成：all-in-mcp 🔌
+
+[**all-in-mcp 仓库**](https://github.com/jiahaoxiang2000/all-in-mcp) 是一个基于 FastMCP 的 Model Context Protocol server，它大幅扩展了 Claude Code 在学术研究和 GitHub 集成方面的能力。
+
+### 架构
+
+all-in-mcp 使用的是一种 **模块化代理架构**，它充当 Claude Code 与不同工具模块之间的智能中间层：
+
+```
+Claude Code → all-in-mcp Proxy → Specialized Modules
+                                ├── APaper (academic tools)
+                                └── GitHub-Repo-MCP (repo tools)
+```
+
+这种设计带来了不少优势。首先是 **更好的模块化与可维护性**，不同工具模块彼此隔离，可以独立更新。其次，通过环境变量还能做 **按需启用**，只加载当前项目真的需要的功能。最后，它还能创造 **隔离的工具命名空间**，避免多个模块之间出现命名冲突。
+
+### 可用工具
+
+| 工具 | 说明 | 模块 |
+|------|-------------|--------|
+| `search-iacr-papers` | 搜索 IACR ePrint Archive | APaper |
+| `download-iacr-paper` | 下载 IACR 论文 PDF | APaper |
+| `read-iacr-paper` | 提取 IACR PDF 文本 | APaper |
+| `search-cryptobib-papers` | 搜索 CryptoBib 数据库 | APaper |
+| `search-google-scholar-papers` | 跨学科论文搜索 | APaper |
+| `search-crossref-papers` | 通过 DOI 元数据搜索 | APaper |
+| `read-pdf` | 从任意 PDF 中提取文本 | APaper |
+| `getRepoAllDirectories` | 列出 GitHub 仓库结构 | GitHub-Repo |
+| `getRepoDirectories` | 获取指定目录内容 | GitHub-Repo |
+| `getRepoFile` | 读取 GitHub 文件内容 | GitHub-Repo |
+
+### APaper 模块详解
+
+**APaper 模块** 是学术研究场景下的主力，提供了一整套几乎可以替代专用 research software 的工具。
+
+🔍 **多数据库检索**：
+
+这个模块连接了四个关键学术数据库，而且各自承担不同角色。**IACR ePrint** 提供顶级密码学研究论文与预印本；**CryptoBib** 提供经过质量校验的密码学书目信息，帮助你确认论文质量；**Google Scholar** 提供更宽泛的跨学科覆盖，附带引用量与 metadata；**Crossref** 则提供 DOI 级别的权威出版信息与交叉引用。
+
+📄 **PDF 处理能力**：
+
+除了检索，APaper 还能打通论文从“找到”到“读懂”的全过程。你可以直接从终端下载 IACR 论文，抽取本地或远程 PDF 的文本，并进一步借助 Claude 做分析和总结。整个流程非常顺畅。
+
+**学术工作流示例**：
+```bash
+# 1. Search for papers
+/agents academic-search "lattice-based cryptography"
+
+# 2. Verify quality through CryptoBib
+# (Agent automatically cross-references)
+
+# 3. Download and analyze top papers
+# (Agent handles full-text extraction and analysis)
+
+# 4. Generate literature review summary
+# Result: Comprehensive analysis with citations
+```
+
+### 安装与配置
+
+**前置要求**：
+- Python 3.10 或更高版本
+- 使用 `pipx` 进行隔离式 Python 包安装
+
+**安装**：
+```bash
+# Install via pipx
+pipx install all-in-mcp
+
+# Or run directly without installation
+pipx run all-in-mcp
+```
+
+**配置**：
+
+将下面内容加入 `.mcp.json`：
+```json
+{
+  "mcpServers": {
+    "all-in-mcp": {
+      "type": "stdio",
+      "command": "pipx",
+      "args": ["run", "all-in-mcp"],
+      "env": {
+        "APAPER": "true",
+        "GITHUB_REPO_MCP": "true"
+      }
+    }
+  }
+}
+```
+
+**环境变量**：
+- `APAPER=true` - 启用学术研究工具
+- `GITHUB_REPO_MCP=true` - 启用 GitHub 仓库工具
+
+**测试配置是否正常**：
+```bash
+# Test with MCP Inspector
+APAPER=true npx @modelcontextprotocol/inspector pipx run all-in-mcp
+```
+
+MCP Inspector 提供一个交互界面，方便测试工具、查看 schema 和排查 server 通信问题。
+
+## Claude Code v2.x 值得重点使用的内置功能 💡
+
+即使已经完成了自己的定制配置，也别忽略 Claude Code v2.x 自带的那些强大原生能力。它们和自定义 agents、commands 配合起来，才能组成完整开发环境。
+
+### 内置 Slash Commands
+
+**开发相关命令**：
+- `/agents` - 管理和调用自定义 agent
+- `/mcp` - 管理 MCP server 连接
+- `/review` - 请求代码审查
+- `/permissions` - 查看/更新权限
+- `/context` - 查看 token 使用统计
+
+**项目相关命令**：
+- `/init` - 使用 CLAUDE.md 初始化项目说明
+- `/memory` - 编辑 CLAUDE.md memory 文件
+- `/add-dir` - 添加额外工作目录
+
+**会话命令**：
+- `/clear` - 清空对话历史
+- `/compact` - 压缩并聚焦对话
+- `/rewind` - 回退对话/代码变更
+
+**系统命令**：
+- `/config` - 打开 Settings 界面
+- `/status` - 查看版本、模型和账号信息
+- `/doctor` - 检查安装状态
+- `/help` - 查看帮助
+
+**实用命令**：
+- `/model` - 选择或切换 AI 模型
+- `/cost` - 查看 token 使用统计
+- `/terminal-setup` - 安装快捷键绑定
+- `/vim` - 进入 vim 模式
+
+更完整的说明请参考 [官方 slash commands 文档](https://docs.claude.com/en/docs/claude-code/slash-commands)。
+
+### 创建自定义 Commands
+
+自定义 command 放在 `.claude/commands/` 中，并支持：
+
+**参数占位符**：
+- `$ARGUMENTS` - 所有参数拼成一个字符串
+- `$1`, `$2` 等 - 独立位置参数
+
+**文件引用**：
+```markdown
+Search for papers about $1 and summarize findings.
+Include related work from @references.md
+```
+
+**Frontmatter 元数据**：
+```markdown
+---
+name: my-command
+description: Command purpose
+model: sonnet
+thinking: extended
+---
+Command prompt here...
+```
+
+**执行 Bash**：
+~~~markdown
+---
+name: run-tests
+---
+Execute the following bash commands:
+```bash
+pytest tests/ --verbose
+```
+~~~
+
+### 基于 MCP 的 Slash Commands
+
+当 MCP server 连接成功后，它们的工具会自动变成 slash commands：
+
+格式：`/mcp__<server-name>__<tool-name>`
+
+以 all-in-mcp 为例：
+```bash
+/mcp__all-in-mcp__search-iacr-papers quantum computing
+
+/mcp__all-in-mcp__getRepoFile https://github.com/user/repo README.md
+```
+
+## 真实工作流示例 🌟
+
+理论很重要，但真正的价值，还是要看这些工具如何在真实场景中一起工作。下面用三个典型场景来说明。
+
+### 学术研究工作流
+
+**场景**：为密码学研究项目做文献综述
+
+```bash
+# 1. Broad exploration
+/agents academic-search "post-quantum cryptography lattice-based"
+
+# 2. Quality-verified deep dive
+/agents paper-research "lattice cryptography NIST finalists"
+
+# 3. Direct paper access
+/mcp__all-in-mcp__download-iacr-paper 2024/123
+
+# 4. Analysis and note-taking
+/mcp__all-in-mcp__read-iacr-paper 2024/123
+# Claude analyzes and summarizes key findings
+
+# 5. Weekly progress report
+/agents weekly-report-writing "Summarize this week's literature review progress"
+```
+
+**结果**：得到一份覆盖全面、经过质量验证，并带有正式文档整理的研究输出。
+
+### 博客写作工作流
+
+**场景**：把技术笔记改写成可读的博客文章
+
+```bash
+# 1. Draft initial content
+claude "I have technical notes about implementing OAuth. Help me structure a blog post."
+
+# 2. Polish with blog agent
+/agents blog-writing "Transform these notes into an engaging tutorial"
+
+# Result: Professional blog post with:
+# - Flowing paragraphs (not bullet points)
+# - Strategic formatting (bold, italics, emojis)
+# - Reference links to OAuth specs
+# - Smooth transitions and proper conclusion
+```
+
+### 开发 + 文档工作流
+
+**场景**：完成一个功能，并保持规范的 Git 实践
+
+```bash
+# 1. Implement feature
+claude "Add user authentication with JWT tokens"
+
+# 2. Review implementation
+/review
+
+# 3. Write documentation
+/agents blog-writing "Document the new authentication system"
+
+# 4. Commit with standards
+/agents commit-push "User authentication feature complete"
+
+# Result:
+# - ✨ feat: add JWT-based user authentication
+# - Updated changelog.txt
+# - Pushed to remote
+# - Co-authored by Claude
+```
+
+## 高级技巧与最佳实践 🎓
+
+当你对基础能力已经熟悉之后，下面这些方法能让你从配置中榨出更多价值。
+
+### Agent 设计原则
+
+**保持足够具体**：agent 的任务范围越明确，效果通常越好。像 “code-helper” 这种泛化 agent 往往什么都能做一点，但什么都不够好。相比之下，像 “api-documentation-generator” 这种聚焦型 agent 更容易做出稳定高质量结果。
+
+**控制工具权限**：不要贪多，别给每个 agent 都开放所有工具。每个 agent 只应该拿到它完成自身任务真正需要的工具。例如：
+```markdown
+---
+tools: Read, Write, Grep  # Just what this agent needs
+---
+```
+这不是限制，而是一种帮助 agent 聚焦的设计方式。
+
+**写清触发条件**：让 Claude 明白在什么情况下应该调用这个 agent。比如：
+```markdown
+description: Use when user explicitly mentions "literature review" or "find papers"
+```
+触发条件越清楚，Claude 就越能自动选对专家，而不需要你每次都手动指定。
+
+### Command 优化
+
+**更好地使用参数**：
+```markdown
+Search for papers about $1 published after $2
+# Usage: /search-papers "blockchain" "2023"
+```
+
+**与文件引用组合使用**：
+```markdown
+Analyze @current-file.py and suggest optimizations based on @best-practices.md
+```
+
+### MCP Server 管理
+
+**按需启用**：只开启真正需要的模块
+```json
+"env": {
+  "APAPER": "true",        // Academic tools
+  "GITHUB_REPO_MCP": "false"  // Disable if not needed
+}
+```
+
+**性能优化**：上线前先用 MCP Inspector 测试工具
+```bash
+npx @modelcontextprotocol/inspector pipx run all-in-mcp
+```
+
+### 安全性考虑
+
+在配置 AI 助手时，安全应该始终是重点，尤其是当你开始给它自动权限时。
+
+**权限控制**：永远要明确、保守地设置允许操作。权限系统是你的安全网：
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",    // Safe: staging is reversible
+      "Read(*)"             // Safe: read operations don't modify
+    ],
+    "deny": [
+      "Bash(rm:*)",        // Dangerous: file deletion
+      "Bash(sudo:*)"       // Dangerous: elevated privileges
+    ]
+  }
+}
+```
+建议从最小权限开始，真的需要时再逐步放开。
+
+**环境变量**：不要把敏感凭据提交进配置仓库。可以用占位符，并在文档里说明用户需要补什么：
+```json
+"env": {
+  "API_KEY": "${YOUR_API_KEY}"  // User must replace this
+}
+```
+涉及敏感值时，建议使用 shell 环境变量或正确 git-ignore 的 `.env` 文件。
+
+## 总结：你的高效开发环境 🎯
+
+一套配置良好的 Claude Code，不只是“更方便”，而是会 **真正改变你的工作方式**。这就像你不再是自己拿着搜索引擎摸索，而是身边站着一个知道该查哪些数据库、怎么验证来源质量的研究馆员。
+
+claude-conf 生态带来的这种改变，体现在几个方面：**五个专用 agent 带来的专业分工**、**自定义 slash commands 带来的快速入口**、**MCP 集成带来的能力扩展**，以及在学术场景下从论文发现到质量验证的一整套完整研究能力。更重要的是，**标准化流程** 让你每一次工作时都能更稳定地得到专业输出。
+
+这种配置范式，本质上是把 AI 从一个通用工具，变成了一支 **专门分工的专家团队**。就像你手里不再只有一把瑞士军刀，而是拥有了一整间配齐专业工具的工作室。
+
+### 下一步
+
+如果你也想搭建一个真正顺手的 Claude Code 环境，可以从这里开始：
+
+1. **Clone 并定制** [claude-conf 仓库](https://github.com/jiahaoxiang2000/claude-conf/)，按你的需求调整
+2. **安装 all-in-mcp**，解锁更强的学术研究能力
+3. **创建自己的专用 agents**，适配你的独特工作流
+4. **把配置分享给社区**，让更多人能在你的基础上继续扩展
+
+这篇文章里的例子，其实只是起点。真正的力量，来自你如何把这些工具按照自己的需求组合起来，做出一个 **自然融入你开发流程** 的配置环境。研究者、开发者、写作者的需求都不一样，你的配置也应该体现这种个性。
+
+**一个真正高效的 Claude Code 环境已经在等你**——现在就开始搭建，感受一下与一支真正理解你工作流的 AI 专家团队协作是什么体验。
+
+---
+
+## 相关资源 📖
+
+如果你想继续深入 Claude Code 的其他能力，可以看看这些文章：
+
+- [**Claude Code Subagents**](/zh/blog/misc/claude-subagent) - 深入理解 subagent 架构、专精优势与自定义 agent 创建
+- [**DeepSeek Meets Claude Code**](/zh/blog/tools/deepseek-claude-code) - 用 DeepSeek V3 运行 Claude Code，在保留完整功能的同时显著降低成本
+
+**官方文档**：
+- [Claude Code Settings Reference](https://docs.anthropic.com/en/docs/claude-code/settings)
+- [Slash Commands Guide](https://docs.claude.com/en/docs/claude-code/slash-commands)
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
+
+**相关仓库**：
+- [claude-conf Configuration](https://github.com/jiahaoxiang2000/claude-conf/) - 完整配置模板
+- [all-in-mcp Server](https://github.com/jiahaoxiang2000/all-in-mcp) - 学术研究 MCP server

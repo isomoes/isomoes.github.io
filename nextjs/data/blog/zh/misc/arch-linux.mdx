@@ -1,0 +1,59 @@
+---
+title: 'Arch Linux 指南'
+date: '2025-05-16'
+tags: ['Arch Linux', 'linux', 'setup', 'guide']
+summary: '一份实用的 Arch Linux 配置与使用指南，涵盖音频、输入法、设备支持等内容。'
+locale: zh
+translationKey: misc-arch-linux
+---
+
+<BilibiliVideo bvid="BV1yHE8zsEHj" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+Arch Linux 是一个轻量、灵活、采用滚动更新模式的 Linux 发行版。这篇文章分享一些简洁而实用的配置经验，帮助你获得更顺手的使用体验。🚀
+
+## Hyprland 配置 🖥️
+
+Hyprland 是一个动态平铺式 Wayland 合成器，非常适合构建现代化的 Arch Linux 桌面。安装完成后，可以按照官方 Wiki 了解基础配置。像环境变量、自动启动命令（例如输入法等）这样的关键设置，都应写入你的 Hyprland 配置文件。没必要死记硬背每个细节，需要时查文档即可。
+
+## 音频：PipeWire 与 pavucontrol 🔊
+
+PipeWire 是 Linux 上现代化的音视频服务。要安装 PipeWire 和 pavucontrol：
+
+```fish
+sudo pacman -S pipewire pipewire-pulse pipewire-alsa pipewire-jack wireplumber pavucontrol
+```
+
+之后启用并启动相关服务，再按需打开音量控制图形界面即可。
+
+## 输入法：Fcitx5 🌐
+
+如果需要中英多语言输入，可以安装 Fcitx5 及其附加组件。再把所需的环境变量和自动启动配置添加到 Hyprland 配置里，并使用图形化工具设置输入法方案。
+
+## Arch Linux 上的苹果设备 🍏
+
+### Magic Mouse 2（USB-C 2024）
+
+- 使用 [Linux-Magic-Trackpad-2-USB-C-Driver](https://github.com/mr-cal/Linux-Magic-Trackpad-2-USB-C-Driver)。
+- 仓库中提供了模块选项的配置示例。
+
+### Magic Keyboard（2021，无 Touch ID）
+
+- 开箱即用。如果需要微调，可以编辑对应的配置文件。
+
+## 实用工具 🛠️
+
+- PDF： [Okular](https://okular.kde.org/)
+- 截图： [Hyprshot](https://github.com/Gustash/Hyprshot)
+- 录屏： [OBS Studio](https://archlinux.org/packages/extra/x86_64/obs-studio/)
+- 按键显示： [wshowkeys](https://github.com/DreamMaoMao/wshowkeys)
+- 代理： [daed](https://github.com/daeuniverse/daed)
+
+---
+
+## 结语 🎉
+
+这份指南基于真实使用经验整理而成。想了解更多内容，可以查看 [Arch Wiki](https://wiki.archlinux.org/)。祝你折腾愉快！😄

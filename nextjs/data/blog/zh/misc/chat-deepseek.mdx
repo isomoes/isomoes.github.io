@@ -1,0 +1,76 @@
+---
+title: '使用 DeepSeek R1 的 NextChat'
+date: '2025-02-21'
+tags: ['chat', 'AI', 'Tools']
+summary: '介绍如何通过代理 API 在 NextChat 中使用 DeepSeek 以及其他模型。'
+locale: zh
+translationKey: misc-chat-deepseek
+---
+
+<BilibiliVideo bvid="BV1MpPceQEE8" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 😭 介绍
+
+### ⚠️ 账户状态更新
+
+**2025-02-21 更新：** 我们之前持续几个月、跨多个 IP 共用 OpenAI 账户的方案，现在已经被官方限制。
+
+---
+
+## 🚀 代理 API 访问方案
+
+为了避免未来再次受限，我们已经从按月订阅模式切换到 **按 API 请求计费** 的方式，主要优势包括：
+
+- **支持多模型**：可同时访问 OpenAI、Anthropic 和 DeepSeek
+- **成本更高效**：只为实际 API 使用量付费
+
+### 🇨🇳 国内 API 提供商
+
+**Endpoint:** [https://api.deerapi.com](https://api.deerapi.com/register?aff=kyx2)  
+**API Key:** `sk-xxxxxx`
+
+支持的模型：
+
+- OpenAI
+- Anthropic
+- DeepSeek
+
+---
+
+## 💻 本地聊天客户端配置
+
+推荐客户端：**[NextChat](https://github.com/ChatGPTNextWeb/NextChat)**
+
+### 配置说明
+
+1. 在客户端设置中：
+   - **Endpoint**：`https://api.deerapi.com`
+   - **API Key**：使用上面提供的密钥
+2. 如果需要自定义模型（例如 `o3-minideepseek-reasoner`）：
+   - 在 “Custom Models” 部分中添加
+   - 具体模型信息请参考[提供商文档](https://api.deerapi.com/pricing)
+
+---
+
+## 🛑 已知限制
+
+1. **不支持文件转换**
+
+   - 原生文件转换功能已下线（这是 OpenAI 基于成本考虑作出的决定）
+   - 变通方案：自行实现基于云端的 embedding 方案
+
+2. **本地聊天存储**
+   - ✅ 优点：安全性更高（数据保留在本地）
+   - ⚠️ 缺点：无法在多设备之间同步
+
+---
+
+## 🔧 使用建议
+
+- 从官方渠道下载安装客户端
+- 对于敏感操作，定期轮换 API key
+- 通过服务商控制台监控使用情况

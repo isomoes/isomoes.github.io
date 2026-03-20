@@ -1,0 +1,527 @@
+---
+title: 'OpenCode：Claude Code 的开源替代方案'
+date: '2025-12-06'
+tags: ['opencode', 'ai-coding', 'cli', 'multi-provider', 'deepseek', 'kimi', 'qwen', 'glm', 'development-tools']
+summary: '从 Claude Code 切换到 OpenCode，构建一个不依赖单一厂商的 AI 编程工作流。支持 75+ LLM 提供商，包括 DeepSeek、KIMI-K2、Qwen-Code 和 GLM-4.6。'
+locale: zh
+translationKey: tools-opencode-cli
+---
+
+<BilibiliVideo bvid="BV1nD2QBAEBW" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 为什么是 OpenCode？ 🤔
+
+之前我们介绍过带有专用 agent 和 MCP 服务器的 [**Claude Code 配置指南**](/zh/blog/tools/claude-code-config)。Claude Code 的确很强，但它有一个关键问题：**厂商锁定**。
+
+Claude Code 的封闭策略让你很难灵活使用其他 LLM 提供商。如果 Claude 停服，或者价格策略发生变化，你整套 AI 工作流都会跟着出问题。对于生产环境来说，这种单点故障完全不可接受。
+
+**OpenCode** 就是为了解决这个问题。它是一个开源的 AI 编程 CLI，支持 **75+ LLM 提供商**，同时保留了同样强大的能力：agents、自定义 commands，以及 MCP server integration。也就是说，你既保留熟悉的工作方式，又摆脱了对单一厂商的依赖。
+
+我们已经成功把 **KIMI-K2**、**Qwen-Code**、**GLM-4.6** 和 **DeepSeek-Chat** 接入到自己的工作流中。下面这篇指南会带你完成同样的配置。
+
+## 安装 🚀
+
+通过安装脚本安装 OpenCode：
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+也可以使用包管理器：
+
+```bash
+# npm
+npm install -g opencode-ai
+
+# Homebrew (macOS/Linux)
+brew install opencode
+
+# Arch Linux
+paru -S opencode-bin
+```
+
+验证安装：
+
+```bash
+opencode --version
+```
+
+更详细的安装选项请参考 [官方文档](https://opencode.ai/docs/)。
+
+## 配置 📝
+
+OpenCode 使用 `opencode.json` 进行配置，和 Claude Code 的 `settings.json` 类似。配置文件可以放在：
+
+- **全局**：`~/.config/opencode/opencode.json`
+- **项目级**：`./opencode.json`（项目根目录）
+- **自定义路径**：通过环境变量 `OPENCODE_CONFIG` 指定
+
+### 基础配置
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "theme": "opencode",
+  "autoupdate": true
+}
+```
+
+多个配置文件会通过 deep merge 策略 **自动合并**，项目级配置会覆盖全局配置。
+
+## 多提供商配置 🌐
+
+OpenCode 最核心的优势就是 **提供商灵活性**。下面以我们实际使用的几个 provider 为例：
+
+### 1. DeepSeek
+
+DeepSeek 提供高性价比、编程能力也很强的模型。
+
+```bash
+# Connect provider
+opencode
+/connect
+# Select DeepSeek and enter API key
+```
+
+在 `opencode.json` 中的配置：
+
+```json
+{
+  "provider": {
+    "deepseek": {
+      "models": {
+        "deepseek-chat": {}
+      }
+    }
+  }
+}
+```
+
+API Key 可从 [DeepSeek Platform](https://platform.deepseek.com/) 获取。
+
+### 2. KIMI-K2（Moonshot AI）
+
+KIMI-K2 在长上下文和推理能力上表现很不错。
+
+```bash
+/connect
+# Select Moonshot AI and enter API key
+```
+
+配置如下：
+
+```json
+{
+  "provider": {
+    "moonshot": {
+      "models": {
+        "moonshot-v1-128k": {}
+      }
+    }
+  }
+}
+```
+
+API Key 可从 [Moonshot AI Console](https://platform.moonshot.ai/console) 获取。
+
+### 3. Qwen-Code
+
+Qwen-Code 模型可以通过多个 provider 使用（如 Cerebras、Hugging Face、OpenCode Zen）。
+
+**通过 Cerebras**（推荐，速度更快）：
+
+```bash
+/connect
+# Select Cerebras and enter API key
+```
+
+```json
+{
+  "provider": {
+    "cerebras": {
+      "models": {
+        "qwen3-coder": {}
+      }
+    }
+  }
+}
+```
+
+API Key 可从 [Cerebras Console](https://inference.cerebras.ai/) 获取。
+
+### 4. GLM-4.6（Z.AI）
+
+GLM-4.6 在多语言和编程能力上都很强。
+
+```bash
+/connect
+# Select Z.AI and enter API key
+```
+
+```json
+{
+  "provider": {
+    "zai": {
+      "models": {
+        "glm-4": {}
+      }
+    }
+  }
+}
+```
+
+API Key 可从 [Z.AI API Console](https://z.ai/manage-apikey/apikey-list) 获取。
+
+### 在模型之间切换
+
+在 TUI 中使用 `/models` 命令即可在不同 provider 间切换：
+
+```bash
+/models
+```
+
+你可以从所有已配置模型中选择，也可以为不同 agent 或 command 指定不同模型。
+
+## Agents 系统 🤖
+
+OpenCode 支持与 Claude Code 类似的 agent 机制，包括 **primary agents** 和 **subagents**。
+
+### 内置 Agents
+
+- **Build** - 默认开发模式，启用所有工具
+- **Plan** - 只读分析模式，不修改代码
+- **General** - 用于复杂研究任务的 subagent
+- **Explore** - 用于快速代码库探索的 subagent
+
+在会话中按 **Tab** 可以切换 primary agent。
+
+### 自定义 Agents
+
+把 agent 放到 `.opencode/agent/` 目录中：
+
+`.opencode/agent/review.md`：
+
+```markdown
+---
+description: Code review without modifications
+mode: subagent
+model: deepseek/deepseek-chat
+permission:
+  edit: deny
+  bash: ask
+---
+
+You are a code reviewer. Focus on:
+- Security vulnerabilities
+- Performance issues
+- Best practices
+- Code maintainability
+
+Provide constructive feedback without making changes.
+```
+
+也可以直接写在 `opencode.json` 里：
+
+```json
+{
+  "agent": {
+    "review": {
+      "description": "Code review without modifications",
+      "mode": "subagent",
+      "model": "deepseek/deepseek-chat",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    }
+  }
+}
+```
+
+通过 `@` 提及来调用 subagent：
+
+```bash
+@review analyze this authentication code
+```
+
+更多细节请参考 [OpenCode Agents Documentation](https://opencode.ai/docs/agents)。
+
+## 自定义 Commands ⚡
+
+你可以在 `.opencode/command/` 中创建可复用 command：
+
+`.opencode/command/test.md`：
+
+```markdown
+---
+description: Run tests with coverage
+agent: build
+model: moonshot/moonshot-v1-128k
+---
+
+Run the full test suite with coverage report.
+Analyze failures and suggest fixes.
+```
+
+也可以写在 `opencode.json` 中：
+
+```json
+{
+  "command": {
+    "test": {
+      "template": "Run the full test suite with coverage report.\nAnalyze failures and suggest fixes.",
+      "description": "Run tests with coverage",
+      "agent": "build",
+      "model": "moonshot/moonshot-v1-128k"
+    }
+  }
+}
+```
+
+使用时直接用 `/` 调用：
+
+```bash
+/test
+```
+
+### Command 特性
+
+**参数**：支持 `$ARGUMENTS`、`$1`、`$2` 等。
+
+```markdown
+Create a React component named $ARGUMENTS with TypeScript support.
+```
+
+**Shell 输出**：使用 `!`command`` 注入命令结果。
+
+```markdown
+Recent commits:
+!`git log --oneline -10`
+
+Review these changes.
+```
+
+**文件引用**：通过 `@` 引用文件。
+
+```markdown
+Review @src/components/Button.tsx for performance issues.
+```
+
+详细说明请查看 [OpenCode Commands Documentation](https://opencode.ai/docs/commands)。
+
+## MCP Server Integration 🔌
+
+OpenCode 支持和 Claude Code 一样的 MCP（Model Context Protocol）服务器，因此你可以直接复用已有配置。
+
+### 配置格式
+
+```json
+{
+  "mcp": {
+    "all-in-mcp": {
+      "type": "local",
+      "command": ["pipx", "run", "all-in-mcp"],
+      "environment": {
+        "APAPER": "true",
+        "GITHUB_REPO_MCP": "true"
+      }
+    }
+  }
+}
+```
+
+如果你做学术研究，需要配置 **all-in-mcp**（详细介绍可参考我们的 [Claude Code 配置指南](/zh/blog/tools/claude-code-config#mcp-integration-all-in-mcp)），设置方式几乎一样：
+
+```bash
+# Install all-in-mcp
+pipx install all-in-mcp
+
+# Configure in opencode.json
+# (same as shown above)
+```
+
+可用工具会自动出现：
+- `search-iacr-papers`
+- `search-google-scholar-papers`
+- `search-cryptobib-papers`
+- `download-iacr-paper`
+- `read-pdf`
+
+### 远程 MCP 服务器
+
+OpenCode 同样支持远程 MCP：
+
+```json
+{
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+更多示例请参考 [OpenCode MCP Documentation](https://opencode.ai/docs/mcp-servers)。
+
+## 从 Claude Code 迁移 🔄
+
+如果你正从 Claude Code 迁移，可以直接参考下面这份映射：
+
+### 文件结构
+
+| Claude Code | OpenCode |
+|------------|----------|
+| `.claude/` | `.opencode/` |
+| `.claude/agents/` | `.opencode/agent/` |
+| `.claude/commands/` | `.opencode/command/` |
+| `.claude/settings.json` | `opencode.json` |
+| `.claude/.mcp.json` | `opencode.json` 中的 `mcp` 段 |
+
+### 配置映射
+
+**Claude Code** `settings.json`：
+```json
+{
+  "permissions": {
+    "allow": ["Bash(git add:*)"]
+  },
+  "enableAllProjectMcpServers": true
+}
+```
+
+**OpenCode** `opencode.json`：
+```json
+{
+  "permission": {
+    "bash": {
+      "git add*": "allow",
+      "*": "ask"
+    }
+  },
+  "mcp": {
+    "my-mcp-server": {
+      "enabled": true
+    }
+  }
+}
+```
+
+### Agent 迁移
+
+**Claude Code** `.claude/agents/blog-writing.md`：
+```markdown
+---
+name: blog-writing
+description: Professional blog writing
+---
+Transform drafts into polished posts...
+```
+
+**OpenCode** `.opencode/agent/blog-writing.md`：
+```markdown
+---
+description: Professional blog writing
+mode: subagent
+---
+Transform drafts into polished posts...
+```
+
+### Command 迁移
+
+Command 语法几乎一样。通常只需要把文件从 `.claude/commands/` 移动到 `.opencode/command/`，再调整 frontmatter：
+
+**Claude Code**：
+```markdown
+---
+name: test
+description: Run tests
+---
+```
+
+**OpenCode**：
+```markdown
+---
+description: Run tests
+agent: build
+---
+```
+
+## 实际工作流示例 🌟
+
+下面是一套使用多 provider 的典型工作流：
+
+```bash
+# 1. Initialize project with DeepSeek (fast and cheap)
+opencode
+/models
+# Select deepseek/deepseek-chat
+
+# 2. Initial code generation
+Add user authentication with JWT tokens
+
+# 3. Switch to KIMI-K2 for complex reasoning
+/models
+# Select moonshot/moonshot-v1-128k
+
+Analyze the security implications of this auth implementation
+
+# 4. Use Qwen-Code for refactoring
+/models
+# Select cerebras/qwen3-coder
+
+Refactor the authentication code following best practices
+
+# 5. Final review with GLM-4.6
+/models
+# Select zai/glm-4
+
+Review the complete authentication system and documentation
+```
+
+这种多 provider 方式，能让你在每一步都针对 **成本**、**速度** 和 **能力** 做更优选择。
+
+## 关键优势 🎯
+
+**Provider 独立性**：可在 75+ provider 间切换，而不必改动工作流。
+
+**成本优化**：简单任务用便宜模型，复杂任务用强模型。
+
+**面向未来**：没有厂商锁定。一个 provider 停掉，直接切另一个。
+
+**相同特性**：agents、commands、MCP servers 的体验与 Claude Code 基本一致。
+
+**开源**：社区驱动、透明可见。
+
+**灵活配置**：JSON 或 Markdown 都能配，全局或项目级都支持。
+
+## 总结 🚀
+
+OpenCode 提供了与 Claude Code 同样强大的 AI 编程体验，但没有厂商锁定问题。支持 **DeepSeek**、**KIMI-K2**、**Qwen-Code**、**GLM-4.6** 以及另外 70 多个 provider，这意味着你可以为每项任务自由选择最合适的模型。
+
+迁移路径也很平滑：目录结构相近、agent/command 语法兼容、MCP 集成方式一致。你现有的工作流基本都能直接迁过去。
+
+现在就开始构建一个 **provider-agnostic** 的 AI 编程工作流：
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+opencode
+```
+
+---
+
+## 相关资源 📖
+
+- [**Claude Code 配置指南**](/zh/blog/tools/claude-code-config) - 我们之前的 Claude Code 方案（方便对比）
+- [**OpenCode Documentation**](https://opencode.ai/docs/) - 官方文档
+- [**OpenCode Providers**](https://opencode.ai/docs/providers/) - 完整 provider 列表
+- [**OpenCode GitHub**](https://github.com/sst/opencode) - 源码与 issue
+
+**配置示例**：
+- [claude-conf Repository](https://github.com/jiahaoxiang2000/claude-conf/) - agent/command 模板
+- [all-in-mcp Server](https://github.com/jiahaoxiang2000/all-in-mcp) - 学术研究 MCP

@@ -1,0 +1,90 @@
+---
+title: '排版：现代文档准备系统'
+date: '2025-07-12'
+tags: ['Typst', 'typesetting', 'document', 'template', 'academic']
+summary: '一个完整的排版项目，提供适用于专业文档、学术论文和演示文稿的 Typst 模板。'
+locale: zh
+translationKey: misc-typesetting
+---
+
+<BilibiliVideo bvid="BV1gaM9z6EPP" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+[Typesetting Project](https://github.com/jiahaoxiang2000/typesetting) 是一个基于 Typst 构建的专业文档准备系统，提供高质量模板和工具，适用于学术与技术写作。📝
+
+## 什么是 Typst？⚡
+
+Typst 是一个现代排版系统，结合了 LaTeX 的强大能力和 Markdown 的简洁写法。它速度快、直观，并且能产出格式精美、排版精确的文档。这个项目正是借助 Typst，为多种文档类型构建了一套完整模板体系。
+
+## 项目特性 🚀
+
+### 模板集合 📄
+
+项目内置了多个预配置模板：
+
+- **note.typ**：用于学术笔记与文档整理
+- **report.typ**：带有更完善结构的专业报告模板
+- **slide.typ**：带自定义样式的演示文稿模板
+- **response.typ**：基于 bamdone-rebuttal 包的论文 rebuttal 模板
+
+### 核心能力 🔧
+
+- **参考文献管理**：集成 .bib 文件支持，自动处理引用
+- **数学公式**：完整支持类 LaTeX 数学公式与自定义运算符
+- **交叉引用**：自动引用图片、表格和章节
+- **专业排版**：适用于学术和技术文档的可发表级布局
+- **多语言支持**：模板同时针对英文和中文内容做了优化
+
+## 快速开始 🏁
+
+### 安装
+
+```bash
+# Clone the repository
+git clone https://github.com/jiahaoxiang2000/typesetting.git
+cd typesetting
+
+# Install Typst
+cargo install typst-cli
+```
+
+### 快速使用
+
+1. 从 `typst/` 目录中选择一个模板
+2. 编译你的文档：
+   ```bash
+   typst compile your-document.typ
+   ```
+3. 查看生成的 PDF
+
+## 项目演进 📈
+
+这个项目经历了明显的发展过程：
+
+- **v1.2.0**：从 LaTeX 完整迁移到纯 Typst 方案
+- **v1.0.0**：首个支持 Typst 的主要版本
+- **自动化工作流**：GitHub Actions 会在 release 时自动生成 PDF 示例
+
+## 文档与示例 📚
+
+- **在线文档**：[完整文档](https://jiahaoxiang2000.github.io/typesetting/)
+- **PDF 示例**：预编译示例可在 [GitHub Releases](https://github.com/jiahaoxiang2000/typesetting/releases) 获取
+- **贡献方式**：欢迎按照清晰的[贡献指南](https://github.com/jiahaoxiang2000/typesetting/blob/main/CONTRIBUTING.md)参与改进
+
+## 为什么选择这个系统？💡
+
+- **现代方式**：相比传统 LaTeX，Typst 拥有更快的编译速度和更好的报错体验
+- **模板库**：为常见文档类型提供开箱即用的模板
+- **持续开发**：保持定期更新和功能扩展
+- **开源**：MIT 许可，欢迎社区贡献
+
+---
+
+## 结语 🎯
+
+这个排版项目展示了现代文档准备工具的强大能力。无论你是在写学术论文、技术报告，还是制作演示文稿，基于 Typst 的这些模板都能为你提供一个高质量、专业化的起点。
+
+欢迎查看这个[仓库](https://github.com/jiahaoxiang2000/typesetting)，马上开始制作漂亮的文档吧！✨

@@ -1,0 +1,44 @@
+---
+title: 'Zed 编辑器'
+date: '2025-03-21'
+tags: ['editor', 'IDE', 'AI', 'Tools']
+summary: 'Zed Editor 是一个具备 AI 能力的强大 IDE，是开发者非常灵活的一款工具。'
+locale: zh
+translationKey: misc-zed-editor
+---
+<BilibiliVideo bvid="BV19LXkY7EuM" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 🤔 背景：我为什么选择 Zed Editor
+
+在之前关于 [NeoVim-start](/zh/blog/misc/neovim-start/) 的博客里，我尝试把 NeoVim 作为主力编辑器。不过，配置 NeoVim 插件并不轻松，尤其是 AI 编码相关插件。当需要同时处理*多个文件*时，NeoVim 用起来就显得有些笨重。
+我的目标是实现**完全键盘驱动的编码方式**，而这段探索也让我接触到了不同于传统编辑器的新型工作流。
+
+很长一段时间里，我一直把 `VSCode` 当作主编辑器，因为它足够轻量，同时比 `JetBrains` 系列 IDE 更灵活。GitHub 的 `Copilot` 在 VSCode 里一直是个很不错的 AI 编码助手，即使面对复杂的编码任务，在 `Snoot 3.7` 上表现也很好。不过，VSCode 并不是为**完全键盘驱动工作流**而设计的，因为很多时候你还是得用鼠标去操作菜单。比如在 AI 聊天面板中，对话通常会返回很长的内容，但却没有键盘快捷键可以滚动面板，最后还是得伸手去拿鼠标。
+
+> 另一个问题是：[在远程机器上无法生成提交信息](https://github.com/microsoft/vscode-copilot-release/issues/5792)。由于 `VSCode-Copilot` 插件并不是开源的，用户无法自己修复这些问题。
+> 有意思的是，这个问题在 Zed Editor 里也存在，不过因为 Zed 是开源的，我就有机会自己修掉它并提交一个 pull request。
+
+总的来说，我想要的是一个**开源**、支持**AI 编码**、支持**全键盘导航**，并且在不同环境下都能保持**一致操作逻辑**的编辑器。
+
+---
+
+## 🚀 认识 [Zed Editor](https://github.com/zed-industries/zed)
+
+“Welcome to Zed, a high-performance, multiplayer code editor from the creators of `Atom` and `Tree-sitter`.” 这是 Zed 仓库中的介绍。Zed 的特别之处在于，它建立在 `Rust` 生态之上，并使用 **GPU** API 进行渲染，因此拥有极高的速度与流畅度。
+
+### 🎨 特性
+
+- **AI Coding**：Zed Editor 提供了很强的 AI 编码能力
+  - 连接你的 `GitHub Copilot` 账户即可访问最新模型
+  - 支持自定义命令引用*文件*、*符号*、*URL* 等内容
+  - 可以把 *diff* 片段直接发给 AI 生成代码，无需手动复制
+  - 注意：目前还没有集成 **RAG** 功能，因此暂时无法使用 `@workspace` 或 `@Codebase` 命令。这些功能计划在未来版本中推出。
+- **完全键盘驱动**：Zed 专门为全键盘控制而设计，并支持 VIM 模式，基本不需要鼠标。所有面板都遵循一致的操作逻辑，类似 Vim 的“Everything is a Buffer”理念。
+
+## 📦 结语
+
+Zed Editor 在 *2023* 年发布，到现在也才两年左右，而且保持着快速的*每周发布*节奏。给 Zed 做贡献通常能很快得到社区反馈。对于重视 AI 编码辅助和*键盘驱动工作流*的开发者来说，它是一个很好的选择，也和我对编辑器的需求高度契合。这同样也是一个参与活跃**开源社区**的宝贵机会。

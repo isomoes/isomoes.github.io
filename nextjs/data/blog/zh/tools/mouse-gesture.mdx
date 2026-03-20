@@ -1,0 +1,310 @@
+---
+title: '🖱️ Mouse Gesture：轻松导航的终极工具'
+date: '2025-05-30'
+tags: ['rust', 'linux', 'gesture-recognition', 'magic-mouse', 'multi-touch', 'productivity']
+summary: '了解如何在 Linux 上释放 Apple Magic Mouse 的全部潜力。这个基于 Rust 的高级手势识别工具，为你的多点触控与效率操作带来更自然的交互体验。'
+locale: zh
+translationKey: tools-mouse-gesture
+---
+
+<BilibiliVideo bvid="BV1si7nzcE6g" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 介绍
+
+你有没有想过，在 Linux 上，你的 Apple Magic Mouse 能不能不只是点按和滚动？如果它还能支持更高级的多点触控手势，比如双指轻点右键、捏合缩放、自定义滑动动作，会不会更爽？
+
+这正是我在 Arch Linux 上为 **Apple Magic Mouse 2 USB-C 2024** 开发这套 **基于 Rust 的手势识别系统** 时想实现的目标。这个项目把 Magic Mouse 从一个普通输入设备，变成了一个具备智能手势识别能力的高效生产力工具。
+
+## 快速开始：在 Linux 上用 Apple Magic Mouse
+
+### 硬件要求
+
+在深入手势识别之前，先让 Magic Mouse 在 Linux 上正常工作。本指南专门面向 **Magic Mouse 2 USB-C 2024** 版本。
+
+### 驱动安装
+
+由于 Apple 并没有正式支持 Linux，Magic Mouse 需要一个自定义内核模块。好在有社区维护的 [Linux Magic Trackpad 2 USB-C Driver](https://github.com/mr-cal/Linux-Magic-Trackpad-2-USB-C-Driver)，我们才能得到完整的多点触控能力。
+
+```bash
+# Clone the driver repository
+git clone https://github.com/mr-cal/Linux-Magic-Trackpad-2-USB-C-Driver.git
+cd Linux-Magic-Trackpad-2-USB-C-Driver
+
+# Build and install the kernel module
+make
+sudo make install
+
+# Load the module
+sudo modprobe hid-magicmouse
+```
+
+### 模块配置
+
+创建一个配置文件，优化 Magic Mouse 的行为：
+
+```bash
+# /etc/modprobe.d/hid-magicmouse.conf
+options hid-magicmouse emulate_3button=0 emulate_scroll_wheel=1 scroll_speed=32 scroll_acceleration=0 report_undeciphered=0
+```
+
+**配置参数说明：**
+
+- `emulate_3button=0`: 禁用中键模拟（我们会用手势自己处理）
+- `emulate_scroll_wheel=1`: 启用平滑滚动
+- `scroll_speed=32`: 中等滚动速度（范围 0-63）
+- `scroll_acceleration=0`: 禁用加速度，保证行为一致
+- `report_undeciphered=0`: 禁用原始多点触控数据输出（我们自己处理）
+
+### 验证安装
+
+检查 Magic Mouse 是否已被系统正确识别：
+
+```bash
+# List input devices
+ls /dev/input/event*
+
+# Test the Magic Mouse (usually event26 or event27)
+sudo evtest /dev/input/event27
+```
+
+你应该会看到类似下面的多点触控能力输出：
+
+```
+Event type 3 (EV_ABS)
+  ABS_MT_SLOT (47): 0-15 slots (16 total contacts supported)
+  ABS_MT_TOUCH_MAJOR (48): 0-1020 units, contact area major axis
+  ABS_MT_TOUCH_MINOR (49): 0-1020 units, contact area minor axis
+  ABS_MT_ORIENTATION (52): -31 to 32, contact orientation
+  ABS_MT_POSITION_X (53): -1100 to 1258, X coordinate
+  ABS_MT_POSITION_Y (54): -1589 to 2047, Y coordinate
+  ABS_MT_TRACKING_ID (57): 0-65535, unique contact identifier
+```
+
+## 架构：构建稳健的手势识别系统
+
+### 系统总览
+
+这套手势识别系统基于 Linux evdev 子系统和 Multi-Touch Protocol Type B，采用 **模块化、事件驱动的架构**。组件之间的协作方式如下：
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Magic Mouse   │────│  Linux Kernel    │────│  evdev Events  │
+│     Hardware    │    │  hid-magicmouse  │    │  (/dev/input)   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                                         │
+                                                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Application Layer                            │
+├─────────────────┬──────────────────┬─────────────────────────────┤
+│   Device        │   MultiTouch     │   Gesture                   │
+│   Management    │   Processing     │   Recognition               │
+│   (device.rs)   │   (multitouch.rs)│   (gesture.rs)              │
+└─────────────────┴──────────────────┴─────────────────────────────┘
+                                                         │
+                                                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  Event Handling                                 │
+│                 (event_handler.rs)                              │
+└─────────────────────────────────────────────────────────────────┘
+                                                         │
+                                                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│               System Actions (xdotool, commands)               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 为什么使用异步架构？
+
+系统采用 **异步编程**，原因很直接：
+
+1. **非阻塞 I/O**：读取设备事件不会卡住主处理线程
+2. **高响应性**：通过异步管线把事件处理延迟压到亚毫秒级
+3. **资源效率高**：单线程 async 比多线程更省内存
+4. **高吞吐**：能稳定处理 Magic Mouse 高达 120Hz 的触摸事件
+
+### 核心数据结构
+
+#### TouchContact 结构体
+
+```rust
+pub struct TouchContact {
+    pub id: i32,                    // Tracking ID from kernel
+    pub x: i32,                     // ABS_MT_POSITION_X
+    pub y: i32,                     // ABS_MT_POSITION_Y
+    pub touch_major: i32,           // ABS_MT_TOUCH_MAJOR
+    pub touch_minor: i32,           // ABS_MT_TOUCH_MINOR
+    pub orientation: i32,           // ABS_MT_ORIENTATION
+    pub pressure: f64,              // Calculated from touch area
+    pub first_contact_time: Instant,
+    pub last_update_time: Instant,
+    pub is_active: bool,
+}
+```
+
+#### MultiTouchProcessor
+
+```rust
+pub struct MultiTouchProcessor {
+    pending_contacts: HashMap<i32, TouchContact>,    // Active slots
+    last_sync_time: Instant,                         // Debouncing
+}
+```
+
+## 实现细节：双指轻点识别
+
+下面我们重点看看双指轻点识别的实现，它很好地展示了系统在手势处理上的精细程度。
+
+### Linux 多点触控协议实现
+
+我们的实现遵循 **Linux Multi-Touch Protocol Type B** 规范，使用 slot 和 tracking ID 管理每一个独立触点。
+
+#### 事件处理流程
+
+系统会按照以下顺序处理事件：
+
+1. **Slot 管理**：`ABS_MT_SLOT` 在不同触点槽之间切换（Magic Mouse 为 0-15）
+2. **触点生命周期**：`ABS_MT_TRACKING_ID` 创建（-1 表示结束）或更新触点
+3. **位置更新**：`ABS_MT_POSITION_X/Y` 更新坐标
+4. **触点属性**：`ABS_MT_TOUCH_MAJOR/MINOR` 和 `ABS_MT_ORIENTATION` 提供接触面积与方向
+5. **同步处理**：`EV_SYN` 标记一帧事件结束，随后开始识别
+
+### 双指轻点检测算法
+
+双指轻点是最有价值的手势之一，通常映射为右键操作。下面是它的识别方式：
+
+#### 检测条件
+
+必须同时满足以下所有条件：
+
+1. **恰好 2 个活动触点**：必须正好两根手指接触
+2. **持续时间短**：两个触点都必须短于 `two_finger_tap_timeout_ms`（默认 250ms）
+3. **距离足够近**：两个触点之间距离小于 `two_finger_tap_distance_threshold`（默认 100.0）
+4. **压力足够大**：两个触点都必须超过 `contact_pressure_threshold`（默认 50.0）
+5. **同时接触**：两根手指开始接触的时间差最好在 100ms 以内
+
+#### 算法实现
+
+```rust
+// Pressure calculation from touch area
+fn calculate_pressure(touch_major: i32, touch_minor: i32) -> f64 {
+    ((touch_major + touch_minor) / 2.0) / 1020.0 * 100.0
+}
+
+// Distance calculation between two contacts
+fn calculate_distance(contact1: &TouchContact, contact2: &TouchContact) -> f64 {
+    let dx = (contact1.x - contact2.x) as f64;
+    let dy = (contact1.y - contact2.y) as f64;
+    (dx * dx + dy * dy).sqrt()
+}
+
+// Two-finger tap detection logic
+fn detect_two_finger_tap(contacts: &[TouchContact]) -> bool {
+    if contacts.len() != 2 {
+        return false;
+    }
+
+    let distance = calculate_distance(&contacts[0], &contacts[1]);
+    let pressure1 = contacts[0].pressure;
+    let pressure2 = contacts[1].pressure;
+
+    // Check all criteria
+    distance < config.two_finger_tap_distance_threshold &&
+    pressure1 > config.contact_pressure_threshold &&
+    pressure2 > config.contact_pressure_threshold &&
+    contacts[0].duration() < config.two_finger_tap_timeout_ms &&
+    contacts[1].duration() < config.two_finger_tap_timeout_ms
+}
+```
+
+### Magic Mouse 的硬件特征
+
+理解硬件能力，是做好手势识别的前提：
+
+**坐标系统：**
+
+- **X 范围**：-1100 到 1258（总计 2358 单位）
+- **Y 范围**：-1589 到 2047（总计 3636 单位）
+- **分辨率**：X=26 单位/mm，Y=70 单位/mm
+- **物理尺寸**：约 90mm x 52mm 触摸面板
+
+**多点触控能力：**
+
+- **Slots**：0-15（最多支持 16 个同时触点）
+- **触摸面积**：主轴/副轴 0-1020 单位
+- **方向信息**：-31 到 32 度
+- **Tracking ID**：0-65535 唯一标识
+
+## 配置与自定义
+
+### 手势参数
+
+系统通过 JSON 配置实现高度可调：
+
+```json
+{
+  "gesture": {
+    "two_finger_tap_timeout_ms": 250,
+    "two_finger_tap_distance_threshold": 100.0,
+    "contact_pressure_threshold": 50.0,
+    "swipe_min_distance": 200.0,
+    "pinch_scale_threshold": 0.8
+  },
+  "actions": {
+    "tap_2finger": "xdotool click 3",
+    "swipe_left": "xdotool key alt+Right",
+    "swipe_right": "xdotool key alt+Left",
+    "pinch_in": "xdotool key ctrl+minus",
+    "pinch_out": "xdotool key ctrl+plus"
+  }
+}
+```
+
+### 动作映射
+
+每个手势都可以映射成系统命令：
+
+- **双指轻点**：右键（`xdotool click 3`）
+- **滑动手势**：浏览器前进/后退（`alt+Left/Right`）
+- **捏合手势**：缩放（`ctrl+plus/minus`）
+- **自定义命令**：任何 shell 命令或脚本都可以
+
+### 参与贡献
+
+这是一个开源项目，也非常欢迎贡献：
+
+- **手势算法**：实现新的手势类型
+- **平台支持**：支持更多设备
+- **性能优化**：继续提升处理效率
+- **文档改进**：完善安装指南和 API 文档
+
+## 总结
+
+在 Linux 上为 Apple Magic Mouse 构建一套成熟的手势识别系统，是一次关于底层输入处理、异步编程和人机交互设计的有趣探索。
+
+**核心成果：**
+
+- ✅ 在 Linux 上完整支持 Magic Mouse 多点触控
+- ✅ 亚毫秒级手势识别
+- ✅ 高度可配置且易于扩展的架构
+- ✅ 面向生产环境的性能与稳定性
+
+**我们学到了什么：**
+
+- Linux Multi-Touch Protocol 的实现细节
+- 异步架构在实时系统中的优势
+- 手势识别算法的设计原则
+- 硬件与软件整合时的挑战
+
+这个项目说明了一件事：只要方法对，我们完全可以在 Linux 上释放 Apple 硬件的真正潜力，做出真正提高日常效率的工具。
+
+这套手势识别系统，把 Magic Mouse 从一个普通指针设备升级成了一个能理解自然动作的智能输入工具。无论是切换浏览器标签页、缩放文档，还是触发你自己的自动化命令，这些手势都会很快变成肌肉记忆，并显著提升工作效率。
+
+**不妨亲自试试**，感受智能手势识别给 Linux 工作流带来的变化！
+
+---
+
+_如果你想进一步了解 Linux 输入系统、Rust 异步编程或手势识别算法，欢迎查看 [mouse-gesture](https://github.com/jiahaoxiang2000/mouse-gesture)，里面有更详细的技术文档和代码示例。_

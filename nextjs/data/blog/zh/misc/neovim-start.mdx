@@ -1,0 +1,47 @@
+---
+title: 'Neovim 入门'
+date: '2025-01-23'
+tags: ['neovim', 'IDE']
+summary: '我们使用 Neovim 作为 IDE，尽量实现无鼠标操作。'
+locale: zh
+translationKey: misc-neovim-start
+---
+
+<BilibiliVideo bvid="BV1vTfVYQEoy" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+## 动机
+
+过去我们一直把 VSCode 当作主要 IDE。它集成了很多功能，可以在一个平台里完成不同任务。不过，当我们希望执行更复杂的任务、实现更多自动化时，VSCode 的插件接口并不统一，这就要求我们频繁查阅每个插件各自的文档。
+
+另外，VSCode 的 UI 交互逻辑也不太适合扩展到新的场景，例如 AI 代码补全。基于这些原因，我们想尝试把 Neovim 作为 IDE，尽量实现无鼠标操作，并让整体 UI 交互更流畅，同时也更方便扩展插件。
+
+## LazyVim
+
+LazyVim 是一套基于 💤 lazy.nvim 的 Neovim 配置，让你可以更轻松地自定义和扩展自己的配置。
+
+### 键位映射
+
+LazyVim 使用 `which-key.nvim` 来帮助你记忆快捷键。只要按下任意按键，比如 `<space>`，你就会看到一个弹出窗口，展示所有以 `<space>` 开头的可用快捷键。
+默认键位可以在[这里](http://www.lazyvim.org/keymaps)查看。
+
+之后我们可以在 `lua/config/keymaps.lua` 文件里自定义快捷键，覆盖默认配置，例如：
+
+```lang-lua
+local map = vim.keymap.set
+map('n', '<leader>q', ':q<CR>')
+```
+
+这会把 `<leader>q` 映射到 `:q<CR>`，也就是关闭当前缓冲区。
+
+### 插件
+
+LazyVim 基于 `lazy.vim`，这是一个用于 Neovim 的插件管理器。你可以在 `lua/plugins` 文件夹中找到插件配置。
+这个文件夹中的 `*.lua` 文件会被 `lazy.vim` 自动加载。
+LazyVim 已经为我们打包了很多默认插件，你可以在[这里](http://www.lazyvim.org/plugins)查看。
+在后续内容中，我们会进一步看看不同插件以及它们的使用方式。
+
+### 自定义
+
+在 `lua/config/` 下，`autocmds.lua` 和 `options.lua` 可以帮助我们覆盖 Neovim 的默认设置，此外也包括用来自定义快捷键的 `keymaps.lua`。

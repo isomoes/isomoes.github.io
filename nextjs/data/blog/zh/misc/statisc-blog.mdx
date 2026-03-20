@@ -1,0 +1,51 @@
+---
+title: '静态博客：Tailwind 与 Next.js'
+date: '2025-01-16'
+tags: ['introduction', 'blog', 'js']
+summary: '使用 Next.js 和 Tailwind CSS 构建静态博客的动机。'
+locale: zh
+translationKey: misc-statisc-blog
+---
+
+<BilibiliVideo bvid="BV1vBw5ecE4v" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+在我看来，博客就是用来展示文章和消息的，最重要的是让它**易于阅读**。如果把文章发在 _CSDN_、_知乎_ 之类的平台上，这些平台往往不够清爽，广告很多，而且很多功能并不支持，比如 $$\LaTeX$$。所以我们需要一种能自己掌控的方式来展示文章，而最直接的方法，就是自己搭建博客。
+
+> [!TIP]
+> 搭建博客当然也许还有很多不错的方法，这里我们选择使用 **Next.js** 和 **Tailwind CSS**。
+
+## 为什么选择 [Next.js](https://github.com/vercel/next.js)？
+
+Next.js 是一个 React 框架，提供了出色的开发体验和丰富的功能。它很适合用来做博客，原因包括：
+
+1. **对 SEO 友好：** Next.js 开箱即具备良好的 SEO 支持。
+2. **性能优秀：** Next.js 通过 **服务端渲染** 和静态站点生成等功能优化博客性能。（如果以后想做成动态博客，也依然可以继续用这个框架。）
+3. **开发体验好：** Next.js 提供热更新、自动代码分割等能力。（如果后续想增加一些新功能，也可以很快接入插件。）
+4. **社区活跃：** Next.js 拥有庞大而活跃的社区，能提供大量支持与资料。到 2025 年为止，它在 GitHub 上已有 **129k+ stars**。
+
+## 为什么选择 [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss)？
+
+Tailwind CSS 是一个 utility-first 的 CSS 框架，提供了一组预定义类来给元素添加样式。它很适合构建博客，原因包括：
+
+1. **可定制性强：** Tailwind CSS 提供了很高的定制自由度，意味着我们可以轻松把样式调整成自己需要的样子。
+2. **开发体验好：** Tailwind CSS 通过一组现成的类名，提升了写样式时的效率。
+3. **社区活跃：** Tailwind CSS 同样拥有很大的社区与丰富资源。到 2025 年，它在 GitHub 上已有 **84.5k+ stars**。
+
+## [tailwind-nextjs-starter-blog](https://github.com/timlrx/tailwind-nextjs-starter-blog)
+
+[tailwind-nextjs-starter-blog](https://github.com/timlrx/tailwind-nextjs-starter-blog) 是一个基于 Next.js 和 Tailwind CSS 的博客起始模板，为构建博客提供了很好的起点。它的特性包括：
+
+- **基于 Tailwind 3.0 和主色属性，轻松自定义样式**
+- **MDX - 可以在 markdown 文档中编写 JSX！**
+- **轻量，首屏 JS 仅 85kB**
+- **移动端友好视图**
+- **明暗主题**
+- **集成 Pliny，提供：**
+  - 多种分析方案，包括 Umami、Plausible、Simple Analytics、Posthog 和 Google Analytics
+  - 通过 Giscus、Utterances 或 Disqus 接入评论
+  - 借助 Kbar 或 Algolia 实现命令面板搜索
+- **通过 KaTeX 支持数学公式展示**
+- **通过 `rehype-citation` 支持引用和参考文献**
+- **支持标签系统 - 每个唯一标签都会有独立页面**

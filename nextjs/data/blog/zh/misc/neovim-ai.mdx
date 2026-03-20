@@ -1,0 +1,137 @@
+---
+title: 'Neovim 遇见 AI（CodeCompanion）'
+date: '2025-06-07'
+tags: ['neovim', 'IDE', 'AI']
+summary: '一份关于 CodeCompanion 的完整指南。它是一个把编辑器变成 AI 驱动 IDE 的 Neovim 插件，涵盖聊天缓冲区、内联辅助、代理工作流以及工具集成等内容。'
+locale: zh
+translationKey: misc-neovim-ai
+---
+
+<BilibiliVideo bvid="BV159TCzDEb5" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+# CodeCompanion
+
+[CodeCompanion](https://github.com/olimorris/codecompanion.nvim?tab=readme-ov-file) 让你可以通过内置适配器、社区适配器，或者自己编写适配器的方式，使用任意 LLM 来编码。
+
+> 我的 CodeCompanion 配置文件在[这里](https://github.com/jiahaoxiang2000/nvim-config/blob/lazy/lua/plugins/codecompanion.lua)。如果你也想实现类似效果，可以直接复制到自己的配置中。
+
+## 聊天缓冲区
+
+聊天缓冲区延续了 Neovim 的交互式 buffer 风格，把所有信息放在一个 buffer 中展示，而不需要再拆成多个 buffer 来分别放参考内容、用户输入和 LLM 回复。
+
+你可以通过以下方式增强聊天内容：
+
+- `#` - 添加上下文（例如 `#buffer`、`#lsp`）
+- `/` - 插入 slash 命令（例如 `/file`、`/help`）
+- `@` - 引入 AI agent 角色（例如 `@editor`、`@cmd_runner`）
+
+> **自定义**：所有上下文选项和 slash 命令都可以完全自定义。你可以往聊天缓冲区中加入自己的上下文或 slash 命令。
+
+> **重要**：引用内容默认只会捕获某个时间点的数据，不会自动更新。可以使用 `gw` 监听 buffer 变化并自动刷新引用；使用 `gp` 可以把某个引用固定到每次请求中。
+
+## 内联助手
+
+Inline Assistant 提供了一种更直接、更轻量的代码交互方式。与聊天缓冲区不同，它会把 AI 的响应直接整合进当前 buffer 中，让 LLM 可以自然地插入或替换代码。
+
+使用 `ga` 接受建议，使用 `gr` 拒绝建议。
+
+> Inline == #buffer + @editor
+
+## 工作流（Agent）模型
+
+> **概念**：Chat + _function calling_ = agent
+
+CodeCompanion 会把工具作为上下文与动作，通过 system prompt 共享给 LLM。LLM 在聊天缓冲区中通过请求工具来充当 agent，而聊天缓冲区则负责在 Neovim 内编排这些工具的调用。你可以通过 `@` 符号把 agent 和 tools 加入聊天缓冲区。
+
+> **自动批准**：使用 `gta` 可以启用自动工具批准，让函数调用无需手动确认即可执行。这个能力在 `@full_stack_dev` 上下文中特别有用。
+
+**Agent 功能**：Agent 会借助 LLM 的响应来调用特定 _tools_。例如，`@editor` 会通过 _editor_ 工具提供文件编辑能力。所有工具都可以根据你的工作流进行配置。
+
+下面是一个自定义 agent 配置示例：
+
+```lua
+require("codecompanion").setup({
+  strategies = {
+    chat = {
+      tools = {
+        ["my_tool"] = {
+          description = "Run a custom task",
+          callback = require("user.codecompanion.tools.my_tool")
+            opts = {
+              requires_approval = false, -- Set to true if you want to require user approval before executing the tool
+            }
+        },
+        groups = {
+          ["my_group"] = {
+            description = "A custom agent combining tools",
+            system_prompt = "Describe what the agent should do",
+            tools = {
+              "cmd_runner",
+              "editor",
+              "my_tool",  -- Include your custom tool
+              -- Add your own tools or reuse existing ones
+            },
+          },
+        },
+      },
+    },
+  },
+})
+```
+
+### 工具是如何工作的
+
+当你把工具加入聊天缓冲区后，CodeCompanion 会要求 LLM 按照为该工具定义的结构化 JSON schema 返回结果。聊天缓冲区会解析 LLM 的响应、识别工具调用，再触发 agent 系统。
+
+随后 agent 会启动一系列事件，将工具依次排队并顺序执行。每个工具的输出都会再通过聊天缓冲区反馈给 LLM，从而形成连续的工作流。
+
+## 工作流（Action Palette）
+
+### 工作机制
+
+当从 Action Palette 启动时，工作流会通过一种 _subscription mechanism_ 附着到某个聊天缓冲区上。工作流会订阅聊天缓冲区中的对话与数据流。在 LLM 返回响应之后，这个聊天会自动从订阅中移除，以避免工作流被再次执行。细节可见 [codecompanion 关于 workflows 的文档](https://codecompanion.olimorris.dev/extending/workflows.html)。
+
+## 总结
+
+**核心功能**
+
+- **Chat Buffer**：在 Neovim 中进行交互式 LLM 对话
+- **Inline Assistant**：带 diff 预览的 AI 代码编写
+- **Action Palette**：通过 `:CodeCompanionActions` 快速访问
+- **Command Generation**：通过 `:CodeCompanionCmd` 生成自定义命令
+
+**上下文集成**
+
+- **变量**：`#buffer`、`#lsp`、`#viewport` 用于获取当前状态
+- **Slash Commands**：`/buffer`、`/file`、`/fetch`、`/help`、`/symbols`、`/terminal`、`/now`
+- **可视化选择**：把选中的代码发送给 AI 分析
+
+**AI Agents 与 Tools**
+
+- **@editor**：直接编辑 buffer
+- **@cmd_runner**：执行 shell 命令
+- **@files**：执行文件系统相关操作
+- **@full_stack_dev**：组合全部工具
+
+**适配器支持**
+
+- **多种 LLM**：Anthropic、OpenAI、GitHub Copilot
+- **灵活配置**：支持自定义 API 与环境变量
+- **Copilot 集成**：可与现有安装直接协同工作
+
+**内置提示词**
+
+- `/commit` - 生成提交信息
+- `/explain` - 解释代码
+- `/fix` - 改进代码
+- `/lsp` - LSP 诊断
+
+## 还想继续做的事
+
+- [ ] **代码索引**：加入 [VectorCode](https://github.com/Davidyz/VectorCode/tree/main) 对代码库建立索引，从而自动把相关上下文加入聊天缓冲区
+- [ ] **Model Context Protocol**：加入 [mcphub.nvim](https://github.com/ravitemer/mcphub.nvim) 来支持 MCP，类似 function calling，但能力更强、更灵活
+- [ ] **网页搜索**：给 Chat 增加网页搜索能力，例如接入 [Tavily](https://www.tavily.com/)
+- [ ] **创建 workflows**：简单工作流可以把多个步骤/任务串起来，这对复杂操作非常有用。Agent workflows 还可以自动做反思与迭代。
+- [ ] **多 agent 协作**：探索更强的多智能体协同工作方式。

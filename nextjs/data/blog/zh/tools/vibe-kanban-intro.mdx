@@ -1,0 +1,539 @@
+---
+title: 'Vibe-Kanban：编排多 Agent AI 编程工作流'
+date: '2026-01-28'
+tags: ['vibe-kanban', 'multi-agent', 'ai-coding', 'parallel-workflow', 'opencode', 'claude-code', 'productivity', 'task-scheduling']
+summary: '一篇关于 vibe-kanban 的完整指南：它是一个开源编排平台，用于管理多个 AI 编程 agent。本文会介绍如何设置 workspace、配置基于 OpenCode 和 Claude Code 的多模型 profile，并提升整体开发效率。'
+locale: zh
+translationKey: tools-vibe-kanban-intro
+---
+
+<BilibiliVideo bvid="BV15X67BGEGr" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## 什么是 Vibe-Kanban？
+
+[**Vibe-Kanban**](https://github.com/BloopAI/vibe-kanban) 是一个开源、基于 Web 的编排平台，专门帮助开发者管理多个同时工作的 AI 编程 agent。随着 AI 编程 agent 越来越多地承担代码生成工作，人类工程师投入更多时间在 **规划、审查与任务编排** 上，而 Vibe-Kanban 正是为简化这个流程而生。
+
+它最核心的价值主张可以概括为：**把 Claude Code、Gemini CLI、Codex、Amp 以及其他 coding agents 的价值放大 10 倍**。
+
+```bash
+# Quick start
+npx vibe-kanban
+```
+
+就是这么简单。运行之后，在浏览器里打开本地 URL，完成初始化设置，你就可以开始编排 AI agents 了。
+
+## 核心功能
+
+### 基于 Git Worktrees 的安全并行执行
+
+vibe-kanban 最杀手级的能力，是 **隔离式并行执行**。每个任务都会在自己的 git worktree 中运行，避免不同 agent 互相干扰，也不会污染你的主分支。
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Main Repository                    │
+├─────────────────┬─────────────────┬─────────────────┤
+│   Worktree 1    │   Worktree 2    │   Worktree 3    │
+│   vk/task-auth  │   vk/task-api   │   vk/task-docs  │
+│   [Agent A]     │   [Agent B]     │   [Agent C]     │
+│   Running...    │   Running...    │   Running...    │
+└─────────────────┴─────────────────┴─────────────────┘
+```
+
+每个 agent 都会自动在独立分支上工作。没有冲突、没有互相覆盖，只有纯粹的并行效率提升。
+
+### 多 Agent 支持
+
+Vibe-kanban 可以无缝配合多种 coding agent：
+
+- **Claude Code** - Anthropic 官方 CLI
+- **OpenCode** - 开源的多 provider 替代方案
+- **GitHub Copilot CLI**
+- **Google Gemini CLI**
+- **OpenAI Codex**
+- **Cursor CLI**
+- **Amp**
+
+你可以在不同任务上切换 agent，或者让不同 agent 同时跑不同任务。
+
+### 内置代码审查
+
+通过界面直接查看带语法高亮的 diff，审查 AI 生成的代码。你可以像对待人类提交的 PR 一样，批准、修改或拒绝这些改动。
+
+### 可视化任务管理
+
+Kanban 面板提供直观的任务组织方式：
+
+- 创建任务并分配给 AI agent
+- 跟踪任务状态（pending、running、completed）
+- 管理复杂任务的 subtasks
+- 在 UI 中处理 pull request、rebase 与 merge
+
+## 一个简单工作流示例：收集系统信息
+
+下面用一个简单又实用的例子来说明。我们会用 vibe-kanban 创建 **三个并行任务**，分别收集操作系统信息。
+
+### 目标
+
+创建一个系统信息收集器，包含三个彼此独立的脚本：
+
+| 任务 | 输出文件 | 信息内容 |
+|------|-------------|-------------|
+| OS Kernel | `kernel_info.md` | 内核版本、架构、主机名 |
+| GPU Information | `gpu_info.md` | GPU 型号、驱动、显存 |
+| Software Packages | `packages_info.md` | 已安装包数量、包管理器 |
+
+### 第一步：创建仓库
+
+```bash
+mkdir system-info-collector && cd system-info-collector
+git init
+echo "# System Information Collector" > README.md
+git add . && git commit -m "init"
+```
+
+### 第二步：启动 Vibe-Kanban
+
+```bash
+npx vibe-kanban
+```
+
+然后在浏览器里打开 URL，并把你的仓库添加进去。
+
+### 第三步：创建三个并行任务
+
+在 vibe-kanban 中创建以下三个任务：
+
+**任务 1：收集 OS Kernel 信息**
+```
+Create a bash script `collect_kernel.sh` that collects:
+- Kernel version (uname -r)
+- System architecture (uname -m)
+- Hostname
+Save output to `kernel_info.md` in markdown format.
+```
+
+**任务 2：收集 GPU 信息**
+```
+Create a bash script `collect_gpu.sh` that collects:
+- GPU model (via lspci or nvidia-smi)
+- Driver version
+- Available VRAM
+Save output to `gpu_info.md` in markdown format.
+```
+
+**任务 3：收集软件包信息**
+```
+Create a bash script `collect_packages.sh` that collects:
+- Total installed packages count
+- Package manager type (apt/pacman/dnf)
+- List of explicitly installed packages
+Save output to `packages_info.md` in markdown format.
+```
+
+### 第四步：并行运行所有任务
+
+点击三个任务的 “Run”。Vibe-kanban 会自动创建隔离 worktree：
+
+```
+system-info-collector/
+├── main branch (your working directory)
+│
+└── worktrees/
+    ├── vk/xxxx-collect-os-kernel/     [Agent 1 - Running]
+    ├── vk/yyyy-collect-gpu-info/      [Agent 2 - Running]
+    └── vk/zzzz-collect-packages/      [Agent 3 - Running]
+```
+
+每个 agent 各自独立工作，不会发生冲突。
+
+### 第五步：审查并合并
+
+任务完成后，在 Changes Panel 中逐个审查：
+
+```bash
+# Example output from Agent 1 (kernel_info.md)
+## Kernel Information
+- **Version**: 6.18.6-arch1-1
+- **Architecture**: x86_64
+- **Hostname**: workstation
+```
+
+批准并合并每个任务，最后你的仓库就会变成：
+
+```
+system-info-collector/
+├── README.md
+├── collect_kernel.sh
+├── collect_gpu.sh
+├── collect_packages.sh
+├── kernel_info.md
+├── gpu_info.md
+└── packages_info.md
+```
+
+### 为什么这种方式有效
+
+- **没有冲突**：每个脚本都在独立 worktree 中完成
+- **并行执行**：三个 agent 同时推进
+- **独立审查**：每个任务都能单独判断是否合并
+- **简单合并**：独立分支让 git history 更干净
+
+## Workspaces：更像 IDE 的工作界面
+
+Vibe-kanban 最近引入了 **Workspaces**（目前仍在 beta），它重新设计了任务执行环境，让体验更像一个 IDE。
+
+### 启用 Workspaces
+
+进入 **Settings → Beta Features**，启用 Workspaces。启用后，你可以在经典 kanban 视图和新的 workspace 界面之间无缝切换。
+
+### Workspace 的核心概念
+
+**Workspaces**：围绕某个任务组织的主要工作环境，可以理解成一个专属开发空间。
+
+**Repositories**：一个 workspace 可以包含多个 git 仓库。你可以在修改某个仓库时，同时引用另一个仓库中的代码。
+
+**Sessions**：和 coding agent 的单独对话线程。一个 workspace 中可以开多个 session，从而在保持上下文的同时绕开 token 限制。
+
+### Workspace 界面
+
+workspace 提供了四栏布局：
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  Command Bar (Cmd/Ctrl + K)                                │
+├──────────────────────┬─────────────────────────────────────┤
+│                      │                                     │
+│   Chat Panel         │   Changes Panel                     │
+│   (Sessions)         │   (Syntax-highlighted diffs)        │
+│                      │                                     │
+├──────────────────────┼─────────────────────────────────────┤
+│                      │                                     │
+│   Terminal           │   Browser Preview                   │
+│                      │   (Desktop/Mobile viewports)        │
+│                      │                                     │
+└──────────────────────┴─────────────────────────────────────┘
+```
+
+### Chat Panel
+
+Chat panel 用来展示你与 AI agent 的对话。它支持：
+
+- 一个 workspace 内开启多个并发 session
+- 在 token 快到上限时开启全新 session
+- 在不同 session 之间保留 workspace 上下文
+- 对话中途切换不同 agent profile
+
+### Changes Panel
+
+代码改动可以通过以下方式审查：
+
+- 带语法高亮的 diff
+- 支持按文件或 unified 视图查看
+- 可直接写 inline comment 给 agent 反馈
+- 一键批准工作流
+
+### 集成工具
+
+- **Terminal**：直接在 workspace 中运行命令
+- **Browser Preview**：不离开界面就能预览改动
+- **Workspace Notes**：记录关键决策与上下文
+
+## 多模型配置
+
+vibe-kanban 的另一个优势，是 agent 配置非常灵活。你可以定义多个 **profiles**，针对不同模型场景随时切换。
+
+### 配置文件位置
+
+vibe-kanban 的配置默认存放在 `~/.local/share/vibe-kanban/`：
+
+```
+~/.local/share/vibe-kanban/
+├── config.json      # Global settings
+└── profiles.json    # Agent profiles
+```
+
+### 全局配置（config.json）
+
+`config.json` 控制全局行为：
+
+```json
+{
+  "config_version": "v8",
+  "theme": "SYSTEM",
+  "executor_profile": {
+    "executor": "OPENCODE"
+  },
+  "editor": {
+    "editor_type": "CUSTOM",
+    "custom_command": "/path/to/your/editor"
+  },
+  "github": {
+    "default_pr_base": "main"
+  },
+  "git_branch_prefix": "vk",
+  "beta_workspaces": true,
+  "send_message_shortcut": "ModifierEnter"
+}
+```
+
+关键设置包括：
+
+- `executor_profile.executor`：默认执行器（`OPENCODE` 或 `CLAUDE_CODE`）
+- `editor.custom_command`：用于 “Open in Editor” 的自定义编辑器命令
+- `git_branch_prefix`：自动创建分支的前缀（默认 `vk`）
+- `beta_workspaces`：启用新的 Workspaces 功能
+
+### Agent Profiles（profiles.json）
+
+`profiles.json` 用于定义 Claude Code 和 OpenCode 的多模型配置。
+
+#### OpenCode Profiles
+
+```json
+{
+  "executors": {
+    "OPENCODE": {
+      "DEFAULT": {
+        "OPENCODE": {
+          "model": "minimax-cn/MiniMax-M2.1",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode"
+        }
+      },
+      "SONNET": {
+        "OPENCODE": {
+          "model": "anthropic/claude-sonnet-4-5",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode",
+          "env": {
+            "HTTPS_PROXY": "http://localhost:1080"
+          }
+        }
+      },
+      "OPUS": {
+        "OPENCODE": {
+          "model": "anthropic/claude-opus-4-5",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode",
+          "env": {
+            "HTTPS_PROXY": "http://localhost:1080"
+          }
+        }
+      },
+      "GEMINI": {
+        "OPENCODE": {
+          "model": "google/gemini-3-pro-preview",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode",
+          "env": {
+            "HTTPS_PROXY": "http://localhost:1080"
+          }
+        }
+      },
+      "GLM": {
+        "OPENCODE": {
+          "model": "zhipuai-coding-plan/glm-4.7",
+          "mode": "build",
+          "auto_approve": true,
+          "base_command_override": "/home/user/.opencode/bin/opencode"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Claude Code Profiles
+
+```json
+{
+  "executors": {
+    "CLAUDE_CODE": {
+      "DEFAULT": {
+        "CLAUDE_CODE": {
+          "model": "sonnet",
+          "dangerously_skip_permissions": true,
+          "base_command_override": "/home/user/.local/bin/claude",
+          "env": {
+            "https_proxy": "http://localhost:1080",
+            "http_proxy": "http://localhost:1080"
+          }
+        }
+      },
+      "OPUS": {
+        "CLAUDE_CODE": {
+          "model": "opus",
+          "dangerously_skip_permissions": true,
+          "base_command_override": "/home/user/.local/bin/claude",
+          "env": {
+            "http_proxy": "http://localhost:1080",
+            "https_proxy": "http://localhost:1080"
+          }
+        }
+      },
+      "GLM": {
+        "CLAUDE_CODE": {
+          "model": "glm-4.7",
+          "dangerously_skip_permissions": true,
+          "base_command_override": "/home/user/.local/bin/claude",
+          "env": {
+            "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+            "ANTHROPIC_AUTH_TOKEN": "your-api-key-here"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Profile 配置项说明
+
+| 选项 | 说明 |
+|--------|-------------|
+| `model` | 模型标识，例如 `anthropic/claude-sonnet-4-5` |
+| `mode` | OpenCode 模式：`build` 或 `plan` |
+| `auto_approve` | 跳过确认提示 |
+| `base_command_override` | CLI 二进制的自定义路径 |
+| `env` | 环境变量（代理、API endpoint 等） |
+| `dangerously_skip_permissions` | Claude Code：跳过权限检查 |
+| `append_prompt` | 自动追加到所有任务后的提示词 |
+
+### 在不同 Profile 之间切换
+
+在 vibe-kanban UI 中，你可以为每个任务单独选择 profile。这样就能做到：
+
+- 简单任务用 **更便宜的模型**（MiniMax、GLM）
+- 复杂推理任务用 **更强模型**（Opus、Gemini Pro）
+- 特定领域任务用 **更专门的模型**
+- 为不同模型配置不同 **代理环境**
+
+### 示例：按任务选择模型
+
+```
+Task: "Fix typo in README"
+→ Profile: DEFAULT (MiniMax-M2.1) - fast and cheap
+
+Task: "Implement OAuth2 authentication flow"
+→ Profile: OPUS (claude-opus-4-5) - complex reasoning needed
+
+Task: "Translate documentation to Chinese"
+→ Profile: GLM (glm-4.7) - strong multilingual support
+```
+
+## 与 OpenCode 和 Claude Code 的协同
+
+Vibe-kanban 可以同时编排 **OpenCode** 和 **Claude Code** 作为执行器。它们是互补关系：
+
+### OpenCode 的优势
+
+- **Provider 灵活**：支持 75+ LLM provider
+- **无厂商锁定**：切换 provider 不影响工作流
+- **成本优化**：简单任务可交给便宜模型
+- **开源**：社区驱动发展
+
+关于 OpenCode 的详细配置，可参考我们的 [OpenCode CLI 指南](/zh/blog/tools/opencode-cli)。
+
+### Claude Code 的优势
+
+- **Anthropic 原生集成**：第一方支持体验更完整
+- **Subagent 架构**：内置专用 agent 体系
+- **MCP server 生态**：有更丰富的工具集成
+
+关于 Claude Code 的详细配置，可参考 [Claude Code 配置指南](/zh/blog/tools/claude-code-config)。
+
+### 混合工作流
+
+比较理想的方式，是采用 **混合工作流**：
+
+1. 把 `OPENCODE` 设为默认执行器，利用 provider 灵活性
+2. 为需要 Anthropic 原生能力的任务配置 Claude Code profile
+3. 由 vibe-kanban 根据任务要求切换不同执行器
+
+## 环境变量
+
+Vibe-kanban 支持多个运行时环境变量：
+
+| 变量 | 默认值 | 说明 |
+|----------|---------|-------------|
+| `PORT` | 自动分配 | 服务端口 |
+| `HOST` | `127.0.0.1` | 后端 host |
+| `VK_ALLOWED_ORIGINS` | 未设置 | 反向代理的 CORS 来源 |
+| `DISABLE_WORKTREE_CLEANUP` | 未设置 | 为调试保留 worktree |
+
+### 远程部署
+
+如果需要部署到远程服务器：
+
+1. 通过 Cloudflare Tunnel 或 ngrok 暴露 UI
+2. 在 Settings → Editor Integration 中配置 SSH
+3. 为你的域名设置 `VK_ALLOWED_ORIGINS`
+
+```bash
+VK_ALLOWED_ORIGINS=https://vk.example.com npx vibe-kanban
+```
+
+## 实用建议
+
+### 任务拆解
+
+高质量多 agent 工作流离不开合理的任务拆解：
+
+- **独立执行**：每个子任务尽量不阻塞其他任务
+- **边界清晰**：scope 明确，避免冲突
+- **粒度合适**：在并行收益和协调成本之间找平衡
+
+### 模型选择策略
+
+根据任务复杂度来分配模型：
+
+| 任务类型 | 推荐模型 |
+|-----------|-------------------|
+| 简单修复、文档 | MiniMax、GLM（快且便宜） |
+| 标准功能实现 | Sonnet、Gemini Pro |
+| 复杂架构设计 | Opus |
+| 多语言内容 | GLM-4.7 |
+| 创造性方案 | Opus、Gemini |
+
+### 审查工作流
+
+- 不要无脑全部批准——像审查人类 PR 一样审查 AI 代码
+- 用 inline comments 引导 agent 继续迭代
+- 在合并前保证测试覆盖合理
+
+## 总结
+
+Vibe-kanban 正在改变开发者与 AI 编程 agent 协作的方式。你不再是和单个 agent 线性对话，而是在多个隔离环境中 **同时编排多个 agent 并行工作**。
+
+下面这些能力组合在一起：
+- **基于 git worktrees 的安全并行执行**
+- **覆盖主流 coding agent 的多 agent 支持**
+- **兼顾成本与能力的灵活模型 profile**
+- **更像 IDE 的 workspace 工作界面**
+
+……共同构成了一种真正新的 AI 辅助开发范式。
+
+现在就开始编排你的 AI coding agents：
+
+```bash
+npx vibe-kanban
+```
+
+---
+
+## 相关资源
+
+- [**Multi-Agent Parallel Workflow**](/zh/blog/tools/multi-agent-parallel) - 第一手体验报告
+- [**OpenCode CLI Guide**](/zh/blog/tools/opencode-cli) - 多 provider 配置
+- [**Claude Code Configuration**](/zh/blog/tools/claude-code-config) - 完整配置指南
+- [**Vibe-Kanban GitHub**](https://github.com/BloopAI/vibe-kanban) - 源码与 issue
+- [**Vibe-Kanban Documentation**](https://vibekanban.com/docs) - 官方文档

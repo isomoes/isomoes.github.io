@@ -1,0 +1,62 @@
+---
+title: '使用 OSS 部署博客'
+date: '2025-02-02'
+tags: ['deploy', 'blog', 'oss']
+summary: '介绍使用 OSS 服务部署博客背后的动机。'
+locale: zh
+translationKey: misc-oss-deploy-blog
+---
+
+<BilibiliVideo bvid="BV1rhFBeKEVA" />
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+---
+
+## 介绍
+
+这篇文章介绍为什么要用 **OSS 服务** 来部署博客。博客本身使用 Next.js 构建，托管在 GitHub Pages 上；内容维护在 GitHub 仓库中，并通过 GitHub Actions 进行部署。
+
+不过，在中国大陆访问 GitHub Pages 并不总是方便。把博客部署到 OSS 服务之后，就能让更多读者更稳定地访问。
+
+### 什么是 OSS 服务？
+
+OSS（Object Storage Service，对象存储服务）是一种由阿里云等平台提供的、可扩展且性价比很高的分布式存储服务。它支持图片、视频等多种数据类型。在这个场景里，我们将博客内容和静态资源都存储到 OSS 上。
+
+## 把博客部署到 OSS
+
+之前我们已经讨论过如何把[静态博客部署到 GitHub Pages](/zh/blog/misc/statisc-blog/)。在那个流程里，我们使用 Next.js 构建博客，把内容放在 GitHub 仓库中，再通过 GitHub Actions 完成部署。Next.js 生成的静态文件存放在 `out` 目录中。
+
+而接入 OSS 时，我们需要使用 `ossutil` 工具上传 `out` 目录。它是阿里云提供的命令行工具，用于管理 OSS bucket 和对象，也方便我们通过 GitHub Actions 自动化上传文件。
+
+```yaml:deploy.yml
+deploy-oss:
+  needs: build
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: github-pages
+        path: artifact
+    - name: Extract artifact
+      run: |
+        mkdir -p dist
+        cd artifact
+        tar -xf artifact.tar -C ../dist
+    - uses: manyuanrong/setup-ossutil@v3.0
+      with:
+        endpoint: "oss-cn-guangzhou.aliyuncs.com"
+        access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
+        access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+    - run: ossutil cp -rf dist/ oss://isomo/ --meta=Cache-Control:no-cache
+```
+
+### 杂项说明
+
+- 可能还需要把自定义域名绑定到 OSS 服务上。
+- 可以进一步阅读[OSS 静态页面配置](https://help.aliyun.com/zh/oss/user-guide/tutorial-use-a-custom-domain-name-to-configure-static-website-hosting?spm=5176.8465980.console-base_help.dexternal.4e701450MfAazA)。
+- 成本方面：OSS 按存储数据量和请求次数计费。对于访问量不大的博客，费用非常低，大约每月 1 元左右。
+
+## 结语
+
+这篇文章介绍了使用 OSS 服务部署博客的动机和基本流程。我们讨论了 OSS 在存储博客内容与资源方面的优势，也说明了如何通过 GitHub Actions 完成部署。希望这份指南能帮助你理解把博客部署到 OSS 平台上的好处。

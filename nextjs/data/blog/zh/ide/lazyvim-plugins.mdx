@@ -1,0 +1,147 @@
+---
+title: 'LazyVim 插件'
+date: '2025-01-24'
+lastmod: '2025-01-24 21:52'
+tags: ['neovim', 'IDE','plugins']
+summary: '本文将介绍 LazyVim 自带的默认插件。'
+locale: zh
+translationKey: ide-lazyvim-plugins
+---
+
+<BilibiliVideo bvid="BV1uEfpYKErT"/>
+
+<TOCInline fromHeading={1} toHeading={3} toc={props.toc} />
+
+## Coding Blink
+
+Blink 指的是 [blink.cmp](https://github.com/andweeb/blink.nvim) 插件，它是 Neovim 的补全插件。它轻量且速度很快，支持 LSP 和 snippets。对于想使用轻量补全插件的人来说，这是一个不错的选择。
+
+在 LazyVim 中，Blink 是默认补全插件。你无需额外配置就可以直接使用。`blink.cmp` 的默认配置如下：
+
+```lua
+opts = {
+  snippets = {
+    expand = function(snippet, _)
+      return LazyVim.cmp.expand(snippet)
+    end,
+  },
+  appearance = {
+    -- sets the fallback highlight groups to nvim-cmp's highlight groups
+    -- useful for when your theme doesn't support blink.cmp
+    -- will be removed in a future release, assuming themes add support
+    use_nvim_cmp_as_default = false,
+    -- set to 'mono' for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+    -- adjusts spacing to ensure icons are aligned
+    nerd_font_variant = "mono",
+  },
+  completion = {
+    accept = {
+      -- experimental auto-brackets support
+      auto_brackets = {
+        enabled = true,
+      },
+    },
+    menu = {
+      draw = {
+        treesitter = { "lsp" },
+      },
+    },
+    documentation = {
+      auto_show = true,
+      auto_show_delay_ms = 200,
+    },
+    ghost_text = {
+      enabled = vim.g.ai_cmp,
+    },
+  },
+
+  -- experimental signature help support
+  -- signature = { enabled = true },
+
+  sources = {
+    -- adding any nvim-cmp sources here will enable them
+    -- with blink.compat
+    compat = {},
+    default = { "lsp", "path", "snippets", "buffer" },
+    cmdline = {},
+  },
+
+  keymap = {
+    preset = "enter",
+    ["<C-y>"] = { "select_and_accept" },
+  },
+}
+```
+
+基于这些插件，我们可以完成 snippets、LSP、path、buffer 和 cmdline 的补全。
+而键位映射也可以按照自己的使用习惯来配置。
+
+## Colorscheme
+
+我们认为 `tokeynight-night` 是 Neovim 中更好看的配色主题，因此把它作为默认 colorscheme。配置如下：
+
+```lua lua/plugins/colorscheme.lua
+{
+  "LazyVim/LazyVim",
+    opts = {
+      colorscheme = "tokyonight-night",
+    },
+}
+```
+
+## Editor `fzf`
+
+编辑器核心基于 [fzf-lua](https://github.com/ibhagwan/fzf-lua)，可以对文件、buffer、git 文件等进行模糊搜索。它是一个非常强大的模糊搜索插件，可用于查找文件、buffer、git 文件等。
+
+- 使用 `<space><space>` 搜索文件。
+- 使用 `<space>sw` 搜索上下文。
+- 等等。
+
+### neo-tree
+
+[neo-tree](https://github.com/nvim-neo-tree/neo-tree.nvim) 是 Neovim 的资源管理器插件。它可以用来浏览文件和目录，对于希望使用文件浏览器插件的人来说是个不错的选择。
+它支持浏览 buffer、gitstatus 和 floder。
+
+- `<leader>e` 用于打开 floder。
+- `<leader>ge` 用于查看 gitstatus。
+- `<leader>be` 用于查看 buffer。
+
+### which-key
+
+which-key 是一个会在弹窗中显示当前模式按键绑定的插件。对于想查看当前模式键位的人来说，它是个不错的选择。
+
+- 使用 `<leader>sk` 显示按键绑定。
+- 在这个 [link](http://www.lazyvim.org/plugins/editor#which-keynvim) 中可以看到默认的按键分组类别，例如 `z` flod、`gs` surround。
+- 使用 `<leader>?` 查看哪些按键可以使用。
+
+## Formatter & Linting
+
+Lazyvim 使用 `conform.nvim` 来格式化代码。对于想使用代码格式化工具的人来说，这是个不错的选择。
+我们可以通过 `<leader>cm` 使用 `mason.nvim` 添加新的文件类型格式化器。
+Linting 也同样由 `mason.nvim` 管理。
+
+## LSP language server protocol
+
+`nvim-lspconfig` 是 lazyvim 默认的 LSP 插件。
+它依赖 `mason.nvim` 和 `mason-lspconfig.nvim`。
+
+## Treesitter
+
+`nvim-treesitter` 是一个新的解析器生成工具，我们可以在 Neovim 中使用它来支持语法高亮以及其他语言处理任务。
+
+- 使用 `<C-Space>` 和 `BS` 来增加或减少选择范围。
+- 使用 `[` 或 `]` 再配合 `f` `c` `a` 在 treesitter 节点间导航。
+
+## UI
+
+- [bufferline](https://github.com/akinsho/bufferline.nvim) - 在编辑器窗口顶部
+  以标签页形式显示已打开的 buffers。
+- [lualine](https://github.com/nvim-lualine/lualine.nvim) - 一个可自定义的状态栏，
+  显示在编辑器底部。
+- [noice.nvim](https://github.com/folke/noice.nvim) - 一个现代通知系统，
+  可用于调试和自定义通知。
+
+## Utils
+
+- [persistence](https://github.com/folke/persistence.nvim) 提供会话管理，
+  可以快速恢复之前的工作会话。

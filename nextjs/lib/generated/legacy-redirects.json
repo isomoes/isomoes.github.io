@@ -236,6 +236,12 @@
     {
       "slug": [
         "tools",
+        "four-layer-multi-agent-workflow"
+      ]
+    },
+    {
+      "slug": [
+        "tools",
         "live-danmu"
       ]
     },
@@ -548,6 +554,21 @@
       "tag": "deepseek"
     },
     {
+      "tag": "multi-agent"
+    },
+    {
+      "tag": "superpowers"
+    },
+    {
+      "tag": "codex"
+    },
+    {
+      "tag": "ai-coding"
+    },
+    {
+      "tag": "budget"
+    },
+    {
       "tag": "rust"
     },
     {
@@ -572,16 +593,10 @@
       "tag": "multi-touch"
     },
     {
-      "tag": "multi-agent"
-    },
-    {
       "tag": "vibe-kanban"
     },
     {
       "tag": "parallel-workflow"
-    },
-    {
-      "tag": "ai-coding"
     },
     {
       "tag": "task-scheduling"

@@ -6,6 +6,7 @@ import siteMetadata from '../data/siteMetadata.js'
 import tagData from '../app/tag-data.json' with { type: 'json' }
 import { allBlogs } from '../.contentlayer/generated/index.mjs'
 import { sortPosts } from 'pliny/utils/contentlayer.js'
+import { prepareTagFeedDirectory } from './rss-utils.mjs'
 
 const outputFolder = process.env.EXPORT ? 'out' : 'public'
 const localeLanguages = {
@@ -43,7 +44,6 @@ const generateRss = (config, posts, locale, page = 'feed.xml') => `
 
 async function generateRSS(config, allBlogs, page = 'feed.xml') {
   rmSync(path.join(outputFolder, page), { force: true })
-  rmSync(path.join(outputFolder, 'tags'), { recursive: true, force: true })
 
   for (const locale of config.locales ?? [config.defaultLocale ?? 'en']) {
     const localePosts = sortPosts(
@@ -57,15 +57,13 @@ async function generateRSS(config, allBlogs, page = 'feed.xml') {
       generateRss(config, localePosts, locale, `${locale}/${page}`)
     )
 
-    rmSync(path.join(localeOutputPath, 'tags'), { recursive: true, force: true })
-
     for (const tag of Object.keys(tagData)) {
       const filteredPosts = localePosts.filter((post) =>
         post.tags?.map((t) => slug(t)).includes(tag)
       )
       const rssPath = path.join(localeOutputPath, 'tags', tag)
 
-      mkdirSync(rssPath, { recursive: true })
+      prepareTagFeedDirectory(rssPath)
       writeFileSync(
         path.join(rssPath, page),
         generateRss(config, filteredPosts, locale, `${locale}/tags/${tag}/${page}`)

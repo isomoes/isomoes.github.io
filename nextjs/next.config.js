@@ -55,6 +55,7 @@ const securityHeaders = [
 ]
 
 const output = process.env.EXPORT ? 'export' : undefined
+const trailingSlash = process.env.EXPORT ? true : undefined
 const basePath = process.env.BASE_PATH || undefined
 const unoptimized = process.env.UNOPTIMIZED ? true : undefined
 
@@ -65,6 +66,7 @@ module.exports = () => {
   const plugins = [withContentlayer, withBundleAnalyzer]
   return plugins.reduce((acc, next) => next(acc), {
     output,
+    trailingSlash,
     basePath,
     reactStrictMode: true,
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],

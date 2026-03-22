@@ -9,6 +9,7 @@ import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import { type Locale } from '@/lib/i18n/config'
 import { getDateLocale, getDictionary } from '@/lib/i18n/dictionaries'
+import { getPaginationBasePath } from '@/lib/pagination'
 import { withLocalePath } from '@/lib/i18n/paths'
 
 interface PaginationProps {
@@ -27,9 +28,7 @@ interface ListLayoutProps {
 function Pagination({ totalPages, currentPage, locale }: PaginationProps & { locale: Locale }) {
   const pathname = usePathname() ?? ''
   const dictionary = getDictionary(locale)
-  const basePath = pathname
-    .replace(/^\//, '') // Remove leading slash
-    .replace(/\/page\/\d+$/, '') // Remove any trailing /page
+  const basePath = getPaginationBasePath(pathname)
   const prevPage = currentPage - 1 > 0
   const nextPage = currentPage + 1 <= totalPages
 

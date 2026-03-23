@@ -110,6 +110,12 @@
     {
       "slug": [
         "misc",
+        "best-os-ai-agent-coding"
+      ]
+    },
+    {
+      "slug": [
+        "misc",
         "blog-motivation"
       ]
     },
@@ -428,6 +434,18 @@
       "tag": "guide"
     },
     {
+      "tag": "ai-coding"
+    },
+    {
+      "tag": "agent"
+    },
+    {
+      "tag": "security"
+    },
+    {
+      "tag": "openness"
+    },
+    {
       "tag": "introduction"
     },
     {
@@ -561,9 +579,6 @@
     },
     {
       "tag": "codex"
-    },
-    {
-      "tag": "ai-coding"
     },
     {
       "tag": "budget"

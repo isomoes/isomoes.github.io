@@ -26,6 +26,9 @@
     },
     {
       "page": "9"
+    },
+    {
+      "page": "10"
     }
   ],
   "blogSlugs": [
@@ -224,6 +227,12 @@
     {
       "slug": [
         "tools",
+        "ai-agent-token-plan"
+      ]
+    },
+    {
+      "slug": [
+        "tools",
         "ai-video-driver"
       ]
     },
@@ -249,6 +258,12 @@
       "slug": [
         "tools",
         "live-danmu"
+      ]
+    },
+    {
+      "slug": [
+        "tools",
+        "md2video-agent-first"
       ]
     },
     {
@@ -551,6 +566,27 @@
       "tag": "keymaps"
     },
     {
+      "tag": "ai-agent"
+    },
+    {
+      "tag": "token"
+    },
+    {
+      "tag": "pricing"
+    },
+    {
+      "tag": "codex"
+    },
+    {
+      "tag": "openrouter"
+    },
+    {
+      "tag": "multi-agent"
+    },
+    {
+      "tag": "budget"
+    },
+    {
       "tag": "video-generation"
     },
     {
@@ -572,16 +608,7 @@
       "tag": "deepseek"
     },
     {
-      "tag": "multi-agent"
-    },
-    {
       "tag": "superpowers"
-    },
-    {
-      "tag": "codex"
-    },
-    {
-      "tag": "budget"
     },
     {
       "tag": "rust"
@@ -597,6 +624,21 @@
     },
     {
       "tag": "bilibili"
+    },
+    {
+      "tag": "md2video"
+    },
+    {
+      "tag": "agent-first"
+    },
+    {
+      "tag": "ai-workflow"
+    },
+    {
+      "tag": "markdown"
+    },
+    {
+      "tag": "cui"
     },
     {
       "tag": "gesture-recognition"

@@ -227,6 +227,12 @@
     {
       "slug": [
         "tools",
+        "ai-agent-own-what-we-owned"
+      ]
+    },
+    {
+      "slug": [
+        "tools",
         "ai-agent-token-plan"
       ]
     },
@@ -569,6 +575,15 @@
       "tag": "ai-agent"
     },
     {
+      "tag": "multi-agent"
+    },
+    {
+      "tag": "chrome-devtools-mcp"
+    },
+    {
+      "tag": "verification"
+    },
+    {
       "tag": "token"
     },
     {
@@ -579,9 +594,6 @@
     },
     {
       "tag": "openrouter"
-    },
-    {
-      "tag": "multi-agent"
     },
     {
       "tag": "budget"

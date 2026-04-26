@@ -185,6 +185,12 @@
     {
       "slug": [
         "misc",
+        "one-year-arch-linux-browser-workflow"
+      ]
+    },
+    {
+      "slug": [
+        "misc",
         "oss-deploy-blog"
       ]
     },
@@ -539,6 +545,15 @@
       "tag": "reproducible"
     },
     {
+      "tag": "browser"
+    },
+    {
+      "tag": "surfingkeys"
+    },
+    {
+      "tag": "ai-agent"
+    },
+    {
       "tag": "deploy"
     },
     {
@@ -570,9 +585,6 @@
     },
     {
       "tag": "keymaps"
-    },
-    {
-      "tag": "ai-agent"
     },
     {
       "tag": "multi-agent"
@@ -683,13 +695,7 @@
       "tag": "glm"
     },
     {
-      "tag": "browser"
-    },
-    {
       "tag": "keyboard-navigation"
-    },
-    {
-      "tag": "surfingkeys"
     },
     {
       "tag": "gui"

@@ -1,0 +1,138 @@
+---
+title: 'One Year with Arch Linux: From Terminal Minimalism to Browser-First Workflows'
+date: '2026-04-26'
+tags: ['arch linux', 'linux', 'workflow', 'browser', 'surfingkeys', 'ai-agent', 'reflection']
+summary: 'After nearly one year using Arch Linux, my workflow has shifted again: from terminal-first minimalism toward a browser-first system powered by web applications, Surfingkeys, and AI agents controlled through web interfaces.'
+locale: en
+translationKey: misc-one-year-arch-linux-browser-workflow
+---
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+One year ago, Arch Linux changed how I thought about computers. At first, the story was about leaving opaque systems behind and building a transparent environment where every service, shortcut, and application had a reason to exist. That journey led me through window managers, terminal tools, dotfiles, AI coding agents, and eventually the philosophy I summarized in [My 2025 Big Changes](/blog/misc/change-2025): **use less, use more uniform logic, and control the whole system with fewer mental models**.
+
+The real configuration behind this journey is public in my [arch-config repository](https://github.com/isomoes/arch-config/). This post is not only a reflection on ideas, but also a summary of how that living Arch Linux setup has changed after one year of daily use.
+
+Now the workflow has changed again.
+
+The surprising part is that this change does not move away from Arch Linux. It moves deeper into the same idea. I still want a system that is simple, keyboard-friendly, and controllable. But after a year of daily use, I realized that the center of my work is no longer the terminal or the window manager. The center is the browser.
+
+## Looking Back: What the First Year Changed
+
+The first year of Arch Linux was not one single migration. It was a sequence of experiments around control.
+
+In the beginning, the focus was the operating system itself. [Arch Linux](/blog/misc/arch-linux) gave me a lightweight base where I could understand what was installed, why it was running, and how it was configured. Compared with Windows, the biggest change was not only performance or package management. It was transparency. The system became something I could inspect and shape.
+
+Then the focus moved to window management. I tried different Wayland workflows, from Hyprland and River to Niri and Sway. The posts about [Wayland window managers](/blog/misc/linux-wayland), [Arch Linux window managers](/blog/arch/window-managers), [Niri](/blog/arch/niri-window-manager), and [Sway](/blog/arch/sway-window-manager) all came from the same question: how can windows, workspaces, and screens follow one clear logic instead of becoming a visual mess?
+
+At the same time, I invested heavily in terminal-first tools. Terminal applications were attractive because they were lightweight, fast, scriptable, and friendly to keyboard users. Neovim, OpenCode, shell tools, Git, and dotfiles all fit this model. My [Arch Linux dotfiles](/blog/misc/arch-linux-dotfiles) became a way to turn personal workflow into code.
+
+The thinking behind all these choices was consistent: **one operation logic should control as much of the computer as possible**. I did not want every application to force a different habit. I wanted fewer interfaces, fewer mouse movements, fewer hidden states, and more reusable muscle memory.
+
+That idea was correct. But the implementation had a cost.
+
+## The Problem with Terminal-First Everything
+
+Terminal applications are excellent when they expose clean text interfaces. They start fast, compose well with scripts, and usually respect keyboard-driven workflows. For developers, they feel natural.
+
+But terminal applications also have a practical problem: **each CLI application has its own logic**.
+
+One tool uses Vim-like navigation. Another uses Emacs-style shortcuts. Another has custom keybindings. Some tools support configuration deeply, while others only expose a few options. If I want one operation logic to control everything, I must adapt each application one by one.
+
+Sometimes this adaptation is easy. Some applications already provide Vim keymaps or clean configuration files. But many do not. Over time, the hidden cost becomes clear: the more terminal tools I adopt, the more time I spend making them behave consistently.
+
+This creates a contradiction. The terminal-first workflow is supposed to reduce complexity, but maintaining uniform control across many independent CLI applications can itself become complex.
+
+That forced me to ask a different question: if the goal is not "use the terminal" but "use one simple control logic," is the terminal always the best center of the workflow?
+
+Today, my answer is no.
+
+## The Browser Became the Real Workbench
+
+Most of my current work already happens through the browser. Roughly speaking, about **80 percent of my daily work depends on browser-based or web-stack applications**.
+
+This includes coding-agent control, documentation, search, writing, video watching on Bilibili or YouTube, music, messaging, and many small research tasks. Even when the underlying work is technical, the interface often becomes a web page.
+
+For a long time, I used Firefox as the main browser. But in daily work I repeatedly met compatibility blocks: websites that behaved strangely, features that expected Chrome behavior, or web applications that were simply tested better on Chromium-based browsers. These issues interrupted the workflow often enough that the browser choice became part of the productivity problem.
+
+So I switched to Chrome.
+
+This is not because Chrome is philosophically perfect. It is because the browser is now my main application platform, and Chrome gives me the least resistance for the web stack I use every day. If most work happens inside web applications, then browser compatibility is not a small detail. It is infrastructure.
+
+The important shift is this: I no longer treat the browser as one application among many. I treat it as the runtime for my workflow.
+
+## Surfingkeys Makes the Browser Fit the Linux Philosophy
+
+Moving more work into the browser would be a regression if it meant returning to mouse-heavy, GUI-heavy behavior. That would violate the original reason I moved to Arch Linux.
+
+The key tool that makes this transition work is [Surfingkeys](/blog/tools/surfingkeys-intro).
+
+Surfingkeys gives the browser a keyboard-first control layer. Link hints, tab switching, scrolling, page search, and many browser operations become reachable through consistent keyboard commands. Instead of moving the mouse across complex web UIs, I can operate most web applications through a familiar modal logic.
+
+This matters more than it first appears. In the old workflow, I spent time configuring keyboard behavior at multiple layers: the window manager, terminal emulator, shell, CLI applications, editors, and browser. Each layer needed its own adaptation.
+
+With Surfingkeys, a large part of the interaction moves into one layer: the browser. If more applications are web applications, and the browser has a unified keyboard control system, then I do not need to rebuild the same control logic separately for every terminal application or window-manager workflow.
+
+That saves time. More importantly, it reduces mental switching.
+
+The goal is still the same as before: **less and more uniform control**. The difference is that the browser has become the place where this goal is easiest to achieve.
+
+## Web Applications Replaced Parts of the Old Workflow
+
+The biggest example is AI-agent work.
+
+Previously, I used [OpenCode](/blog/tools/opencode-cli) mainly as a terminal application. That matched the terminal-first philosophy well: agents lived close to Git repositories, commands, tests, and shell tools.
+
+But agent work is changing. The agent now owns more than half of the work time in many tasks. When an agent is planning, editing, running tools, or waiting for review, the human role becomes less about typing commands continuously and more about supervising, comparing, approving, and redirecting.
+
+For that style of work, a web interface can be better than a pure terminal interface.
+
+Now I use the OpenCode export SDK to build web applications such as **ikanban** and **ipaper**, which repackage agent workflows into browser-based interfaces. The agent still does the work through the underlying toolchain, but I control and observe it through a web UI.
+
+This changes the interface from "one terminal session running one agent" to "a browser workspace for managing agent-driven work." It fits the actual responsibility split better: the agent performs long-running operations, and I supervise from a higher-level interface.
+
+The same pattern appears outside coding. Video watching happens through Bilibili or YouTube. Music happens through web services. Messaging and communication are also increasingly browser-centered. These are not isolated tools anymore. They are all part of the same application layer.
+
+The result is cross-system portability. If one operating system can run a modern browser and the web stack I depend on, then it can run most of my workflow.
+
+## What This Means for Window Managers and Tools
+
+This does not mean the window manager no longer matters. It still matters, but its role becomes smaller and clearer.
+
+In the earlier Arch Linux phase, I expected the window manager to carry a large part of my productivity system. Workspace design, keybindings, window movement, screen layout, and application launching were central problems.
+
+Now the window manager mostly needs to provide a stable container for the browser and a few supporting applications. I still care about keyboard control, good multi-monitor behavior, and predictable layouts. But I no longer need the window manager to solve every interaction problem.
+
+The same is true for terminal applications. I still use the terminal when it is the best tool: Git operations, local development, debugging, system management, and direct command execution. But I do not need every daily activity to become a terminal activity.
+
+This is a more practical version of minimalism. Minimalism does not mean forcing everything into the terminal. It means removing unnecessary interface diversity. If the browser plus Surfingkeys gives one consistent control layer for many daily applications, then it is more minimal than maintaining many separate terminal interfaces.
+
+## The Tradeoff: Web Stack Dependence
+
+This workflow has a clear disadvantage: it depends heavily on the web stack.
+
+Not every application has a good web version. Some performance-heavy work, graphics work, drawing tools, local computation tools, and specialized desktop applications still work better as native applications. In those areas, the browser-first workflow is not enough.
+
+There is also a broader concern: web applications can be heavier, more network-dependent, and more controlled by service providers than local tools. A terminal workflow often gives stronger local ownership. A browser workflow can trade some of that ownership for convenience, compatibility, and cross-system consistency.
+
+For now, I accept this tradeoff because my current work rarely depends on heavy native desktop applications. Most of my important tasks are writing, coding-agent supervision, research, communication, watching, listening, and web-based tool use. For that workload, the browser-first model is good enough, and often better.
+
+The key is to be honest about the boundary. Browser-first is not universally best. It is best for my current work distribution.
+
+## Conclusion: Same Philosophy, New Center
+
+After nearly one year with Arch Linux, my workflow has moved from terminal-first minimalism to browser-first uniform control.
+
+At first, this sounds like a reversal. It is not. The deeper principle has stayed the same. I still want transparent systems, keyboard-first operation, fewer mental models, and tools that can be shaped around my workflow instead of forcing me to adapt blindly.
+
+What changed is the center of gravity.
+
+In the first phase, Arch Linux taught me to control the system through window managers, terminal tools, dotfiles, and configuration as code. In the new phase, the browser has become the main application runtime, Surfingkeys provides the unified keyboard layer, and web applications carry most of the daily workflow.
+
+The result is simpler than the old setup in an unexpected way. I configure less at the window-manager and terminal-application level. I depend more on one browser control layer. I use web UIs for agent supervision, media, communication, and research. And because the workflow is mostly web-stack based, it becomes easier to move across systems as long as the browser environment is available.
+
+That is the newest lesson from one year of Arch Linux: the goal was never to worship the terminal. The goal was to build a computing environment with less friction, more uniform control, and more time spent on real work.
+
+Right now, the browser is the best place for that environment to live.

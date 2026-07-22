@@ -18,7 +18,7 @@ import {
 const components = {
   mail: Mail,
   github: Github,
-  facebook: Bluesky,
+  facebook: Facebook,
   youtube: Youtube,
   linkedin: Linkedin,
   twitter: Twitter,

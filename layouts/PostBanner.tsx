@@ -22,8 +22,7 @@ interface LayoutProps {
 
 export default function PostMinimal({ content, locale, next, prev, children }: LayoutProps) {
   const { slug, title, images } = content
-  const displayImage =
-    images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
+  const displayImage = images && images.length > 0 ? images[0] : undefined
   const dictionary = getDictionary(locale)
 
   return (
@@ -32,13 +31,15 @@ export default function PostMinimal({ content, locale, next, prev, children }: L
       <article>
         <div className="mx-auto max-w-[68ch]">
           <div className="space-y-1 pb-10 text-center dark:border-gray-700">
-            <div className="w-full">
-              <Bleed>
-                <div className="relative aspect-[2/1] w-full">
-                  <Image src={displayImage} alt={title} fill className="object-cover" />
-                </div>
-              </Bleed>
-            </div>
+            {displayImage && (
+              <div className="w-full">
+                <Bleed>
+                  <div className="relative aspect-[2/1] w-full">
+                    <Image src={displayImage} alt={title} fill className="object-cover" />
+                  </div>
+                </Bleed>
+              </div>
+            )}
             <div className="relative pt-10">
               <PageTitle>{title}</PageTitle>
             </div>

@@ -3,6 +3,7 @@
 import { createElement, useEffect, useId, useRef, useState } from 'react'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { locales, type Locale } from '@/lib/i18n/config'
 import { withLocalePath } from '@/lib/i18n/paths'
 
@@ -77,22 +78,11 @@ export default function LocaleSwitcher({ currentLocale, postAlternates }: Locale
     },
     [
       createElement('span', { key: 'label' }, currentLocale),
-      createElement(
-        'svg',
-        {
-          key: 'icon',
-          xmlns: 'http://www.w3.org/2000/svg',
-          viewBox: '0 0 20 20',
-          fill: 'currentColor',
-          className: 'h-4 w-4',
-          'aria-hidden': 'true',
-        },
-        createElement('path', {
-          fillRule: 'evenodd',
-          d: 'M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 011.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z',
-          clipRule: 'evenodd',
-        })
-      ),
+      createElement(ChevronDownIcon, {
+        key: 'icon',
+        className: 'h-4 w-4',
+        'aria-hidden': 'true',
+      }),
     ]
   )
 
@@ -119,22 +109,11 @@ export default function LocaleSwitcher({ currentLocale, postAlternates }: Locale
             [
               createElement('span', { key: `label-${link.locale}` }, link.label),
               link.isActive
-                ? createElement(
-                    'svg',
-                    {
-                      key: `active-${link.locale}`,
-                      xmlns: 'http://www.w3.org/2000/svg',
-                      viewBox: '0 0 20 20',
-                      fill: 'currentColor',
-                      className: 'h-4 w-4',
-                      'aria-hidden': 'true',
-                    },
-                    createElement('path', {
-                      fillRule: 'evenodd',
-                      d: 'M16.704 5.29a1 1 0 010 1.42l-7.002 7a1 1 0 01-1.414 0l-3.002-3a1 1 0 111.414-1.42l2.295 2.294 6.295-6.294a1 1 0 011.414 0z',
-                      clipRule: 'evenodd',
-                    })
-                  )
+                ? createElement(CheckIcon, {
+                    key: `active-${link.locale}`,
+                    className: 'h-4 w-4',
+                    'aria-hidden': 'true',
+                  })
                 : createElement(
                     'span',
                     { key: `inactive-${link.locale}`, className: 'sr-only' },

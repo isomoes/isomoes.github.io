@@ -147,7 +147,7 @@ export default function ListLayoutWithTags({
                           <h2 className="font-serif text-2xl font-bold leading-snug tracking-tight">
                             <Link
                               href={url || `/${path}`}
-                              className="text-gray-900 dark:text-gray-100"
+                              className="text-gray-900 transition-colors hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-400"
                             >
                               {title}
                             </Link>

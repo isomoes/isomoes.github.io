@@ -97,7 +97,7 @@ export default function ListLayout({
                 type="text"
                 onChange={(e) => setSearchValue(e.target.value)}
                 placeholder={dictionary.search.placeholder}
-                className="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-900 dark:bg-gray-800 dark:text-gray-100"
               />
             </label>
             <svg
@@ -140,7 +140,7 @@ export default function ListLayout({
                         {tags?.map((tag) => <Tag key={tag} text={tag} locale={locale} />)}
                       </div>
                     </div>
-                    <div className="prose max-w-none font-serif text-gray-500 dark:text-gray-400">
+                    <div className="prose max-w-none font-serif text-gray-600 dark:text-gray-300">
                       {summary}
                     </div>
                   </div>

@@ -128,8 +128,8 @@ export function RootDocument({ children, lang }: { children: React.ReactNode; la
       />
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
-      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
-      <body className="bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white">
+      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#030712" />
+      <body className="bg-white pl-[calc(100vw-100%)] text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100">
         <ThemeProviders>{children}</ThemeProviders>
       </body>
     </html>

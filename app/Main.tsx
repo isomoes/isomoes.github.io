@@ -59,7 +59,7 @@ export default function Home({ posts, locale }: { posts: HomePost[]; locale: Loc
                             {tags?.map((tag) => <Tag key={tag} text={tag} locale={locale} />)}
                           </div>
                         </div>
-                        <div className="prose max-w-none font-serif text-gray-500 dark:text-gray-400">
+                        <div className="prose max-w-none font-serif text-gray-600 dark:text-gray-300">
                           {summary}
                         </div>
                       </div>

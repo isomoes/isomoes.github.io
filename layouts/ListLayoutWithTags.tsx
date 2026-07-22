@@ -91,7 +91,7 @@ export default function ListLayoutWithTags({
           </h1>
         </div>
         <div className="flex sm:space-x-24">
-          <div className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded bg-gray-50 pt-5 shadow-md dark:bg-gray-900/70 dark:shadow-gray-800/40 sm:flex">
+          <div className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded-lg border border-gray-200 bg-gray-50 pt-5 dark:border-gray-700 dark:bg-gray-900/70 sm:flex">
             <div className="px-6 py-4">
               {isBlogIndex ? (
                 <h3 className="font-bold uppercase text-primary-500">{dictionary.tags.allPosts}</h3>
@@ -156,7 +156,7 @@ export default function ListLayoutWithTags({
                             {tags?.map((tag) => <Tag key={tag} text={tag} locale={locale} />)}
                           </div>
                         </div>
-                        <div className="prose max-w-none font-serif text-gray-500 dark:text-gray-400">
+                        <div className="prose max-w-none font-serif text-gray-600 dark:text-gray-300">
                           {summary}
                         </div>
                       </div>

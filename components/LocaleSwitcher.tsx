@@ -7,6 +7,8 @@ import { ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { locales, type Locale } from '@/lib/i18n/config'
 import { withLocalePath } from '@/lib/i18n/paths'
 
+const localeNames: Record<Locale, string> = { en: 'English', zh: '中文' }
+
 type LocaleSwitcherAlternates = Partial<Record<Locale, string>>
 
 type BuildLocaleSwitcherLinksInput = {
@@ -73,11 +75,11 @@ export default function LocaleSwitcher({ currentLocale, postAlternates }: Locale
       'aria-expanded': isOpen,
       'aria-controls': menuId,
       className:
-        'flex items-center gap-1 text-sm font-medium uppercase tracking-[0.18em] text-gray-900 transition hover:text-primary-500 focus:outline-none dark:text-gray-100 dark:hover:text-primary-400',
+        'flex items-center gap-1 text-sm font-medium text-gray-900 transition hover:text-primary-500 focus:outline-none dark:text-gray-100 dark:hover:text-primary-400',
       onClick: () => setIsOpen((open) => !open),
     },
     [
-      createElement('span', { key: 'label' }, currentLocale),
+      createElement('span', { key: 'label' }, localeNames[currentLocale]),
       createElement(ChevronDownIcon, {
         key: 'icon',
         className: 'h-4 w-4',
@@ -93,7 +95,7 @@ export default function LocaleSwitcher({ currentLocale, postAlternates }: Locale
           id: menuId,
           role: 'menu',
           className:
-            'absolute right-0 z-50 mt-2 w-20 rounded-md bg-white p-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800',
+            'absolute right-0 z-50 mt-2 w-32 rounded-lg bg-white p-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800',
         },
         links.map((link) =>
           createElement(
@@ -103,11 +105,11 @@ export default function LocaleSwitcher({ currentLocale, postAlternates }: Locale
               href: link.href,
               role: 'menuitem',
               'aria-current': link.isActive ? 'page' : undefined,
-              className: `${link.isActive ? 'text-primary-600 dark:text-primary-300' : 'text-gray-700 dark:text-gray-200'} flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium uppercase tracking-[0.18em] hover:bg-primary-600 hover:text-white`,
+              className: `${link.isActive ? 'text-primary-600 dark:text-primary-300' : 'text-gray-700 dark:text-gray-200'} flex w-full items-center justify-between rounded-md px-2 py-2 text-sm font-medium hover:bg-primary-600 hover:text-white`,
               onClick: () => setIsOpen(false),
             },
             [
-              createElement('span', { key: `label-${link.locale}` }, link.label),
+              createElement('span', { key: `label-${link.locale}` }, localeNames[link.locale]),
               link.isActive
                 ? createElement(CheckIcon, {
                     key: `active-${link.locale}`,

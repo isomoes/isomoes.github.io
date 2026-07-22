@@ -27,6 +27,7 @@ export type Dictionary = {
     previous: string
     next: string
     searchArticles: string
+    pageOf: string
   }
   tags: {
     title: string
@@ -79,6 +80,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       previous: 'Previous',
       next: 'Next',
       searchArticles: 'Search articles',
+      pageOf: '{current} of {total}',
     },
     tags: {
       title: 'Tags',
@@ -129,6 +131,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       previous: '上一页',
       next: '下一页',
       searchArticles: '搜索文章',
+      pageOf: '第 {current} / {total} 页',
     },
     tags: {
       title: '标签',

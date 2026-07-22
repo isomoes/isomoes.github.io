@@ -49,7 +49,9 @@ function Pagination({ totalPages, currentPage, locale }: PaginationProps & { loc
           </Link>
         )}
         <span>
-          {currentPage} of {totalPages}
+          {dictionary.blog.pageOf
+            .replace('{current}', String(currentPage))
+            .replace('{total}', String(totalPages))}
         </span>
         {!nextPage && (
           <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>

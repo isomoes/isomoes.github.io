@@ -10,7 +10,7 @@ interface Props {
 const LayoutWrapper = ({ children }: Props) => {
   return (
     <SectionContainer>
-      <div className="flex h-screen flex-col justify-between font-sans">
+      <div className="flex min-h-[100dvh] flex-col justify-between font-sans">
         <Header />
         <main className="mb-auto">{children}</main>
         <Footer />

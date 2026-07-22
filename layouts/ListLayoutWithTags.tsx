@@ -132,7 +132,7 @@ export default function ListLayoutWithTags({
               {displayPosts.map((post) => {
                 const { path, date, title, summary, tags, url } = post
                 return (
-                  <li key={path} className="py-5">
+                  <li key={path} className="py-6">
                     <article className="flex flex-col space-y-2 xl:space-y-0">
                       <dl>
                         <dt className="sr-only">{dictionary.home.publishedOn}</dt>

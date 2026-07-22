@@ -9,7 +9,8 @@ import { defaultLocale, type Locale } from '@/lib/i18n/config'
 import { withLocalePath } from '@/lib/i18n/paths'
 
 const Header = ({ locale = defaultLocale }: { locale?: Locale }) => {
-  let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10'
+  let headerClass =
+    'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-4 md:py-6'
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50'
   }
@@ -20,13 +21,8 @@ const Header = ({ locale = defaultLocale }: { locale?: Locale }) => {
     <header className={headerClass}>
       <Link href={withLocalePath(locale, '/')} aria-label={siteMetadata.headerTitle}>
         <div className="flex items-center justify-between">
-          {/* <div className="mr-3">
-            <Logo />
-          </div> */}
           {typeof siteMetadata.headerTitle === 'string' ? (
-            <div className="hidden h-6 text-2xl font-semibold sm:block">
-              {siteMetadata.headerTitle}
-            </div>
+            <div className="text-xl font-semibold sm:text-2xl">{siteMetadata.headerTitle}</div>
           ) : (
             siteMetadata.headerTitle
           )}

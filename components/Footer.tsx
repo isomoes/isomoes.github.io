@@ -27,11 +27,9 @@ export default function Footer({ locale = defaultLocale }: { locale?: Locale }) 
           <SocialIcon kind="medium" href={siteMetadata.medium} size={6} />
         </div>
         <div className="mb-2 flex space-x-2 text-sm text-gray-500 dark:text-gray-400">
-          <div>{siteMetadata.author}</div>
-          <div>{` • `}</div>
-          <div>{`© ${new Date().getFullYear()}`}</div>
-          <div>{` • `}</div>
           <Link href={withLocalePath(locale, '/')}>{siteMetadata.title}</Link>
+          <div>{`·`}</div>
+          <div>{`© ${new Date().getFullYear()}`}</div>
         </div>
         <div className="mb-8 text-sm text-gray-500 dark:text-gray-400">
           <Link href="https://github.com/timlrx/tailwind-nextjs-starter-blog">

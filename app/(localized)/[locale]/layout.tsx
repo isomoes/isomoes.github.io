@@ -6,6 +6,7 @@ import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { SearchProvider, SearchConfig } from 'pliny/search'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
+import LocalePersister from '@/components/LocalePersister'
 import SectionContainer from '@/components/SectionContainer'
 import siteMetadata from '@/data/siteMetadata'
 import { rootMetadata, RootDocument } from '../../root-layout-shared'
@@ -46,6 +47,7 @@ export default async function LocalizedLayout({
 
   return (
     <RootDocument lang={locale}>
+      <LocalePersister locale={locale} />
       <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
       <SectionContainer>
         <SearchProvider searchConfig={searchConfig as SearchConfig}>

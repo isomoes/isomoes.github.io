@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect } from 'react'
+import { resolveStoredLocaleTarget } from '@/lib/i18n/locale-storage'
 
 type LegacyRedirectPageProps = {
   target: string
+  respectStoredLocale?: boolean
 }
 
 function getRedirectHref(target: string) {
@@ -14,10 +16,14 @@ function getRedirectHref(target: string) {
   return `${target}${window.location.search}${window.location.hash}`
 }
 
-export default function LegacyRedirectPage({ target }: LegacyRedirectPageProps) {
+export default function LegacyRedirectPage({
+  target,
+  respectStoredLocale = false,
+}: LegacyRedirectPageProps) {
   useEffect(() => {
-    window.location.replace(getRedirectHref(target))
-  }, [target])
+    const resolved = resolveStoredLocaleTarget(target, respectStoredLocale)
+    window.location.replace(getRedirectHref(resolved))
+  }, [target, respectStoredLocale])
 
   return (
     <main className="mx-auto flex min-h-[50vh] max-w-2xl flex-col items-center justify-center gap-4 px-6 text-center">

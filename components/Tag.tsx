@@ -12,9 +12,9 @@ const Tag = ({ text, locale = defaultLocale }: Props) => {
   return (
     <Link
       href={withLocalePath(locale, `/tags/${slug(text)}`)}
-      className="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+      className="mr-3 text-sm font-medium text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
     >
-      {text.split(' ').join('-')}
+      {text}
     </Link>
   )
 }

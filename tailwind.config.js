@@ -22,7 +22,21 @@ module.exports = {
         14: '3.5rem',
       },
       fontFamily: {
-        sans: ['var(--font-merriweather)', ...fontFamily.sans],
+        sans: [
+          'var(--font-sans)',
+          'var(--font-sans-sc)',
+          'PingFang SC',
+          'Microsoft YaHei',
+          ...fontFamily.sans,
+        ],
+        serif: [
+          'var(--font-serif)',
+          'var(--font-serif-sc)',
+          'Songti SC',
+          'SimSun',
+          ...fontFamily.serif,
+        ],
+        mono: ['var(--font-mono)', ...fontFamily.mono],
       },
       colors: {
         primary: colors.pink,
@@ -51,8 +65,11 @@ module.exports = {
               fontWeight: '600',
             },
             code: {
-              color: theme('colors.indigo.500'),
+              color: theme('colors.gray.800'),
+              fontWeight: '400',
             },
+            'code::before': { content: '""' },
+            'code::after': { content: '""' },
           },
         },
         invert: {
@@ -66,6 +83,9 @@ module.exports = {
             },
             'h1,h2,h3,h4,h5,h6': {
               color: theme('colors.gray.100'),
+            },
+            code: {
+              color: theme('colors.gray.200'),
             },
           },
         },

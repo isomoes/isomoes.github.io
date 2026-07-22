@@ -1,4 +1,10 @@
-import { Merriweather } from 'next/font/google'
+import {
+  Source_Serif_4,
+  Geist,
+  JetBrains_Mono,
+  Noto_Serif_SC,
+  Noto_Sans_SC,
+} from 'next/font/google'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { locales } from '@/lib/i18n/config'
@@ -6,11 +12,39 @@ import { buildLocaleAlternates } from '@/lib/i18n/metadata'
 import { ThemeProviders } from './theme-providers'
 import { getMetadataLocale, getOpenGraphLocale } from './seo'
 
-const merriweather = Merriweather({
+// Reading serif (Latin) + matched CJK serif. Chrome sans (Latin) + matched CJK sans. Code mono.
+const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
-  weight: ['400', '700'],
   display: 'swap',
-  variable: '--font-merriweather',
+  variable: '--font-serif',
+})
+
+const geist = Geist({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
+})
+
+// CJK faces are large, so never preload them: next/font keeps the unicode-range
+// slicing, so browsers only fetch the slices for glyphs actually on the page.
+const notoSerifSC = Noto_Serif_SC({
+  weight: ['400', '600', '700'],
+  display: 'swap',
+  variable: '--font-serif-sc',
+  preload: false,
+})
+
+const notoSansSC = Noto_Sans_SC({
+  weight: ['400', '500', '700'],
+  display: 'swap',
+  variable: '--font-sans-sc',
+  preload: false,
 })
 
 const rootPathname = '/'
@@ -64,7 +98,11 @@ export function RootDocument({ children, lang }: { children: React.ReactNode; la
   const basePath = process.env.BASE_PATH || ''
 
   return (
-    <html lang={lang} className={`${merriweather.variable} scroll-smooth`} suppressHydrationWarning>
+    <html
+      lang={lang}
+      className={`${sourceSerif.variable} ${geist.variable} ${jetbrainsMono.variable} ${notoSerifSC.variable} ${notoSansSC.variable} scroll-smooth`}
+      suppressHydrationWarning
+    >
       <link
         rel="apple-touch-icon"
         sizes="76x76"

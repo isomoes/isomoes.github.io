@@ -86,7 +86,7 @@ export default function ListLayout({
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         <div className="space-y-2 pb-8 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+          <h1 className="font-serif text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl md:text-4xl">
             {title}
           </h1>
           <div className="relative max-w-lg">
@@ -131,7 +131,7 @@ export default function ListLayout({
                   </dl>
                   <div className="space-y-3 xl:col-span-3">
                     <div>
-                      <h3 className="text-2xl font-bold leading-8 tracking-tight">
+                      <h3 className="font-serif text-2xl font-bold leading-snug tracking-tight">
                         <Link href={url || `/${path}`} className="text-gray-900 dark:text-gray-100">
                           {title}
                         </Link>
@@ -140,7 +140,7 @@ export default function ListLayout({
                         {tags?.map((tag) => <Tag key={tag} text={tag} locale={locale} />)}
                       </div>
                     </div>
-                    <div className="prose max-w-none text-gray-500 dark:text-gray-400">
+                    <div className="prose max-w-none font-serif text-gray-500 dark:text-gray-400">
                       {summary}
                     </div>
                   </div>

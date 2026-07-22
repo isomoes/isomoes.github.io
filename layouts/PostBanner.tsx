@@ -43,7 +43,9 @@ export default function PostMinimal({ content, locale, next, prev, children }: L
               <PageTitle>{title}</PageTitle>
             </div>
           </div>
-          <div className="prose max-w-none py-4 dark:prose-invert">{children}</div>
+          <div className="prose mx-auto max-w-[68ch] py-4 font-serif dark:prose-invert">
+            {children}
+          </div>
           {siteMetadata.comments && (
             <div className="pb-6 pt-6 text-center text-gray-700 dark:text-gray-300" id="comment">
               <Comments slug={slug} />

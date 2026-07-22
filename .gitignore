@@ -1,5 +1,51 @@
-nextjs/app/tag-data.json
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+public/sitemap.xml
+.vercel
+
+# production
+/build
+*.xml
+
+# rss feed
+/public/feed.xml
+
+# search
+/public/search.json
+
+# misc
+.DS_Store
+
+# debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Contentlayer
+.contentlayer
+
+# Generated redirects
+/lib/generated/legacy-redirects.json
+
+# isomo.github.io (root-level)
+app/tag-data.json
 temp/*
-/nextjs/public/en/search.json
-/nextjs/public/zh/search.json
+/public/en/search.json
+/public/zh/search.json
 /.opencode/package-lock.json

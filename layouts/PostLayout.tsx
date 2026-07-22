@@ -13,7 +13,7 @@ import { type Locale } from '@/lib/i18n/config'
 import { getDateLocale, getDictionary } from '@/lib/i18n/dictionaries'
 import { withLocalePath } from '@/lib/i18n/paths'
 
-const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/nextjs/data/${path}`
+const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 
 const postDateTemplate: Intl.DateTimeFormatOptions = {
   weekday: 'long',

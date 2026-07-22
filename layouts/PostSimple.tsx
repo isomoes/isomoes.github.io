@@ -27,7 +27,7 @@ export default function PostLayout({ content, locale, next, prev, children }: La
     <SectionContainer>
       <ScrollTopAndComment />
       <article>
-        <div>
+        <div className="mx-auto max-w-[68ch]">
           <header>
             <div className="space-y-1 border-b border-gray-200 pb-10 text-center dark:border-gray-700">
               <dl>
@@ -45,7 +45,7 @@ export default function PostLayout({ content, locale, next, prev, children }: La
           </header>
           <div className="grid-rows-[auto_1fr] divide-y divide-gray-200 pb-8 dark:divide-gray-700 xl:divide-y-0">
             <div className="divide-y divide-gray-200 dark:divide-gray-700 xl:col-span-3 xl:row-span-2 xl:pb-0">
-              <div className="prose mx-auto max-w-[68ch] pb-8 pt-10 font-serif dark:prose-invert">
+              <div className="prose max-w-none pb-8 pt-10 font-serif dark:prose-invert">
                 {children}
               </div>
             </div>

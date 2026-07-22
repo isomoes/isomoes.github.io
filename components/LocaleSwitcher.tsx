@@ -31,7 +31,7 @@ export function buildLocaleSwitcherLinks({
 
   return locales.map((locale) => ({
     href: postAlternates
-      ? (postAlternates[locale] ?? withLocalePath(locale, '/blog'))
+      ? (postAlternates[locale] ?? withLocalePath(locale, '/'))
       : withLocalePath(locale, normalizedPathname),
     locale,
     label: locale,

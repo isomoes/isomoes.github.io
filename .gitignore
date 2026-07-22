@@ -49,3 +49,4 @@ temp/*
 /public/en/search.json
 /public/zh/search.json
 /.opencode/package-lock.json
+/tsconfig.tsbuildinfo

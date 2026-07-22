@@ -17,7 +17,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: string
   const dictionary = getDictionary(locale)
 
   return genPageMetadata({
-    title: dictionary.navigation.home,
+    title: dictionary.navigation.blog,
     description: dictionary.siteDescription,
     locale,
     pathname: `/${locale}`,

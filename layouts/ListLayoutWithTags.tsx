@@ -82,7 +82,6 @@ export default function ListLayoutWithTags({
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
 
   const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
-  const isBlogIndex = /\/blog(?:$|\/page\/)/.test(pathname)
 
   return (
     <>
@@ -95,16 +94,12 @@ export default function ListLayoutWithTags({
         <div className="flex sm:space-x-24">
           <div className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded-lg border border-gray-200 bg-gray-50 pt-5 dark:border-gray-700 dark:bg-gray-900/70 sm:flex">
             <div className="px-6 py-4">
-              {isBlogIndex ? (
-                <h3 className="font-bold uppercase text-primary-500">{dictionary.tags.allPosts}</h3>
-              ) : (
-                <Link
-                  href={withLocalePath(locale, '/blog')}
-                  className="font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
-                >
-                  {dictionary.tags.allPosts}
-                </Link>
-              )}
+              <Link
+                href={withLocalePath(locale, '/')}
+                className="font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+              >
+                {dictionary.tags.allPosts}
+              </Link>
               <ul>
                 {sortedTags.map((t) => {
                   return (

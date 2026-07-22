@@ -29,7 +29,7 @@ describe('buildLocaleSwitcherLinks', () => {
     ])
   })
 
-  it('falls back to the target locale blog index when a translated post is unavailable', () => {
+  it('falls back to the target locale home when a translated post is unavailable', () => {
     expect(
       buildLocaleSwitcherLinks({
         currentLocale: 'en',
@@ -40,7 +40,7 @@ describe('buildLocaleSwitcherLinks', () => {
       })
     ).toEqual([
       { href: '/en/blog/ide/ai-code', locale: 'en', label: 'en', isActive: true },
-      { href: '/zh/blog', locale: 'zh', label: 'zh', isActive: false },
+      { href: '/zh', locale: 'zh', label: 'zh', isActive: false },
     ])
   })
 

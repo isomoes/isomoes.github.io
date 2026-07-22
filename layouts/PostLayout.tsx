@@ -159,7 +159,7 @@ export default function PostLayout({
               </div>
               <div className="pt-4 xl:pt-8">
                 <Link
-                  href={withLocalePath(locale, '/blog')}
+                  href={withLocalePath(locale, '/')}
                   className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                   aria-label={dictionary.post.backToBlog}
                 >

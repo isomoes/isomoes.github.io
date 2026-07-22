@@ -81,7 +81,7 @@ describe('LocaleSwitcher', () => {
     const trigger = container.querySelector('button[aria-haspopup="menu"]')
 
     expect(trigger).not.toBeNull()
-    expect(trigger).toHaveTextContent('en')
+    expect(trigger).toHaveTextContent('English')
     expect(container.querySelector('[role="menu"]')).toBeNull()
 
     await act(async () => {
@@ -96,9 +96,9 @@ describe('LocaleSwitcher', () => {
     expect(items).toHaveLength(2)
     expect(container.innerHTML).toContain('href="/en/about"')
     expect(container.innerHTML).toContain('href="/zh/about"')
-    expect(menu).toHaveTextContent('en')
-    expect(menu).toHaveTextContent('zh')
-    expect(activeItem).toHaveTextContent('en')
+    expect(menu).toHaveTextContent('English')
+    expect(menu).toHaveTextContent('中文')
+    expect(activeItem).toHaveTextContent('English')
   })
 
   it('closes the locale menu on Escape and outside click', async () => {
@@ -133,7 +133,7 @@ describe('LocaleSwitcher', () => {
     expect(container.querySelector('[role="menu"]')).toBeNull()
   })
 
-  it('uses a theme-switch style trigger with compact locale text', async () => {
+  it('uses a theme-switch style trigger showing the current locale name', async () => {
     await act(async () => {
       root.render(createElement(LocaleSwitcher, { currentLocale: 'en' }))
     })
@@ -141,7 +141,7 @@ describe('LocaleSwitcher', () => {
     const trigger = container.querySelector('button[aria-haspopup="menu"]')
 
     expect(trigger?.className).not.toContain('rounded-full')
-    expect(trigger?.textContent).toContain('en')
-    expect(trigger?.textContent).not.toContain('zh')
+    expect(trigger?.textContent).toContain('English')
+    expect(trigger?.textContent).not.toContain('中文')
   })
 })

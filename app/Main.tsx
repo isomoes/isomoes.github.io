@@ -14,9 +14,6 @@ export default function Home({ posts, locale }: { posts: HomePost[]; locale: Loc
           <h1 className="font-serif text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl md:text-4xl">
             {dictionary.home.title}
           </h1>
-          <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            {dictionary.siteDescription}
-          </p>
         </div>
         <VirtualPostList posts={posts} locale={locale} />
       </div>

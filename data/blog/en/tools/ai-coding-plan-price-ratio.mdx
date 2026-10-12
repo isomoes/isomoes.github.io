@@ -1,0 +1,155 @@
+---
+title: 'Cheap Models, Expensive Tasks: What Our OpenCode Go Trial Cost'
+date: '2026-10-12'
+tags: ['ai-agent', 'pricing', 'opencode', 'codex', 'kimi', 'deepseek', 'budget']
+summary: 'A ¥67 OpenCode Go trial exposed the gap between low API prices and affordable coding subscriptions. Our iKanban task comparison, the limits of API-value ratios, and why more tokens do not automatically become our own ability.'
+locale: en
+translationKey: tools-ai-coding-plan-price-ratio
+---
+
+<BilibiliVideo bvid="BV16jpd6EE3n" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+---
+
+## We Wanted a Fallback, Not Another Benchmark
+
+We paid **¥67 to try OpenCode Go**, hoping to find a practical alternative to our GPT and Claude subscriptions. One medium-complexity issue in iKanban used roughly **5% of our monthly allowance with Kimi K3**. A comparable task with **GPT-6.1 Sol** used about **1% of the weekly allowance on ChatGPT Plus**.
+
+Those percentages describe different windows. Once we converted them into an estimated monthly task budget, the difference was difficult to ignore: approximately **¥3.35 per task with Kimi, versus ¥0.335 with GPT**.
+
+This is not a controlled model benchmark. It is a small, local cost comparison that changed whether we wanted to keep using the plan. Before comparing capability, speed, or latency, we had already encountered a more basic problem: **could we afford to make this our daily workflow?**
+
+## Why We Looked Beyond GPT and Claude
+
+In recent days, we tried the higher-usage GPT Pro and Claude Max tiers—the 5x plans. Our Claude account was banned after about one day. We suspect our local access environment may have contributed, but we do not have a confirmed explanation. The ban is an observation; its cause remains uncertain.
+
+As we described in [our workflow after the Claude ban](/blog/tools/ai-workflow-after-claude-ban), losing a model does not have to erase the tools and methods around it. OpenCode and iKanban let us keep working. But portable tooling cannot make an unavailable model available again.
+
+GPT introduces a different concern: sometimes the service feels weaker than the model we selected. We worry that a GPT-6 session might fall back to GPT-5.5 or a cheaper model. **We have not verified silent model substitution**, and worse output alone is not evidence of it. Context, reasoning settings, routing, and ordinary model variation can also change results. Still, uncertainty about what we are actually receiving makes a subscription harder to trust.
+
+That led us to consider Kimi K3, GLM-5.3, and DeepSeek V4. We wanted an option that was easier to access and pay for, without making every substantial task feel expensive.
+
+## The ¥67 OpenCode Go Experiment
+
+We first heard about Go through Bilibili videos. The appeal was straightforward: access to several Chinese models, a larger token budget than direct API spending, and payment in yuan through Alipay. We paid ¥67 for the trial month. That is our transaction amount, not a guaranteed yuan price or payment option for every buyer.
+
+The [official OpenCode Go documentation](https://opencode.ai/v2/docs/console/go) currently lists **Go at \$10/month** and **Go Plus at \$40/month**. The allowance depends on the model, rather than providing one uniform amount of inexpensive usage.
+
+For the models most relevant to our comparison, the base Go plan lists:
+
+| Model               | Monthly metered usage allowance | Allowance ÷ 10 USD subscription |
+| ------------------- | ------------------------------- | ------------------------------- |
+| Kimi K3             | 15 USD                          | 1.5×                            |
+| GLM-5.3             | 15 USD                          | 1.5×                            |
+| DeepSeek V4 Pro     | 15 USD                          | 1.5×                            |
+| Kimi K2.7 Code      | 60 USD                          | 6×                              |
+| GLM-5.3-Flash       | 60 USD                          | 6×                              |
+| DeepSeek V4.1 Flash | 80 USD                          | 8×                              |
+
+These figures are a **snapshot checked on October 12, 2026**, using Go's published token rates. They are not cash credits or guaranteed completed-task counts. The documentation also specifies 5-hour and weekly limits at 20% and 50% of the monthly limit. Different model allowances should not be assumed to form one freely interchangeable balance.
+
+OpenCode explains the difference: bulk discounts and reserved capacity support larger allowances for some models; newer models or models without those discounts receive less. That explains the pricing, but it also changes the purchase decision. **Access to many models is not the same as a generous budget for the particular model we want.**
+
+## What One iKanban Task Tells Us
+
+Our test was a medium-complexity issue in our own iKanban project. The Kimi K3 session showed about **\$0.67 in metered usage** and approximately **5% of the monthly quota**.
+
+The simple budget calculation is:
+
+```text
+Kimi K3: 100% ÷ 5% ≈ 20 comparable tasks per month
+Allocated subscription cost: ¥67 ÷ 20 ≈ ¥3.35 per task
+```
+
+There is a small mismatch in the recorded numbers. At the currently published \$15 allowance, \$0.67 is about **4.47%**, not exactly 5%. Using the dollar figure gives roughly **22 tasks and ¥2.99 per task**. We cannot reconcile the dashboard percentage and metered amount without a more detailed record. Either way, the result is around twenty such tasks, not hundreds.
+
+For the comparable GPT-6.1 Sol task, our observation was approximately **1% of a weekly Plus allowance**:
+
+```text
+GPT: 100% ÷ 1% ≈ 100 comparable tasks per week
+Four-week estimate: 100 × 4 ≈ 400 tasks
+Allocated subscription cost: $20 ÷ 400 = $0.05 per task
+```
+
+Using ¥6.7 per dollar—the conversion implied by our ¥67 Go payment—\$0.05 is **¥0.335**. This is a consistent comparison assumption, not a claim about the live exchange rate or our actual Plus checkout total.
+
+| Comparison                             | Kimi K3 through Go | GPT-6.1 Sol through Plus           |
+| -------------------------------------- | ------------------ | ---------------------------------- |
+| Observed quota use                     | About 5% monthly   | About 1% weekly                    |
+| Extrapolated tasks per four-week month | About 20           | About 400                          |
+| Monthly subscription basis             | ¥67 paid           | 20 USD list price, modeled as ¥134 |
+| Allocated cost per task                | About ¥3.35        | About ¥0.335                       |
+
+This suggests a roughly **10× cost difference for this workload**. It does not mean GPT charges ¥0.335 whenever we submit an issue. Both figures allocate a fixed subscription across an assumed fully used task budget. If we finish fewer tasks, our actual subscription cost per completed task rises.
+
+The comparison also assumes similar task consumption across the month, no competing usage, and no tighter limit becoming the bottleneck. Context, caching, retries, and reasoning can all change consumption. [OpenAI's Codex pricing guide](https://developers.openai.com/codex/pricing/) explicitly separates API prices from included subscription usage and cautions against treating them as fixed task counts.
+
+Even with those limits, this was enough to make us reconsider Go as our primary Kimi plan. We did not need a universal benchmark to decide that the budget felt too small for our own work.
+
+## Does DeepSeek Flash Solve the Problem?
+
+Some people suggested DeepSeek V4.1 Flash, with a claimed cost of around **¥0.30 for a comparable task**. That would put it near our GPT estimate. It is a suggestion we received, not a result we reproduced in this comparison.
+
+The price direction is plausible. [DeepSeek's official pricing](https://api-docs.deepseek.com/quick_start/pricing/) lists V4.1 Flash at \$0.15 per million uncached input tokens and \$0.60 per million output tokens off-peak, with peak rates twice as high. Cached input is cheaper still. Go also gives it a much larger allowance than Kimi K3.
+
+But our concern is that Flash would sacrifice too much capability relative to GPT-6.1 Sol for the harder work we want to delegate. That remains our assessment, not a measured capability gap from this cost test. A cheaper model may still be useful for bounded, simpler tasks; it does not automatically replace our main model.
+
+The useful metric is **cost per accepted task**, including retries and human correction—not only price per million tokens. Low token prices help only if the model can complete the work we need at an acceptable standard.
+
+## Be Careful with the Plan-to-API Ratio
+
+Our initial description of Kimi's plan value was “almost 1:1.” The current published allowance makes that **1.5×**, which is better than direct metered spending but still much smaller than we hoped.
+
+To avoid reversing the ratio, we define the multiplier as:
+
+```text
+Value multiplier = API-equivalent usage value ÷ subscription fee
+```
+
+The inverse—subscription fee divided by API value—is a cost fraction, not a multiplier.
+
+Our rough expectation was **2–8× for Go versus 35–50× for GPT/Claude coding subscriptions**. The checked Go figures above refine the relevant range to **1.5–8×**. The 35–50× figure remains our working estimate, not a published allowance or a result established by this single task. Demonstrating it would require token logs, model-specific API rates, cache accounting, and observed usage across complete reset periods. The task percentages alone cannot prove it.
+
+![SemiAnalysis chart comparing API-equivalent value and tokens per dollar of subscription fees across OpenAI, Anthropic, Z.ai, MiniMax, and Moonshot plans](/static/images/ai-coding-plan-api-value-comparison.jpg)
+
+_Chart credited to SemiAnalysis in the supplied image. Each dot represents a lab's own subscription paired with one model; both axes use logarithmic scales. This is not an OpenCode Go comparison, and the image does not state a measurement date._
+
+The chart also challenges our broad 35–50× estimate. It places **GPT-6.1 Sol around 10×**, Claude Sonnet 5.5 and Opus 5.5 above 50×, and MiniMax M3 around 20×. There is no single multiplier that describes all GPT/Claude plans, and Chinese-model subscriptions are not uniformly low-value either. These are the chart's estimates, not measurements we independently reproduced. Provider, model, and subscription tier all matter.
+
+Nor is a dollar of API-equivalent value identical across models: expensive API pricing can inflate the multiplier without increasing useful work. In our [earlier token-plan post](/blog/tools/ai-agent-token-plan), we focused on API-equivalent budgets. This trial makes us put more weight on the simpler question: **how many tasks that we actually need can the subscription support?**
+
+## Paying More Is Not the Only Way Forward
+
+The frustrating part is that we are willing to pay for strong overseas models, but account bans and uncertainty about service quality make access fragile. The Chinese-model options we tried have not yet given us the combination of price and capability we want. That is a statement about our tested options, not the whole market.
+
+It also helps explain why operating a strong model can become a specialized role. Access, task selection, context preparation, and verification affect how much useful work a team gets from its subscription. The operator's contribution is not merely typing prompts; it is knowing where the model is worth using and where a human must lead.
+
+We have consequently reduced our token consumption. This connects to the question in [If We Own the AI, Do We Own Its Ability?](/blog/tools/is-ai-ability-really-our-ability): generated output does not automatically become our understanding.
+
+The files can belong to us while the reasoning remains external. If we cannot explain an important change, verify it, or maintain it when the model disappears, we have gained output without gaining the same amount of ability. That does not make the output worthless, but it makes dependence visible.
+
+Even Claude and GPT do not remove the need for human direction. We still have to choose the problem, judge the evidence, and absorb the decisions that matter. More tokens can accelerate production; they cannot guarantee that we become better at the work.
+
+Perhaps this is partly how we make peace with not having reliable access to the cheapest, strongest model. We should admit that possibility. **A tighter budget is still a constraint, not a hidden advantage.** But the distinction between generating more and understanding more remains useful even with unlimited access.
+
+## Conclusion
+
+Our ¥67 Go trial did not deliver the inexpensive Kimi workflow we hoped for. The observed task budget was around twenty medium-complexity issues per month, compared with a rough four-week extrapolation of four hundred through GPT Plus. On a full-quota basis, that meant roughly **¥3.35 versus ¥0.335 per task**.
+
+Go's checked allowance multipliers for the selected models range from **1.5× to 8×**. Our **35–50× GPT/Claude estimate is not established**, and the supplied chart shows why these models and plans need to be compared separately. The more defensible conclusion is narrower: a model can have attractive API pricing while its subscription remains expensive for our daily tasks.
+
+For now, we will choose models by the cost of useful, accepted work, keep fallback tools portable, and use fewer tokens where extra generation adds little. The goal is not to consume the largest possible quota. It is to get work done at a sustainable price—and retain enough understanding to own the result.
+
+---
+
+## Sources and Related Posts
+
+- [OpenCode Go: pricing and model-specific usage limits](https://opencode.ai/v2/docs/console/go)
+- [OpenAI Codex: subscription pricing and usage accounting](https://developers.openai.com/codex/pricing/)
+- [Claude plans: Pro and Max pricing](https://claude.com/pricing)
+- [DeepSeek: official API pricing](https://api-docs.deepseek.com/quick_start/pricing/)
+- [How to Choose a Token Plan for AI Agent Coding](/blog/tools/ai-agent-token-plan)
+- [When Claude Disappeared: Rebuilding Our AI Workflow Around OpenCode](/blog/tools/ai-workflow-after-claude-ban)
+- [If We Own the AI, Do We Own Its Ability?](/blog/tools/is-ai-ability-really-our-ability)

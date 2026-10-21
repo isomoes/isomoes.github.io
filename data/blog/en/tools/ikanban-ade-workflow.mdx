@@ -1,0 +1,157 @@
+---
+title: 'From IDE to ADE: Our Everyday AI Workflow with iKanban'
+date: '2026-10-21'
+tags: ['AI', 'ADE', 'ikanban', 'opencode', 'workflow', 'agent', 'ai4paper']
+summary: 'How our experiments with individual AI tools became an everyday workflow built around iKanban and OpenCode: expressing intent, reviewing results, and extending the environment across devices and domains.'
+locale: en
+translationKey: tools-ikanban-ade-workflow
+---
+
+<BilibiliVideo bvid="BV1Wknz6zEHJ" />
+
+<TOCInline fromHeading={1} toHeading={2} toc={props.toc} />
+
+We have shared plenty of individual AI tools: a CLI, a multi-agent pattern, a set of skills, or a migration between runtimes. Each post addressed a particular problem. But none, on its own, fully answers a more practical question: how do we actually work with AI every day?
+
+By October 2026, our approach has become reasonably stable. This post connects the pieces: **OpenCode handles execution, iKanban provides the human interface, and everyday work follows a cycle of expressing intent, agent execution, and reviewing results.**
+
+Rather than introduce another tool in isolation, we want to explain how these pieces form a working environment—and why we continue maintaining our own interface.
+
+## From a better editor to an environment for agents
+
+Longtime readers may remember that one starting point for our regular blogging and videos was [Getting Started with Neovim](/blog/misc/neovim-start), published in January 2025. Back then, we wanted fewer mouse interactions and a more consistent way to operate our editor and everyday tools. Our later exploration of Linux, window managers, and the [IDE journey](/blog/ide/ide-journey) followed the same thread.
+
+In February 2026, [The Better AI IDE: Software Should Serve AI First, Then Humans](/blog/ide/great-ai-ide) raised a different question: when agents write most of the code, do we still need an IDE designed around humans manually operating on it?
+
+**ADE—Agent Development Environment—** is a useful way to describe the kind of application we have in mind. We use the term to explain a shift in design priorities, not to establish a rigid product category.
+
+A traditional IDE integrates search, editing, refactoring, and testing into an interface so people can perform those actions directly. In our workflow, agents can already invoke tools, modify files, and run builds and tests through the terminal. Many operations that once required a person to click through an interface no longer need that intermediary.
+
+This does not mean every GUI should disappear. It means **the interface an agent uses to execute work does not have to be the interface a person uses to oversee it.** Terminals and structured tools suit agents; clear task states, readable summaries, and artifact previews suit people. This continues the shift described in our [browser-first workflow](/blog/misc/one-year-arch-linux-browser-workflow): terminal tools still do the underlying work, but the person does not have to stay in a terminal.
+
+## What iKanban does, and what OpenCode does
+
+[iKanban](https://github.com/isomoes/ikanban) is a project we have been iterating on since early this year. It has gone through several architectural rewrites and experiments with different foundations. [Rewriting iKanban on DeepSeek Harness](/blog/tools/deepseek-harness-ikanban) documents one stage of that history, but it describes the implementation at that time—not today's installation procedure.
+
+The current version is a **standalone static frontend for OpenCode V2**, directly using the upstream shared desktop/web application. The browser connects through the API to an OpenCode backend running on the work machine. Projects, sessions, tool execution, and file access belong to that backend environment; the frontend makes them accessible to the person.
+
+That boundary matters. We are not trying to implement another agent runtime inside the UI. Instead, we focus on two human activities:
+
+- **Expressing intent:** explaining the goal, the constraints, and what counts as completion.
+- **Reviewing results:** judging whether the agent met the goal and what needs clarification, revision, or another run.
+
+iKanban currently provides project and session management, worktree workspaces, file references, Git diff review, file previews, and terminals. It also supports switching between servers and mobile layouts. You can open the [hosted iKanban frontend](https://isomoes.github.io/ikanban/) and follow the [repository instructions](https://github.com/isomoes/ikanban#readme) to connect your own backend.
+
+These are not unrelated features. They serve the same cycle: hand intent to an agent, then return results that a person can evaluate.
+
+## The everyday cycle
+
+Suppose we want to add a feature to a project. We usually open the relevant project and workspace, then create a session. Relatively independent tasks can use separate worktrees so multiple sessions do not modify the same working directory. Our [multi-agent parallel workflow](/blog/tools/multi-agent-parallel) covers isolation and parallelism in more detail.
+
+Next, we describe the request. The important part is not writing a long prompt; it is making the goal, boundaries, and acceptance criteria clear. Instead of saying only “add PDF preview,” for example, we should explain where it belongs, what review problem it should solve, and whether new dependencies are acceptable. We can reference relevant files directly rather than restating all the background.
+
+Once execution starts, the agent reads the project, develops an approach, modifies files, and runs verification. We do not watch every command. We return when it needs clarification, requests permission, or presents an intermediate result. Multiple sessions can make progress independently, but useful parallelism still depends on clear task boundaries—not simply opening more chat windows.
+
+When results arrive, we first read the overall explanation, then inspect diffs, test results, or the final artifact as needed. If the direction is wrong, we clarify the intent and ask for revisions. If the direction is right but verification is incomplete, we ask for the missing evidence.
+
+Compared with opening an editor and implementing everything step by step, the difference is this: **we organize tasks and acceptance first, rather than files and editing actions.**
+
+### Expressing intent: reducing input friction with audio2text
+
+We already have a companion project for this part of the workflow: [audio2text](https://github.com/isomoes/audio2text). It is a Chinese speech-to-text tool for Wayland that can type recognized text directly into the focused application.
+
+Often, we know what we want but need to hand an unfinished train of thought to the agent. Speaking first and then refining the text into a clear request can feel more natural than starting with an empty input box. Input friction is even more noticeable on a phone.
+
+In our desktop setup, we focus the iKanban input, start recording with a global shortcut configured in the window manager, and describe the request. We then check the transcription, add relevant files and constraints, and send it to the agent. audio2text turns speech into input; iKanban passes the intent to the backend. Neither needs a dedicated integration with the other.
+
+audio2text currently uses WeType by default and also supports DashScope. It is a system-level input tool, not a built-in iKanban voice feature or a mobile solution. Direct typing requires a Wayland compositor that supports the relevant virtual keyboard protocol. Audio is sent to the selected cloud recognition service, so sensitive content also requires considering that data flow.
+
+The goal is not to make prompts less deliberate. It is to shorten the distance between an idea and an actionable task. Goals and boundaries still need checking after transcription; speaking quickly is not the same as communicating clearly.
+
+### Reviewing results: start with a summary, then inspect by risk
+
+Review is changing too. When AI generated smaller amounts of code, we could read the diff section by section. Now, a task may modify many files. If every change requires the same depth of manual inspection, review becomes the bottleneck.
+
+We therefore more often start with **a summary of the entire commit or change set**: what was implemented, why the approach was chosen, which modules were affected, what verification ran, and what limitations remain. We review that explanation to assess the direction, then decide which details need closer inspection.
+
+A summary does not prove correctness. It can omit problems or even disagree with the actual changes. Its purpose is to help allocate attention, not eliminate diff review. Authentication, data deletion, permissions, and other high-risk logic still require inspecting the implementation.
+
+For mechanically checkable requirements, we prefer putting constraints into project rules and automated checks ahead of time: formatting, types, tests, and dependency restrictions. In everyday use, models seem more consistent at following explicit instructions than they were early this year. But **a rule in a prompt is still a soft constraint; a check that blocks an invalid change from proceeding is a hard constraint.**
+
+This lets us spend more attention on whether the feature is what we actually wanted. It does not make “the agent says it is done” an acceptance criterion.
+
+## The result might be a paper, not code
+
+Expressing intent and reviewing results form a general framework, but the right interaction depends on the domain.
+
+In software projects, diffs are an important entry point. In paper writing, apparently correct source changes still need inspection in the compiled PDF: do equations overflow, are figures readable, does pagination work, and is the argument coherent? Reading LaTeX or Typst changes alone cannot answer all of those questions.
+
+For us, **PDF preview inside the review interface is a concrete domain requirement**. There is an important distinction here: accepting a PDF attachment in the composer is not the same as providing a complete review experience for a generated paper.
+
+Other domains may need their own artifact views. We would like to add these review capabilities through plugins rather than pack every domain feature into the general interface. This remains a direction for future extension, not a claim that iKanban already has a complete domain-plugin ecosystem.
+
+A general ADE provides the interaction structure. Domain extensions let people actually see and evaluate the work produced in their field.
+
+## Longer-running agents make cross-device access practical
+
+With one short session, waiting at the computer feels natural enough. With several concurrent sessions—or a single longer task—we do not want to stay in front of the work machine the whole time.
+
+Often, all we need is to check the latest result on a phone, answer a clarification question, or decide which direction the work should take next. We are not moving the entire development environment onto a phone. We are taking the necessary decision points with us.
+
+OpenCode's client-server architecture provides the foundation. Sessions and execution live on the backend, while desktop and mobile browsers can connect to the same service without starting separate copies of a task. The [OpenCode V2 API documentation](https://opencode.ai/v2/docs/api) describes the interfaces.
+
+Our deployment has two parts, both recorded in public configuration repositories:
+
+1. A [systemd user service](https://github.com/isomoes/arch-config/blob/master/systemd/user/ikanban.service) manages the OpenCode backend, starting it with the user service environment and restarting it after failure.
+2. An [frpc configuration](https://github.com/isomoes/arch-config/tree/master/compose/frpc) forwards the local backend port to a public server, where Nginx provides the HTTPS entry point.
+
+The connection runs from iKanban on a phone or computer, through the public HTTPS endpoint and FRP tunnel, to OpenCode on the work machine. The frontend device changes; the execution environment does not.
+
+A reachable port is not necessarily a safe service. This backend can modify project files and execute commands, so remote access requires careful authentication and transport security. Our requirements are long, random service credentials, separate backend and FRP tunnel authentication, HTTPS at the public entry point, and no direct public access to the remote forwarded port.
+
+The committed FRP configuration contains only structure and environment-variable references. Actual secrets stay in local configuration excluded from Git. The systemd service also loads credentials from the local environment instead of embedding them in a public service file. These configurations live in [linux-config](https://github.com/isomoes/linux-config) and its `.config` submodule, [arch-config](https://github.com/isomoes/arch-config).
+
+These files document our environment; they are not a universally secure deployment recipe. In particular, starting a systemd user service at boot depends on the machine's user-service startup configuration.
+
+## Where this fits in the four-layer workflow
+
+We previously described a [four-layer multi-agent workflow](/blog/tools/four-layer-multi-agent-workflow). At the time, the third layer focused on Superpowers, worktrees, and structured execution. We now find it useful to define that layer more broadly: the resources a project or domain needs, rather than a single workflow tool.
+
+| Layer                                  | Question it answers                                                 | Place in our current workflow                                        |
+| -------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Layer 1: Model API                     | Which models provide the capability, and at what cost?              | Replaceable model access                                             |
+| Layer 2: Agent runtime                 | How are sessions, tool calls, and execution managed?                | OpenCode                                                             |
+| Layer 3: Project and domain resources  | Which rules and capabilities does the agent need here?              | Project instructions, skills, MCP, verification tools, and workflows |
+| Layer 4: Human interaction environment | How do people give instructions, observe state, and review results? | An ADE such as iKanban                                               |
+
+“Stable” does not mean we will never replace the first or second layer. It means their responsibilities and integration boundaries are reasonably clear. Adding a feature above them does not require rediscovering model access and tool execution each time.
+
+The third layer has also accumulated reusable resources, including our [OpenCode configuration](https://github.com/isomoes/opencode-config) and [custom skills](https://github.com/isomoes/skills). These resources shape how the agent works; the fourth layer shapes how people participate.
+
+Much of our recent optimization belongs in that fourth layer: smoother input, easier-to-review summaries, domain-specific artifact previews, and the ability to make decisions away from the computer.
+
+That is why we still want to maintain iKanban. The more independently agents can execute, the more worthwhile it becomes to design the human side deliberately.
+
+## From a general ADE to domain-specific AI tools
+
+Our longer-term goal is not just a more convenient general coding interface. We want to build domain-specific, AI-native tools on top of this shared interaction model. Paper writing is one direction.
+
+You could call this a fifth layer or a domain-specific variation of the fourth. The name matters less than the principle: **package domain resources together with the right review experience, instead of making every user assemble everything from scratch.**
+
+We maintain the [AI4Paper (`ai4paper`)](https://github.com/ai4paper) organization for this work. Its current resources include:
+
+- [apaper-plugin](https://github.com/ai4paper/apaper-plugin): combines academic writing and figure-creation skills with literature-research tools to equip agents for paper-authoring tasks.
+- [apaper-mcp](https://github.com/ai4paper/apaper-mcp): provides academic-source search, literature metadata and BibTeX retrieval, and supported paper downloads.
+- [book](https://github.com/ai4paper/book): collects practical guidance for problem selection, experiments, writing, submission, and revision.
+
+A historical clarification: the former [iPaper](https://github.com/ai4paper/ipaper) workspace explored a separate product bundle, but the [current AI4Paper organization overview](https://github.com/ai4paper#readme) states that its development has stopped. The current direction uses OpenCode as the runtime and builds capabilities through plugins and research tools rather than continuing that older workspace.
+
+These resources are not yet a complete paper-writing ADE. They provide domain capabilities and workflow foundations. Helping researchers express research intent, verify sources, and review paper artifacts more effectively remains work we want to continue.
+
+## Conclusion: improving the exchange between people and agents
+
+From Neovim and Linux to iKanban, it may look as though we have simply kept changing tools. But the question has changed. Earlier, we wanted to operate the computer more efficiently ourselves. Now, we want to delegate work to agents while retaining clear judgment and control.
+
+Our current answer is to let models and runtimes handle execution, let project resources supply rules and domain capabilities, and use an ADE to focus human work on expressing intent and reviewing results. Voice input, change summaries, artifact previews, and cross-device access all reduce friction in those two activities.
+
+We will keep maintaining and improving iKanban while exploring domain tools such as paper-writing environments. The measure of success is not how many features the interface contains. It is **whether we can communicate requirements more clearly and evaluate results faster and more reliably.**

@@ -41,7 +41,8 @@ const notoSerifSC = Noto_Serif_SC({
 })
 
 const notoSansSC = Noto_Sans_SC({
-  weight: ['400', '500', '700'],
+  // Static weights can return extensionless URLs that Next 15's font loader cannot parse.
+  weight: 'variable',
   display: 'swap',
   variable: '--font-sans-sc',
   preload: false,
